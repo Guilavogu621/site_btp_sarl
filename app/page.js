@@ -58,75 +58,89 @@ export default function HomePage() {
   };
 
   return (
-    <div>
-      {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden grid-bg border-b border-[#e0e0e0]">
-        <div className="max-w-6xl mx-auto px-6 pt-16 pb-20 md:pt-24 md:pb-28 grid md:grid-cols-[1.1fr,0.9fr] gap-12 items-center">
+    <div className="bg-[#F8FAFC]">
+      {/* 1. HERO SECTION - DARK ARCHITECTURAL BLUEPRINT & GOLD ACCENTS */}
+      <section className="relative overflow-hidden grid-bg border-b border-[#334155] text-white py-20 md:py-32">
+        {/* Glowing Orbs */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#E8952E]/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-10 left-10 w-72 h-72 bg-[#1E40AF]/20 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-[1.1fr,0.9fr] gap-12 items-center">
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="font-mono text-[11px] tracking-[0.2em] uppercase px-2.5 py-1 border border-[#cccccc] text-[#5B6B7A]">
-                Planche 00 / Présentation
-              </span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1E293B] border border-[#E8952E]/40 text-[#E8952E] font-mono text-[11px] font-bold uppercase tracking-widest mb-6 shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-[#E8952E] animate-ping"></span>
+              <span>Bureau d'Études & BTP de Référence — Guinée</span>
             </div>
-            <h1 className="font-display font-bold leading-[1.05] text-[36px] md:text-[48px] text-[#1d1d1d]">
-              De l'esquisse à la remise des clés, un seul interlocuteur.
+            
+            <h1 className="font-display font-extrabold leading-[1.08] text-[40px] sm:text-[52px] md:text-[60px] text-white mb-6">
+              Concevoir <span className="gold-gradient-text">juste.</span><br />
+              Bâtir <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">fort & durable.</span>
             </h1>
-            <p className="mt-6 text-[17px] max-w-lg text-[#5B6B7A]">
-              Conception, structure, chiffrage, gestion et suivi : nous accompagnons vos projets de bâtiment à chaque étape, avec la rigueur d'un bureau d'études et l'œil d'un chantier.
+
+            <p className="text-[17px] md:text-[19px] max-w-xl text-slate-300 leading-relaxed mb-10 font-normal">
+              De l'étude de structure complexe à la livraison clé en main, Best Builders SARLU s'engage sur la rigueur d'ingénierie, les délais maîtrisés et l'excellence sur le terrain.
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
+
+            <div className="flex flex-wrap items-center gap-4">
               <Link
                 href="#contact"
-                className="inline-flex items-center gap-2 px-6 py-3.5 font-bold text-[15px] bg-[#0A2540] text-white hover:bg-[#1E56A0] transition-colors shadow-md"
+                className="inline-flex items-center gap-3 px-8 py-4 font-extrabold text-[14px] uppercase tracking-wider bg-gradient-to-r from-[#E8952E] to-[#D97706] text-[#0F172A] hover:from-[#D97706] hover:to-[#B45309] hover:text-white transition-all shadow-xl hover:shadow-[#E8952E]/20 rounded-sm hover:-translate-y-0.5"
               >
-                Demander un devis
+                Demander une étude / Devis
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/realisations"
-                className="inline-flex items-center gap-2 px-6 py-3.5 font-bold text-[15px] border border-[#CBD5E1] bg-white hover:bg-[#F1F5F9] text-[#0A2540] transition-colors"
+                className="inline-flex items-center gap-2 px-7 py-4 font-bold text-[14px] uppercase tracking-wider bg-[#1E293B] border border-[#334155] text-white hover:bg-[#334155] hover:border-slate-400 transition-all rounded-sm"
               >
-                Voir nos réalisations
+                Découvrir nos chantiers
               </Link>
             </div>
           </div>
 
-          <div>
+          <div className="relative">
             <HeroVisual />
           </div>
         </div>
       </section>
 
-      {/* 2. LE GROUPE BEST BUILDERS SECTION */}
-      <section id="groupe" className="bg-white py-16 md:py-24 border-b border-[#e0e0e0]">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div className="relative h-80 md:h-[450px] bg-[#f5f5f5] p-8 border border-[#e0e0e0] flex items-center justify-center">
-            <img
-              src="/img/logo.png"
-              alt="Le Groupe Best Builders"
-              className="max-h-64 w-auto object-contain"
-            />
-            <div className="absolute -bottom-4 -right-4 w-28 h-28 bg-[#0A2540] hidden md:block -z-10"></div>
+      {/* 2. LE GROUPE BEST BUILDERS SECTION - EXECUTIVE CORPORATE */}
+      <section id="groupe" className="bg-[#0F172A] text-white py-24 border-b border-[#334155] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+          <div className="relative">
+            <div className="relative z-10 bg-[#1E293B] p-8 md:p-12 border border-[#334155] shadow-2xl rounded-lg">
+              <div className="w-16 h-1 bg-[#E8952E] mb-8"></div>
+              <img
+                src="/img/logo.png"
+                alt="Le Groupe Best Builders"
+                className="h-28 w-auto object-contain mb-8 bg-white p-4 rounded-md shadow-md"
+              />
+              <blockquote className="text-[17px] font-display italic text-slate-200 leading-relaxed border-l-2 border-[#E8952E] pl-4">
+                "Notre vocation est d'apporter aux maîtres d'ouvrages publics et privés une expertise d'ingénierie sans concession sur la qualité et la durabilité."
+              </blockquote>
+            </div>
+            <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-[#E8952E]/10 rounded-full blur-2xl pointer-events-none"></div>
           </div>
+
           <div>
-            <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-              À Propos de Nous
+            <span className="font-mono text-[12px] tracking-widest uppercase text-[#E8952E] font-bold block mb-3">
+              Acteur Majeur du BTP & Bureau d'Études Agréé
             </span>
-            <h1 className="font-display font-bold text-[32px] md:text-[44px] mt-3 leading-tight text-[#0A2540]">
-              Le Groupe Best Builders
-            </h1>
-            <p className="mt-6 text-[16px] text-[#5B6B7A] leading-relaxed">
+            <h2 className="font-display font-extrabold text-[36px] md:text-[48px] leading-tight text-white mb-6">
+              Le Groupe Best Builders SARLU.
+            </h2>
+            <p className="text-[16px] text-slate-300 leading-relaxed mb-4">
               {initialSiteSettings.about_text}
             </p>
-            <p className="mt-4 text-[16px] text-[#5B6B7A] leading-relaxed">
-              Notre ambition est claire : participer activement au développement de la nation en proposant des solutions de construction innovantes, durables et adaptées aux réalités de notre environnement.
+            <p className="text-[16px] text-slate-300 leading-relaxed mb-8">
+              Forts d'un bureau d'études intégré et d'équipes de chantier hautement qualifiées, nous assurons une maîtrise complète de la chaîne de valeur du bâtiment et des travaux publics en Guinée.
             </p>
-            <div className="mt-8">
+            <div>
               <Link
                 href="/a-propos"
-                className="inline-flex items-center gap-2 px-6 py-3.5 font-bold text-[14px] uppercase tracking-wider bg-[#0A2540] text-white hover:bg-[#1E56A0] transition-colors shadow-sm"
+                className="inline-flex items-center gap-3 px-7 py-3.5 font-extrabold text-[13px] uppercase tracking-wider bg-[#1E293B] border border-[#E8952E] text-[#E8952E] hover:bg-[#E8952E] hover:text-[#0F172A] transition-all rounded-sm shadow-md"
               >
-                Découvrir notre histoire
+                En savoir plus sur le groupe
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -134,15 +148,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. STATS BANNER */}
-      <section className="bg-[#0A2540] text-white py-12 border-b border-[#0F3854]">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+      {/* 3. STATS BANNER - GOLD ACCENTED STATS */}
+      <section className="bg-[#0A0F1D] text-white py-16 border-b border-[#334155]">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           {initialStats.map((stat) => (
-            <div key={stat.id} className="text-center md:text-left">
-              <div className="font-display font-extrabold text-[36px] md:text-[44px] text-blue-300">
+            <div key={stat.id} className="bg-[#1E293B]/60 border border-[#334155] p-6 rounded-md shadow-lg text-center hover:border-[#E8952E] transition-colors">
+              <div className="font-display font-extrabold text-[40px] md:text-[48px] gold-gradient-text">
                 {stat.value}
               </div>
-              <div className="text-[14px] text-slate-200 font-medium mt-1">
+              <div className="text-[13px] font-mono uppercase tracking-wider text-slate-300 font-semibold mt-2">
                 {stat.label}
               </div>
             </div>
@@ -150,18 +164,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. SERVICES SECTION */}
-      <section id="services" className="py-20 md:py-28 bg-[#f5f5f5]">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-2xl mb-16">
-            <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-              Nos Domaines d'Intervention
+      {/* 4. SERVICES SECTION - PREMIUM CARDS WITH GOLD ACCENTS */}
+      <section id="services" className="py-24 md:py-32 bg-[#F8FAFC] border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-3xl mb-16">
+            <span className="font-mono text-[12px] tracking-widest uppercase text-[#E8952E] font-bold block mb-2">
+              Pôles d'Expertise Technique
             </span>
-            <h1 className="font-display font-bold text-[32px] md:text-[42px] mt-3 leading-tight text-[#0A2540]">
-              Une expertise globale.
-            </h1>
-            <p className="mt-4 text-[16px] text-[#5B6B7A]">
-              De l'étude de faisabilité technique à la livraison clé en main, nous assurons chaque métier avec précision.
+            <h2 className="font-display font-extrabold text-[36px] md:text-[46px] text-[#0F172A] leading-tight">
+              Une ingénierie globale au service de vos chantiers.
+            </h2>
+            <p className="mt-4 text-[17px] text-[#475569] leading-relaxed">
+              Nous couvrons l'ensemble des besoins de conception, de calcul et de maîtrise d'œuvre d'exécution.
             </p>
           </div>
 
@@ -171,24 +185,25 @@ export default function HomePage() {
               return (
                 <div
                   key={service.id}
-                  className="bg-white p-8 border border-[#e0e0e0] hover:border-[#0A2540] transition-all flex flex-col justify-between group shadow-sm hover:shadow-md"
+                  className="bg-white p-8 md:p-10 border border-slate-200 hover:border-[#0F172A] transition-all hover-lift rounded-lg flex flex-col justify-between group shadow-sm relative overflow-hidden"
                 >
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#E8952E] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div>
-                    <div className="w-14 h-14 bg-[#F1F5F9] text-[#0A2540] group-hover:bg-[#0A2540] group-hover:text-white transition-colors flex items-center justify-center mb-6">
-                      <IconComp className="w-7 h-7" />
+                    <div className="w-16 h-16 bg-[#0F172A] text-[#E8952E] rounded-md flex items-center justify-center mb-8 shadow-md group-hover:scale-110 transition-transform">
+                      <IconComp className="w-8 h-8" />
                     </div>
-                    <h3 className="font-display font-bold text-[22px] text-[#0A2540] mb-3">
+                    <h3 className="font-display font-bold text-[24px] text-[#0F172A] mb-4">
                       {service.title}
                     </h3>
-                    <p className="text-[15px] text-[#5B6B7A] leading-relaxed mb-6">
+                    <p className="text-[15px] text-[#475569] leading-relaxed mb-8">
                       {service.short_description}
                     </p>
                   </div>
                   <Link
                     href={`/services#${service.slug}`}
-                    className="inline-flex items-center text-[13px] font-bold uppercase tracking-wider text-[#0A2540] group-hover:text-[#1E56A0] transition-colors"
+                    className="inline-flex items-center text-[13px] font-extrabold uppercase tracking-wider text-[#0F172A] group-hover:text-[#E8952E] transition-colors"
                   >
-                    En savoir plus <ArrowRight className="w-4 h-4 ml-2" />
+                    Découvrir le pôle <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               );
@@ -197,53 +212,55 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. PROCESS SECTION */}
-      <section className="py-20 bg-white border-y border-[#e0e0e0]">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center max-w-xl mx-auto mb-16">
-            <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-              Méthodologie
+      {/* 5. PROCESS SECTION - STEP-BY-STEP METHODOLOGY */}
+      <section className="py-24 bg-[#0F172A] text-white border-b border-[#334155]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="font-mono text-[12px] tracking-widest uppercase text-[#E8952E] font-bold block mb-2">
+              Méthodologie Certifiée
             </span>
-            <h1 className="font-display font-bold text-[32px] md:text-[42px] mt-2 text-[#0A2540]">
-              La rigueur à chaque étape.
-            </h1>
+            <h2 className="font-display font-extrabold text-[36px] md:text-[44px] text-white">
+              La rigueur technique à chaque étape.
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
             {initialProcessSteps.map((step) => (
-              <div key={step.id} className="bg-[#f5f5f5] p-6 border border-[#e0e0e0]">
-                <span className="font-mono text-[24px] font-bold text-[#0A2540]">
-                  {step.order}
-                </span>
-                <h3 className="font-display font-bold text-[17px] text-[#0A2540] mt-2 mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-[13px] text-[#5B6B7A] leading-relaxed">
-                  {step.description}
-                </p>
+              <div key={step.id} className="bg-[#1E293B] p-6 border border-[#334155] rounded-lg hover:border-[#E8952E] transition-colors flex flex-col justify-between">
+                <div>
+                  <span className="font-mono text-[28px] font-extrabold gold-gradient-text block mb-3">
+                    {step.order}
+                  </span>
+                  <h3 className="font-display font-bold text-[18px] text-white mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-[13px] text-slate-300 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 6. PROJECTS SECTION */}
-      <section id="realisations" className="py-20 md:py-28 bg-[#f5f5f5]">
-        <div className="max-w-6xl mx-auto px-6">
+      {/* 6. PROJECTS SECTION - PORTFOLIO SHOWCASE */}
+      <section id="realisations" className="py-24 md:py-32 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
             <div>
-              <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-                Portfolio
+              <span className="font-mono text-[12px] tracking-widest uppercase text-[#E8952E] font-bold block mb-2">
+                Portfolio de Références
               </span>
-              <h1 className="font-display font-bold text-[32px] md:text-[42px] mt-2 text-[#0A2540]">
-                Des chantiers menés à terme.
-              </h1>
+              <h2 className="font-display font-extrabold text-[36px] md:text-[46px] text-[#0F172A]">
+                Des ouvrages emblématiques.
+              </h2>
             </div>
             <Link
               href="/realisations"
-              className="mt-4 md:mt-0 inline-flex items-center gap-2 font-bold text-[14px] uppercase tracking-wider text-[#0A2540] hover:text-[#1E56A0] transition-colors"
+              className="mt-6 md:mt-0 inline-flex items-center gap-2 font-extrabold text-[13px] uppercase tracking-wider text-[#0F172A] hover:text-[#E8952E] transition-colors"
             >
-              Voir tous nos projets <ArrowRight className="w-4 h-4" />
+              Voir l'intégralité du portfolio <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
@@ -252,32 +269,32 @@ export default function HomePage() {
               <Link
                 key={project.id}
                 href={`/realisations#project-${project.id}`}
-                className="group bg-white border border-[#e0e0e0] flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow"
+                className="group bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-2xl transition-all hover-lift flex flex-col h-full"
               >
-                <div className="h-56 relative bg-slate-900 overflow-hidden">
+                <div className="h-64 relative bg-[#0F172A] overflow-hidden">
                   <img
                     src={project.photo_after || project.photo_before}
                     alt={project.title}
-                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute top-3 right-3 bg-[#0A2540] text-white text-[11px] font-mono px-2.5 py-1 uppercase font-bold shadow-md">
+                  <div className="absolute top-4 right-4 bg-[#0F172A]/90 backdrop-blur-md text-white text-[11px] font-mono px-3 py-1 uppercase font-bold border border-[#334155] shadow-md rounded-xs">
                     {project.location}
                   </div>
                 </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-[#0A2540] mb-2 font-bold">
+                <div className="p-8 flex-1 flex flex-col">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-[#E8952E] mb-2 font-bold block">
                     {project.category}
                   </span>
-                  <h3 className="font-display font-bold text-[20px] text-[#0A2540] mb-3">
+                  <h3 className="font-display font-bold text-[22px] text-[#0F172A] mb-3 leading-snug">
                     {project.title}
                   </h3>
-                  <p className="text-[14px] text-[#5B6B7A] line-clamp-3 mb-6 flex-1">
+                  <p className="text-[14px] text-[#475569] line-clamp-3 mb-6 flex-1 leading-relaxed">
                     {project.description}
                   </p>
-                  <div className="mt-auto pt-4 border-t border-[#e0e0e0] flex items-center justify-between text-[13px] text-[#5B6B7A]">
-                    <span>Surface : {project.surface}</span>
-                    <span className="font-bold text-[#0A2540] group-hover:text-[#1E56A0]">
-                      Fiche projet →
+                  <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between text-[13px] text-[#64748B]">
+                    <span className="font-medium">Surface : {project.surface}</span>
+                    <span className="font-bold text-[#0F172A] group-hover:text-[#E8952E] transition-colors flex items-center gap-1">
+                      Fiche projet <ArrowRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
                 </div>
@@ -287,78 +304,78 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. CONTACT SECTION */}
-      <section id="contact" className="py-20 md:py-28 bg-white border-t border-[#e0e0e0]">
-        <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
+      {/* 7. CONTACT SECTION - EXECUTIVE FORM */}
+      <section id="contact" className="py-24 md:py-32 bg-[#0F172A] text-white border-t border-[#334155]">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
           <div>
-            <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-              Parlons de votre projet
+            <span className="font-mono text-[12px] tracking-widest uppercase text-[#E8952E] font-bold block mb-2">
+              Assistance & Chiffrage de Projets
             </span>
-            <h1 className="font-display font-bold text-[36px] md:text-[48px] mt-2 text-[#0A2540]">
-              Un projet en tête ?
-            </h1>
-            <p className="mt-4 text-[16px] text-[#5B6B7A] leading-relaxed">
-              Vous avez un projet de construction, de rénovation ou besoin d'une étude de structure rigoureuse ? Remplissez ce formulaire et notre équipe technique vous recontactera sous 24h.
+            <h2 className="font-display font-extrabold text-[38px] md:text-[50px] text-white leading-tight mb-6">
+              Transmettez-nous votre besoin.
+            </h2>
+            <p className="text-[17px] text-slate-300 leading-relaxed mb-10">
+              Nos ingénieurs d'études et chefs de projet examinent votre dossier et reviennent vers vous sous 24 heures avec un chiffrage précis.
             </p>
 
-            <div className="mt-10 space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-[#F1F5F9] text-[#0A2540] flex items-center justify-center shrink-0">
+            <div className="space-y-6">
+              <div className="flex items-start gap-4 p-5 bg-[#1E293B] border border-[#334155] rounded-md">
+                <div className="w-12 h-12 bg-[#0F172A] text-[#E8952E] flex items-center justify-center rounded-md shrink-0">
                   <MapPin className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-[16px] text-[#0A2540]">Adresse du bureau</h4>
-                  <p className="text-[14px] text-[#5B6B7A] mt-1">{initialSiteSettings.address}</p>
+                  <h4 className="font-bold text-[16px] text-white">Siège Social & Bureau d'Études</h4>
+                  <p className="text-[14px] text-slate-300 mt-1">{initialSiteSettings.address}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-[#F1F5F9] text-[#0A2540] flex items-center justify-center shrink-0">
+              <div className="flex items-start gap-4 p-5 bg-[#1E293B] border border-[#334155] rounded-md">
+                <div className="w-12 h-12 bg-[#0F172A] text-[#E8952E] flex items-center justify-center rounded-md shrink-0">
                   <Phone className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-[16px] text-[#0A2540]">Téléphone</h4>
-                  <p className="text-[14px] text-[#5B6B7A] mt-1">{initialSiteSettings.phone}</p>
+                  <h4 className="font-bold text-[16px] text-white">Ligne Directe Technique</h4>
+                  <p className="text-[14px] text-slate-300 mt-1">{initialSiteSettings.phone}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-[#F1F5F9] text-[#0A2540] flex items-center justify-center shrink-0">
+              <div className="flex items-start gap-4 p-5 bg-[#1E293B] border border-[#334155] rounded-md">
+                <div className="w-12 h-12 bg-[#0F172A] text-[#E8952E] flex items-center justify-center rounded-md shrink-0">
                   <Mail className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-[16px] text-[#0A2540]">Email</h4>
-                  <p className="text-[14px] text-[#5B6B7A] mt-1">{initialSiteSettings.email}</p>
+                  <h4 className="font-bold text-[16px] text-white">Courrier Électronique</h4>
+                  <p className="text-[14px] text-slate-300 mt-1">{initialSiteSettings.email}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-[#F8FAFC] p-8 border border-[#E2E8F0]">
-            <h3 className="font-display font-bold text-[22px] text-[#0A2540] mb-6">
-              Demande de Devis / Contact
+          <div className="bg-[#1E293B] p-8 md:p-10 border border-[#334155] rounded-lg shadow-2xl">
+            <h3 className="font-display font-extrabold text-[24px] text-white mb-6">
+              Formulaire de Contact & Devis
             </h3>
 
             {errorMsg && (
-              <div className="mb-6 bg-red-50 border border-red-300 text-red-700 p-4 text-[14px] flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 shrink-0" />
+              <div className="mb-6 bg-red-500/20 border border-red-500 text-red-200 p-4 text-[14px] flex items-center gap-2 rounded-sm">
+                <AlertTriangle className="w-5 h-5 shrink-0 text-red-400" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
             {submitted ? (
-              <div className="bg-emerald-50 border border-emerald-500 text-[#0A2540] p-6 text-center rounded-sm">
-                <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto mb-3" />
-                <h4 className="font-bold text-[18px]">Message envoyé avec succès !</h4>
-                <p className="text-[14px] text-[#5B6B7A] mt-2">
-                  Merci {formData.name}. Nos ingénieurs étudient votre demande et vous répondront très rapidement.
+              <div className="bg-emerald-500/20 border border-emerald-500 text-white p-8 text-center rounded-sm">
+                <CheckCircle2 className="w-14 h-14 text-emerald-400 mx-auto mb-4" />
+                <h4 className="font-bold text-[20px]">Votre demande a été transmise !</h4>
+                <p className="text-[14px] text-slate-300 mt-2">
+                  Merci {formData.name}. Nos ingénieurs prennent en charge votre demande.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-[13px] font-bold uppercase tracking-wider text-[#0A2540] mb-2">
-                    Nom complet *
+                  <label className="block text-[12px] font-mono font-bold uppercase tracking-wider text-slate-300 mb-2">
+                    Nom Complet *
                   </label>
                   <input
                     type="text"
@@ -366,13 +383,13 @@ export default function HomePage() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="ex: Mamadou Diallo"
-                    className="w-full px-4 py-3 bg-white border border-[#cccccc] focus:border-[#0A2540] outline-none text-[15px]"
+                    className="w-full px-4 py-3.5 bg-[#0F172A] border border-[#334155] text-white focus:border-[#E8952E] outline-none text-[15px] rounded-sm"
                   />
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-[13px] font-bold uppercase tracking-wider text-[#0A2540] mb-2">
+                    <label className="block text-[12px] font-mono font-bold uppercase tracking-wider text-slate-300 mb-2">
                       Téléphone *
                     </label>
                     <input
@@ -381,12 +398,12 @@ export default function HomePage() {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="+224 6XX XX XX XX"
-                      className="w-full px-4 py-3 bg-white border border-[#cccccc] focus:border-[#0A2540] outline-none text-[15px]"
+                      className="w-full px-4 py-3.5 bg-[#0F172A] border border-[#334155] text-white focus:border-[#E8952E] outline-none text-[15px] rounded-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-[13px] font-bold uppercase tracking-wider text-[#0A2540] mb-2">
-                      Email *
+                    <label className="block text-[12px] font-mono font-bold uppercase tracking-wider text-slate-300 mb-2">
+                      Adresse Email *
                     </label>
                     <input
                       type="email"
@@ -394,19 +411,19 @@ export default function HomePage() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="nom@exemple.com"
-                      className="w-full px-4 py-3 bg-white border border-[#cccccc] focus:border-[#0A2540] outline-none text-[15px]"
+                      className="w-full px-4 py-3.5 bg-[#0F172A] border border-[#334155] text-white focus:border-[#E8952E] outline-none text-[15px] rounded-sm"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[13px] font-bold uppercase tracking-wider text-[#0A2540] mb-2">
-                    Service concerné
+                  <label className="block text-[12px] font-mono font-bold uppercase tracking-wider text-slate-300 mb-2">
+                    Pôle d'Expertise Concerné
                   </label>
                   <select
                     value={formData.service_requested}
                     onChange={(e) => setFormData({ ...formData, service_requested: e.target.value })}
-                    className="w-full px-4 py-3 bg-white border border-[#cccccc] focus:border-[#0A2540] outline-none text-[15px]"
+                    className="w-full px-4 py-3.5 bg-[#0F172A] border border-[#334155] text-white focus:border-[#E8952E] outline-none text-[15px] rounded-sm"
                   >
                     {initialServices.map((s) => (
                       <option key={s.id} value={s.title}>
@@ -417,8 +434,8 @@ export default function HomePage() {
                 </div>
 
                 <div>
-                  <label className="block text-[13px] font-bold uppercase tracking-wider text-[#0A2540] mb-2">
-                    Votre message / Description du projet *
+                  <label className="block text-[12px] font-mono font-bold uppercase tracking-wider text-slate-300 mb-2">
+                    Description & Détails de l'Ouvrage *
                   </label>
                   <textarea
                     rows={4}
@@ -426,15 +443,15 @@ export default function HomePage() {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Précisez la nature de votre projet, la localisation et le délai souhaité..."
-                    className="w-full px-4 py-3 bg-white border border-[#cccccc] focus:border-[#0A2540] outline-none text-[15px]"
+                    className="w-full px-4 py-3.5 bg-[#0F172A] border border-[#334155] text-white focus:border-[#E8952E] outline-none text-[15px] rounded-sm"
                   ></textarea>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-4 bg-[#0A2540] hover:bg-[#1E56A0] text-white font-bold text-[15px] uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-md"
+                  className="w-full py-4 bg-gradient-to-r from-[#E8952E] to-[#D97706] text-[#0F172A] hover:from-[#D97706] hover:to-[#B45309] hover:text-white font-extrabold text-[15px] uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-xl rounded-sm"
                 >
-                  Envoyer ma demande
+                  Envoyer la Demande d'Étude
                   <Send className="w-4 h-4" />
                 </button>
               </form>
@@ -444,4 +461,5 @@ export default function HomePage() {
       </section>
     </div>
   );
+
 }
