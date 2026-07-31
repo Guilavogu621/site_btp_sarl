@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Ruler, Calculator, HardHat, Hammer, CheckCircle2, Phone, Mail, MapPin, Send, AlertTriangle } from "lucide-react";
 import HeroVisual from "@/components/HeroVisual";
+import StatsCounter from "@/components/StatsCounter";
 import { initialServices, initialProjects, initialStats, initialProcessSteps, initialSiteSettings } from "@/lib/data";
 import { sanitizeContactForm, validateEmail, validatePhone } from "@/lib/security";
 
@@ -89,6 +90,21 @@ export default function HomePage() {
                 Voir nos réalisations
               </Link>
             </div>
+
+            {/* QUICK TRUST STRIP — key numbers visible without scrolling */}
+            <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 pt-6 border-t border-[#e0e0e0]">
+              {initialStats.slice(0, 3).map((stat) => (
+                <div key={stat.id}>
+                  <StatsCounter
+                    value={stat.value}
+                    className="font-display font-extrabold text-[26px] md:text-[30px] text-[#0A2540]"
+                  />
+                  <div className="text-[12px] text-[#5B6B7A] font-medium mt-0.5">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -139,9 +155,10 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           {initialStats.map((stat) => (
             <div key={stat.id} className="text-center md:text-left">
-              <div className="font-display font-extrabold text-[36px] md:text-[44px] text-blue-300">
-                {stat.value}
-              </div>
+              <StatsCounter
+                value={stat.value}
+                className="font-display font-extrabold text-[36px] md:text-[44px] text-blue-300"
+              />
               <div className="text-[14px] text-slate-200 font-medium mt-1">
                 {stat.label}
               </div>
