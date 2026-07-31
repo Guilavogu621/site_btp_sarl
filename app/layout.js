@@ -6,13 +6,13 @@ import Footer from "@/components/Footer";
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const openSans = Open_Sans({
   subsets: ["latin"],
   variable: "--font-open-sans",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata = {
@@ -23,7 +23,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fr" className={`${montserrat.variable} ${openSans.variable} scroll-smooth`}>
-      <body className="w-full min-h-screen flex flex-col justify-between bg-[#F8FAFC] text-[#0F172A] antialiased">
+      <body className="w-full min-h-screen flex flex-col justify-between bg-[#f5f5f5] text-[#1d1d1d]">
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
