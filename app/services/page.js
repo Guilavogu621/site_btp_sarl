@@ -1,72 +1,103 @@
 import Link from "next/link";
-import { Ruler, Calculator, HardHat, Hammer, ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { initialServices } from "@/lib/data";
-
-const iconMap = {
-  Ruler: Ruler,
-  Calculator: Calculator,
-  HardHat: HardHat,
-  Hammer: Hammer,
-};
+import PageHeader from "@/components/PageHeader";
 
 export const metadata = {
   title: "Nos Métiers & Services — Best Builders SARLU",
   description: "Découvrez nos métiers : Conception & calcul de structure, chiffrage & économie, gestion & suivi de chantier, rénovation.",
 };
 
+const serviceBadges = [
+  "01 • INGÉNIERIE",
+  "02 • ÉCONOMIE",
+  "03 • SUPERVISION",
+  "04 • RÉNOVATION"
+];
+
 export default function ServicesPage() {
   return (
-    <div className="bg-[#f5f5f5] py-16 md:py-24">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Banner */}
-        <div className="mb-16">
-          <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-            Nos Métiers
-          </span>
-          <h1 className="font-display font-bold text-[36px] md:text-[52px] text-[#0A2540] mt-2 leading-tight">
-            Catalogue de Services & Métiers BTP
-          </h1>
-          <p className="mt-4 text-[18px] text-[#5B6B7A] max-w-3xl leading-relaxed">
-            Bureau d'études et contractant général, nous intervenons à toutes les phases de votre projet de construction.
-          </p>
-        </div>
+    <div className="bg-[#F7F9FF] blueprint-grid pb-20 md:pb-28 min-h-screen">
+      {/* Header Banner */}
+      <PageHeader
+        badge="Catalogue Métiers"
+        title="Ingénierie & Métiers de la Construction"
+        description="Bureau d'études et contractant général, nous intervenons à toutes les étapes avec une rigueur absolue."
+      />
 
+      <div className="max-w-6xl mx-auto px-6">
         {/* Services Detail List */}
         <div className="space-y-12">
           {initialServices.map((service, index) => {
-            const IconComp = iconMap[service.icon] || Ruler;
+            const isReversed = index % 2 !== 0;
             return (
               <div
                 key={service.id}
                 id={service.slug}
-                className="bg-white p-8 md:p-12 border border-[#e0e0e0] grid md:grid-cols-[100px,1fr] gap-8 items-start scroll-mt-28 shadow-sm hover:border-[#0A2540] transition-colors"
+                className="card-stitch p-0 scroll-mt-28 grid md:grid-cols-12 items-stretch group overflow-hidden"
               >
-                <div className="w-20 h-20 bg-[#F1F5F9] text-[#0A2540] flex items-center justify-center shrink-0 border border-[#CBD5E1]">
-                  <IconComp className="w-10 h-10" />
+                {/* Image du service */}
+                <div className={`${isReversed ? "md:col-start-9 md:col-span-4" : "md:col-span-4"} relative min-h-[260px] overflow-hidden bg-[#0A2540] ${isReversed ? "md:order-2" : ""}`}>
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="image-overlay-gradient" />
+
+                  {/* Numéro de service en grand */}
+                  <span className="absolute top-4 left-4 font-display font-extrabold text-[48px] text-white/10 leading-none select-none">
+                    0{index + 1}
+                  </span>
+
+                  <span className="absolute bottom-4 left-4 font-mono text-[10px] text-[#00C2FF] font-semibold bg-[#0A2540]/90 backdrop-blur-sm px-3 py-1.5 border border-[#00C2FF]/30 rounded-sm shadow-md">
+                    {serviceBadges[index] || `0${index + 1} • SERVICE`}
+                  </span>
                 </div>
 
-                <div>
-                  <span className="font-mono text-[11px] text-[#0A2540] uppercase tracking-wider font-bold">
-                    Métier 0{index + 1}
-                  </span>
-                  <h2 className="font-display font-bold text-[26px] md:text-[32px] text-[#0A2540] mt-1 mb-4">
-                    {service.title}
-                  </h2>
-                  <p className="text-[16px] text-[#5B6B7A] leading-relaxed mb-6 font-medium">
-                    {service.short_description}
-                  </p>
-                  <div className="bg-[#F8FAFC] p-6 border border-[#E2E8F0] mb-6">
-                    <p className="text-[15px] text-[#0A2540] leading-relaxed">
-                      {service.detailed_content}
+                {/* Contenu texte */}
+                <div className={`${isReversed ? "md:col-start-1 md:col-span-8 md:order-1" : "md:col-span-8"} flex flex-col justify-between p-8 md:p-10`}>
+                  <div>
+                    <div className="flex items-center justify-between gap-4 mb-3">
+                      <span className="technical-badge">
+                        {serviceBadges[index] || `0${index + 1} • SERVICE`}
+                      </span>
+                      <span className="font-mono text-[10px] text-[#5B6B7A] uppercase font-semibold tracking-wider">
+                        CONAKRY &amp; RÉGIONS
+                      </span>
+                    </div>
+
+                    <h2 className="font-display font-bold text-[24px] md:text-[30px] text-[#0A2540] mb-4 group-hover:text-[#295EA8] transition-colors leading-tight">
+                      {service.title}
+                    </h2>
+
+                    <p className="font-sans text-[15px] text-[#334155] leading-relaxed mb-6">
+                      {service.short_description}
                     </p>
+
+                    <div className="bg-[#F7F9FF] p-6 border border-[#C4C6CE]/70 rounded-md mb-6 relative overflow-hidden">
+                      {/* Subtle top accent */}
+                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#295EA8]/30 via-[#00C2FF]/30 to-transparent" />
+
+                      <h4 className="font-mono text-[11px] font-semibold uppercase text-[#0A2540] mb-3 flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#00C2FF]" />
+                        Détails de l&apos;intervention technique :
+                      </h4>
+                      <p className="font-sans text-[14px] text-[#334155] leading-relaxed">
+                        {service.detailed_content}
+                      </p>
+                    </div>
                   </div>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0A2540] text-white font-bold text-[13px] uppercase tracking-wider hover:bg-[#1E56A0] transition-colors shadow-sm"
-                  >
-                    Demander une étude pour ce service
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+
+                  <div>
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#0A2540] text-white font-display font-semibold text-[13px] uppercase tracking-wider hover:bg-[#295EA8] transition-all shadow-md rounded-sm group/btn hover:-translate-y-0.5"
+                    >
+                      <span>Demander une étude pour ce service</span>
+                      <ArrowRight className="w-4 h-4 text-[#00C2FF] group-hover/btn:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             );

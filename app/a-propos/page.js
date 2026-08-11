@@ -1,138 +1,178 @@
 import Link from "next/link";
-import { CheckCircle2, ShieldCheck, Target, Award, ArrowRight, Users } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Target, Award, ArrowRight, Users, Sparkles, Building2, Layers } from "lucide-react";
 import { initialSiteSettings, initialTeamMembers } from "@/lib/data";
+import PageHeader from "@/components/PageHeader";
+import { getInitials } from "@/lib/utils";
 
 export const metadata = {
   title: "Le Groupe Best Builders — À Propos & Présentation",
   description: "Découvrez l'histoire, la vision, les valeurs et l'équipe dirigeante du Groupe Best Builders SARLU en Guinée.",
 };
 
-/**
- * Génère les initiales d'un nom complet (max 2 lettres).
- * Ex: "Ing. Koivogui Jeannot Délé" → "KJ"
- * @param {string} fullName - Le nom complet du membre
- * @returns {string} Les initiales en majuscules
- */
-function getInitials(fullName) {
-  const cleaned = fullName
-    .replace(/^(Ing\.|Me\.|Dr\.|Prof\.)\s*/i, "")
-    .trim();
-  const words = cleaned.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "?";
-  if (words.length === 1) return words[0].charAt(0).toUpperCase();
-  return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
-}
-
 export default function AboutPage() {
   return (
-    <div className="bg-[#f5f5f5] py-16 md:py-24">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Banner */}
-        <div id="qui-sommes-nous" className="mb-16 scroll-mt-32">
-          <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-            Qui sommes-nous ?
-          </span>
-          <h1 className="font-display font-bold text-[36px] md:text-[52px] text-[#0A2540] mt-2 leading-tight">
-            À Propos du Groupe Best Builders
-          </h1>
-          <p className="mt-4 text-[18px] text-[#5B6B7A] max-w-3xl leading-relaxed">
-            Un acteur de référence dans l'ingénierie et la construction BTP en République de Guinée, alliant savoir-faire technique et rigueur d'exécution.
-          </p>
-        </div>
+    <div className="bg-[#F7F9FF] blueprint-grid pb-20 md:pb-28 min-h-screen">
+      {/* Header Banner */}
+      <PageHeader
+        id="qui-sommes-nous"
+        badge="À Propos du Groupe"
+        title="Ingénierie & Construction BTP en Guinée"
+        description="Un acteur de référence alliant savoir-faire technique, rigueur de calcul et excellence d'exécution sur le terrain."
+      />
 
-        {/* Story Section */}
-        <div id="historique" className="grid md:grid-cols-2 gap-12 items-center bg-white p-8 md:p-12 border border-[#e0e0e0] mb-16 scroll-mt-32">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Story Section Card */}
+        <div id="historique" className="card-stitch p-8 md:p-12 grid md:grid-cols-2 gap-12 items-center mb-20 scroll-mt-32 shadow-xl">
           <div>
-            <h2 className="font-display font-bold text-[28px] text-[#0A2540] mb-6">
-              Notre Mission & Vision
+            <span className="technical-badge mb-4">
+              MISSION &amp; HISTORIQUE
+            </span>
+            <h2 className="font-display font-bold text-[28px] md:text-[36px] text-[#0A2540] mt-3 mb-6 leading-tight">
+              Notre Mission &amp; Vision
             </h2>
-            <p className="text-[16px] text-[#5B6B7A] leading-relaxed mb-4">
+            <p className="font-sans text-[16px] text-[#334155] leading-relaxed mb-4">
               {initialSiteSettings.about_text}
             </p>
-            <p className="text-[16px] text-[#5B6B7A] leading-relaxed mb-6">
-              Depuis notre création, nous veillons à maintenir un niveau d'exigence maximal dans la conception des structures et la conduite des travaux sur le terrain. Notre bureau d'études intégré nous permet de contrôler l'ensemble de la chaîne de valeur du bâtiment.
+            <p className="font-sans text-[16px] text-[#334155] leading-relaxed mb-8">
+              Depuis notre création, nous veillons à maintenir un niveau d&apos;exigence maximal dans la conception des structures et la conduite des travaux. Notre bureau d&apos;études intégré nous permet de contrôler l&apos;ensemble de la chaîne de valeur.
             </p>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-[15px] font-bold text-[#0A2540]">
-                <CheckCircle2 className="w-5 h-5 text-[#0A2540]" />
-                <span>Études de structures conformes aux normes internationales</span>
-              </div>
-              <div className="flex items-center gap-3 text-[15px] font-bold text-[#0A2540]">
-                <CheckCircle2 className="w-5 h-5 text-[#0A2540]" />
-                <span>Maîtrise totale des délais et des coûts de chantier</span>
-              </div>
-              <div className="flex items-center gap-3 text-[15px] font-bold text-[#0A2540]">
-                <CheckCircle2 className="w-5 h-5 text-[#0A2540]" />
-                <span>Supervision continue par des ingénieurs certifiés</span>
-              </div>
+            <div className="space-y-4">
+              {[
+                "Études de structures conformes aux normes Eurocodes/BAEL",
+                "Maîtrise totale des délais et du chiffrage budgétaire",
+                "Supervision continue sur le terrain par des ingénieurs certifiés"
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-start gap-3 group">
+                  <div className="w-7 h-7 rounded-md bg-[#F1F4F7] border border-[#C4C6CE] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#0A2540] group-hover:border-[#0A2540] transition-all">
+                    <CheckCircle2 className="w-4 h-4 text-[#00C2FF]" />
+                  </div>
+                  <span className="font-display font-semibold text-[15px] text-[#0A2540] leading-snug">{item}</span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="bg-[#F8FAFC] p-8 border border-[#E2E8F0] flex items-center justify-center min-h-[350px]">
-            <img src="/img/logo.png" alt="Logo Best Builders" className="max-h-56 w-auto object-contain" />
-          </div>
-        </div>
+          <div className="bg-[#0A2540] p-8 rounded-md border border-[#295EA8]/40 flex flex-col items-center justify-center min-h-[380px] relative overflow-hidden blueprint-grid-dark text-white">
+            {/* Decorative corner lines */}
+            <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-[#00C2FF]/30" />
+            <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-[#00C2FF]/30" />
 
-        {/* Values Grid */}
-        <div id="nos-valeurs" className="mb-16 scroll-mt-32">
-          <h2 className="font-display font-bold text-[28px] text-[#0A2540] mb-8 text-center">
-            Nos Piliers & Valeurs
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-8">
-            <div className="bg-white p-8 border border-[#e0e0e0]">
-              <div className="w-12 h-12 bg-[#F1F5F9] text-[#0A2540] flex items-center justify-center mb-6">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <h3 className="font-display font-bold text-[20px] text-[#0A2540] mb-3">
-                Sécurité & Fiabilité
-              </h3>
-              <p className="text-[14px] text-[#5B6B7A] leading-relaxed">
-                La sécurité des structures et des personnes est notre priorité absolue. Nous calculons chaque ouvrage avec un coefficient de sécurité optimal.
-              </p>
+            <div className="relative">
+              <img
+                src="/img/logo.png"
+                alt="Logo Best Builders"
+                className="max-h-44 w-auto object-contain bg-white/95 p-5 rounded-md border border-[#00C2FF]/20 mb-5 drop-shadow-2xl"
+              />
+              <div className="absolute -bottom-2 -right-2 w-5 h-5 bg-[#00C2FF] rounded-full animate-pulse shadow-[0_0_12px_rgba(0,194,255,0.5)]" />
             </div>
 
-            <div className="bg-white p-8 border border-[#e0e0e0]">
-              <div className="w-12 h-12 bg-[#F1F5F9] text-[#0A2540] flex items-center justify-center mb-6">
-                <Target className="w-6 h-6" />
-              </div>
-              <h3 className="font-display font-bold text-[20px] text-[#0A2540] mb-3">
-                Précision Technique
-              </h3>
-              <p className="text-[14px] text-[#5B6B7A] leading-relaxed">
-                Notre bureau d'études utilise les outils de modélisation les plus avancés pour garantir une exécution fidèle aux plans.
-              </p>
+            <div className="technical-badge technical-badge-vibrant mt-2">
+              BUREAU D&apos;ÉTUDES AGRÉÉ • GUINÉE
             </div>
 
-            <div className="bg-white p-8 border border-[#e0e0e0]">
-              <div className="w-12 h-12 bg-[#F1F5F9] text-[#0A2540] flex items-center justify-center mb-6">
-                <Award className="w-6 h-6" />
-              </div>
-              <h3 className="font-display font-bold text-[20px] text-[#0A2540] mb-3">
-                Engagement Qualité
-              </h3>
-              <p className="text-[14px] text-[#5B6B7A] leading-relaxed">
-                De la sélection des matériaux à la remise des clés, nous appliquons un suivi qualité rigoureux à chaque étape.
-              </p>
+            <div className="mt-6 flex items-center gap-6 text-[#00C2FF] font-mono text-[11px] font-semibold">
+              <span>EST. 2009</span>
+              <span className="w-px h-4 bg-[#295EA8]" />
+              <span>CONAKRY</span>
+              <span className="w-px h-4 bg-[#295EA8]" />
+              <span>KIPÉ</span>
             </div>
           </div>
         </div>
 
-        {/* ═══════════════════════════════════════════════════════ */}
-        {/* SECTION : ÉQUIPE DIRIGEANTE                           */}
-        {/* ═══════════════════════════════════════════════════════ */}
-        <div className="mb-16">
+        {/* Values Grid — Premium 3 Pillars */}
+        <div id="nos-valeurs" className="mb-20 scroll-mt-32 section-divider pt-8">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 mb-3">
-              <Users className="w-5 h-5 text-[#0A2540]" />
-              <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-                L'Équipe Dirigeante
+            <span className="technical-badge mb-4">
+              NOS PILIERS FONDAMENTAUX
+            </span>
+            <h2 className="font-display font-bold text-[30px] md:text-[38px] text-[#0A2540] mt-3">
+              Engagement &amp; Rigueur <span className="text-[#295EA8]">Technique</span>
+            </h2>
+            <p className="font-sans text-[16px] text-[#5B6B7A] max-w-xl mx-auto mt-3">
+              Trois principes fondateurs guident chaque décision technique et chaque étape de nos chantiers.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <ShieldCheck className="w-7 h-7" />,
+                title: "Sécurité & Fiabilité",
+                accent: "#295EA8",
+                desc: "La sécurité des structures et des personnes est notre priorité absolue. Chaque ouvrage est dimensionné avec un coefficient de sécurité optimal selon les normes BAEL et Eurocodes.",
+                stat: "100%",
+                statLabel: "Zéro accident"
+              },
+              {
+                icon: <Target className="w-7 h-7" />,
+                title: "Précision Technique",
+                accent: "#00C2FF",
+                desc: "Notre bureau d'études utilise les logiciels de modélisation et de calculs de structures les plus performants du secteur BTP. Chaque métré est vérifié deux fois.",
+                stat: "±0.5%",
+                statLabel: "Marge d'erreur"
+              },
+              {
+                icon: <Award className="w-7 h-7" />,
+                title: "Excellence d'Exécution",
+                accent: "#295EA8",
+                desc: "De la sélection des matériaux de chantier à la livraison finale, nos équipes appliquent un contrôle qualité strict à chaque étape des travaux.",
+                stat: "120+",
+                statLabel: "Projets livrés"
+              }
+            ].map((value, idx) => (
+              <div key={idx} className="card-stitch p-8 flex flex-col group relative">
+                {/* Stat badge en haut à droite */}
+                <div className="absolute top-4 right-4 text-right">
+                  <span className="font-display font-extrabold text-[28px] text-[#0A2540]/10 group-hover:text-[#00C2FF]/20 transition-colors leading-none block">
+                    {value.stat}
+                  </span>
+                  <span className="font-mono text-[9px] text-[#5B6B7A]/60 uppercase tracking-wider">
+                    {value.statLabel}
+                  </span>
+                </div>
+
+                <div className="icon-box-stitch mb-6">
+                  {value.icon}
+                </div>
+                <h3 className="font-display font-bold text-[20px] text-[#0A2540] mb-3 group-hover:text-[#295EA8] transition-colors leading-snug">
+                  {value.title}
+                </h3>
+                <p className="font-sans text-[14px] text-[#334155] leading-relaxed flex-grow">
+                  {value.desc}
+                </p>
+
+                {/* Progress bar visuel */}
+                <div className="mt-6 pt-4 border-t border-[#C4C6CE]/50">
+                  <div className="w-full h-1 bg-[#F1F4F7] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-700 group-hover:w-full"
+                      style={{
+                        width: "0%",
+                        background: `linear-gradient(to right, #0A2540, ${value.accent})`
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section Équipe Dirigeante */}
+        <div id="equipe" className="mb-20 scroll-mt-32 section-divider pt-8">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <Users className="w-5 h-5 text-[#295EA8]" />
+              <span className="technical-badge">
+                ORGANIGRAMME &amp; ÉQUIPE
               </span>
             </div>
-            <h2 className="font-display font-bold text-[28px] md:text-[36px] text-[#0A2540]">
-              Des femmes et des hommes engagés
+            <h2 className="font-display font-bold text-[30px] md:text-[38px] text-[#0A2540] mt-1">
+              Des experts engagés sur le <span className="text-[#295EA8]">terrain</span>
             </h2>
-            <p className="mt-3 text-[16px] text-[#5B6B7A] max-w-2xl mx-auto leading-relaxed">
-              Ingénieurs, juristes, gestionnaires et techniciens : notre équipe pluridisciplinaire est le pilier de chaque projet mené par Best Builders SARLU.
+            <p className="font-sans text-[16px] text-[#5B6B7A] max-w-2xl mx-auto mt-3 leading-relaxed">
+              Ingénieurs, juristes, économistes et techniciens : une équipe pluridisciplinaire au service de vos projets.
             </p>
           </div>
 
@@ -142,74 +182,79 @@ export default function AboutPage() {
               return (
                 <div
                   key={member.id}
-                  className={`bg-white border text-center p-6 transition-all hover:shadow-lg hover:-translate-y-1 group ${
-                    isGerant
-                      ? "border-[#0A2540] shadow-md col-span-2 sm:col-span-1 border-2"
-                      : "border-[#e0e0e0]"
+                  className={`card-stitch text-center p-6 flex flex-col justify-between group ${
+                    isGerant ? "border-2 border-[#0A2540] shadow-lg" : ""
                   }`}
                 >
-                  {/* Avatar ou Photo */}
-                  <div className="relative mx-auto mb-5">
-                    {member.photo ? (
-                      <img
-                        src={member.photo}
-                        alt={member.name}
-                        className={`w-24 h-24 object-cover mx-auto ${
-                          isGerant ? "border-4 border-[#0A2540]" : "border-2 border-[#e0e0e0]"
-                        }`}
-                      />
-                    ) : (
-                      <div
-                        className={`w-24 h-24 mx-auto flex items-center justify-center text-[28px] font-bold transition-colors ${
-                          isGerant
-                            ? "bg-[#0A2540] text-white border-4 border-[#1E56A0]"
-                            : "bg-[#F1F5F9] text-[#0A2540] border-2 border-[#E2E8F0] group-hover:bg-[#0A2540] group-hover:text-white"
-                        }`}
-                      >
-                        {getInitials(member.name)}
-                      </div>
-                    )}
-                    {/* Indicateur Gérant */}
-                    {isGerant && (
-                      <div className="absolute -top-2 -right-2 bg-[#0A2540] text-white text-[9px] font-mono font-bold px-2 py-0.5 uppercase tracking-wider">
-                        Fondateur
-                      </div>
-                    )}
+                  <div>
+                    <div className="relative mx-auto mb-5">
+                      {member.photo ? (
+                        <img
+                          src={member.photo}
+                          alt={member.name}
+                          className={`w-20 h-20 object-cover mx-auto rounded-full shadow-md transition-transform group-hover:scale-105 ${
+                            isGerant ? "border-[3px] border-[#0A2540] ring-2 ring-[#00C2FF]/30" : "border-2 border-[#C4C6CE]"
+                          }`}
+                        />
+                      ) : (
+                        <div
+                          className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center text-[22px] font-bold transition-all shadow-md ${
+                            isGerant
+                              ? "bg-[#0A2540] text-[#00C2FF] border-2 border-[#00C2FF] ring-2 ring-[#00C2FF]/20"
+                              : "bg-gradient-to-br from-[#F1F4F7] to-[#E8ECF1] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:from-[#0A2540] group-hover:to-[#0A2540] group-hover:text-[#00C2FF] group-hover:border-[#295EA8]"
+                          }`}
+                        >
+                          {getInitials(member.name)}
+                        </div>
+                      )}
+                      {isGerant && (
+                        <span className="absolute -top-2 -right-2 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-semibold px-2.5 py-0.5 border border-[#00C2FF]/30 uppercase rounded-sm shadow-md">
+                          Fondateur
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="font-display font-bold text-[15px] text-[#0A2540] leading-snug group-hover:text-[#295EA8] transition-colors">
+                      {member.name}
+                    </h3>
                   </div>
 
-                  {/* Nom & Poste */}
-                  <h3 className="font-display font-bold text-[16px] text-[#0A2540] leading-snug">
-                    {member.name}
-                  </h3>
-                  <p className={`font-mono text-[11px] uppercase tracking-wider mt-2 font-semibold ${
-                    isGerant ? "text-[#1E56A0]" : "text-[#5B6B7A]"
-                  }`}>
-                    {member.role}
-                  </p>
+                  <div className="mt-4 pt-3 border-t border-[#C4C6CE]/50">
+                    <span className="font-mono text-[10px] text-[#295EA8] font-semibold uppercase tracking-wider block">
+                      {member.role}
+                    </span>
+                  </div>
                 </div>
               );
             })}
           </div>
-
-          <p className="text-center text-[13px] text-[#5B6B7A] mt-8 italic">
-            Les photos de l'équipe seront publiées prochainement.
-          </p>
         </div>
 
-        {/* CTA */}
-        <div className="bg-[#0A2540] text-white p-10 md:p-14 text-center rounded-sm shadow-xl">
-          <h2 className="font-display font-bold text-[28px] md:text-[36px] mb-4">
-            Envie de collaborer avec nous ?
-          </h2>
-          <p className="text-[16px] text-slate-200 max-w-xl mx-auto mb-8">
-            Faites confiance à l'expertise de Best Builders SARLU pour la réalisation de vos ouvrages.
-          </p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#1E56A0] hover:bg-white hover:text-[#0A2540] text-white font-bold text-[15px] uppercase tracking-wider transition-colors shadow-md"
-          >
-            Contactez notre équipe <ArrowRight className="w-4 h-4" />
-          </Link>
+        {/* Banner CTA — Premium */}
+        <div className="relative bg-[#0A2540] text-white p-12 md:p-16 text-center rounded-md shadow-2xl blueprint-grid-dark border border-[#295EA8]/30 overflow-hidden">
+          {/* Decorative corners */}
+          <div className="absolute top-5 left-5 w-10 h-10 border-t-2 border-l-2 border-[#00C2FF]/25" />
+          <div className="absolute bottom-5 right-5 w-10 h-10 border-b-2 border-r-2 border-[#00C2FF]/25" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-px bg-gradient-to-r from-transparent via-[#00C2FF]/50 to-transparent" />
+
+          <div className="relative z-10">
+            <span className="technical-badge technical-badge-vibrant mb-6">
+              EXPERTISE DISPONIBLE
+            </span>
+            <h2 className="font-display font-bold text-[28px] md:text-[38px] mb-5 mt-4 leading-tight">
+              Confiez vos projets à nos ingénieurs
+            </h2>
+            <p className="font-sans text-[16px] text-slate-200 max-w-xl mx-auto mb-10 leading-relaxed">
+              Profitez d&apos;une étude de faisabilité et d&apos;une évaluation personnalisée pour vos futurs chantiers BTP.
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-[#00C2FF] text-[#000F22] font-display font-bold text-[14px] uppercase tracking-wider hover:bg-white transition-all shadow-lg rounded-sm hover:-translate-y-1 active:scale-95"
+            >
+              <span>Contactez notre bureau d&apos;études</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>

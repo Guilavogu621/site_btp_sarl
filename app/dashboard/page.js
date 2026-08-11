@@ -28,18 +28,24 @@ import {
   X
 } from "lucide-react";
 import LoginScreen from "@/components/LoginScreen";
+import { useEffect } from "react";
 import {
   initialProjects,
   initialArticles,
   initialContactMessages,
   initialServices,
-  initialSiteSettings
+  initialSiteSettings,
+  getStoredArticles,
+  saveStoredArticles,
+  getStoredProjects,
+  saveStoredProjects
 } from "@/lib/data";
 import { sanitizeText } from "@/lib/security";
 
 export default function DashboardPage() {
-  // Authentication State
+  // Authentication State with Persistence
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [currentUserEmail, setCurrentUserEmail] = useState("bestbuilderssarlu@gmail.com");
 
   // User Management State
@@ -59,6 +65,27 @@ export default function DashboardPage() {
   const [articles, setArticles] = useState(initialArticles);
   const [services, setServices] = useState(initialServices);
   const [settings, setSettings] = useState(initialSiteSettings);
+
+  // Synchroniser la session d'authentification et les contenus au chargement du dashboard
+  useEffect(() => {
+    try {
+      const savedSession = localStorage.getItem("best_builders_admin_session");
+      if (savedSession) {
+        const parsed = JSON.parse(savedSession);
+        if (parsed && parsed.isAuthenticated) {
+          setIsAuthenticated(true);
+          if (parsed.email) setCurrentUserEmail(parsed.email);
+        }
+      }
+    } catch (e) {
+      console.error("Erreur lors de la lecture de la session admin :", e);
+    } finally {
+      setIsCheckingAuth(false);
+    }
+
+    setArticles(getStoredArticles());
+    setProjects(getStoredProjects());
+  }, []);
 
   // Search filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -86,14 +113,27 @@ export default function DashboardPage() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
 
-  // Authentication Handler
+  // Authentication Handlers
   const handleLogin = (email) => {
     setCurrentUserEmail(email);
     setIsAuthenticated(true);
+    try {
+      localStorage.setItem(
+        "best_builders_admin_session",
+        JSON.stringify({ isAuthenticated: true, email })
+      );
+    } catch (e) {
+      console.error("Erreur de sauvegarde de la session admin :", e);
+    }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    try {
+      localStorage.removeItem("best_builders_admin_session");
+    } catch (e) {
+      console.error("Erreur de suppression de la session admin :", e);
+    }
   };
 
   // User Management Handlers
@@ -134,7 +174,9 @@ export default function DashboardPage() {
       ...newProject,
       slug: newProject.title.toLowerCase().replace(/ /g, "-")
     };
-    setProjects([created, ...projects]);
+    const updated = [created, ...projects];
+    setProjects(updated);
+    saveStoredProjects(updated);
     setShowAddProject(false);
     setNewProject({
       title: "",
@@ -150,7 +192,9 @@ export default function DashboardPage() {
 
   const handleDeleteProject = (id) => {
     if (confirm("Voulez-vous supprimer ce projet du portfolio ?")) {
-      setProjects(projects.filter((p) => p.id !== id));
+      const updated = projects.filter((p) => p.id !== id);
+      setProjects(updated);
+      saveStoredProjects(updated);
       triggerSuccess();
     }
   };
@@ -162,7 +206,9 @@ export default function DashboardPage() {
       ...newArticle,
       slug: newArticle.title.toLowerCase().replace(/ /g, "-")
     };
-    setArticles([created, ...articles]);
+    const updated = [created, ...articles];
+    setArticles(updated);
+    saveStoredArticles(updated);
     setShowAddArticle(false);
     setNewArticle({
       title: "",
@@ -175,7 +221,9 @@ export default function DashboardPage() {
 
   const handleDeleteArticle = (id) => {
     if (confirm("Voulez-vous supprimer cet article d'actualité ?")) {
-      setArticles(articles.filter((a) => a.id !== id));
+      const updated = articles.filter((a) => a.id !== id);
+      setArticles(updated);
+      saveStoredArticles(updated);
       triggerSuccess();
     }
   };
@@ -189,6 +237,22 @@ export default function DashboardPage() {
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
+
+  // IF CHECKING AUTHENTICATION SESSION -> SHOW LOADER
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-[#0A2540] flex items-center justify-center text-white font-sans blueprint-grid-dark">
+        <div className="flex flex-col items-center gap-4 p-8 bg-[#0F3854]/60 border border-[#1E56A0]/40 rounded-md">
+          <svg className="animate-spin w-8 h-8 text-[#00C2FF]" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4" strokeLinecap="round" />
+          </svg>
+          <span className="font-mono text-[12px] uppercase text-[#00C2FF] font-semibold tracking-wider">
+            Vérification de la session admin...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   // IF NOT AUTHENTICATED -> SHOW PREMIUM LOGIN SCREEN
   if (!isAuthenticated) {
@@ -248,113 +312,88 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col md:flex-row">
         {/* NAVY BLUE SIDEBAR NAVIGATION */}
         <aside className="w-full md:w-64 bg-[#0A2540] border-r border-[#0F3854] p-5 shrink-0 shadow-lg text-white">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[#94A3B8] font-bold mb-4 px-3">
-            Menu d'Administration
+          <p className="font-mono text-[10px] uppercase tracking-widest text-slate-300 font-bold mb-4 px-3">
+            Menu d&apos;Administration
           </p>
 
-          <nav className="space-y-1.5">
+          <nav className="space-y-1">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`w-full flex items-center justify-between px-4 py-3 text-[14px] font-medium rounded-sm transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-md font-medium text-[13px] transition-all text-left ${
                 activeTab === "overview"
-                  ? "bg-[#1E56A0] text-white font-bold shadow-md border-l-4 border-white"
-                  : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
+                  ? "bg-[#1E56A0] text-white font-bold shadow-md"
+                  : "text-slate-200 hover:bg-[#0F3854] hover:text-white"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <TrendingUp className="w-4 h-4" />
-                <span>Vue d'ensemble</span>
-              </div>
+              <TrendingUp className="w-4 h-4 text-[#00C2FF]" />
+              <span>Tableau de bord</span>
             </button>
 
             <button
               onClick={() => setActiveTab("messages")}
-              className={`w-full flex items-center justify-between px-4 py-3 text-[14px] font-medium rounded-sm transition-all ${
+              className={`w-full flex items-center justify-between px-3 py-3 rounded-md font-medium text-[13px] transition-all text-left ${
                 activeTab === "messages"
-                  ? "bg-[#1E56A0] text-white font-bold shadow-md border-l-4 border-white"
-                  : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
+                  ? "bg-[#1E56A0] text-white font-bold shadow-md"
+                  : "text-slate-200 hover:bg-[#0F3854] hover:text-white"
               }`}
             >
               <div className="flex items-center gap-3">
-                <MessageSquare className="w-4 h-4" />
-                <span>Demandes & Contact</span>
+                <MessageSquare className="w-4 h-4 text-[#00C2FF]" />
+                <span>Demandes / Contact</span>
               </div>
-              <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold ${
-                activeTab === "messages" ? "bg-white text-[#0A2540]" : "bg-[#0F3854] text-white"
-              }`}>
-                {messages.length}
-              </span>
+              {messages.length > 0 && (
+                <span className="bg-[#00C2FF] text-[#000F22] text-[11px] font-mono font-bold px-2 py-0.5 rounded-full">
+                  {messages.length}
+                </span>
+              )}
             </button>
 
             <button
               onClick={() => setActiveTab("projects")}
-              className={`w-full flex items-center justify-between px-4 py-3 text-[14px] font-medium rounded-sm transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-md font-medium text-[13px] transition-all text-left ${
                 activeTab === "projects"
-                  ? "bg-[#1E56A0] text-white font-bold shadow-md border-l-4 border-white"
-                  : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
+                  ? "bg-[#1E56A0] text-white font-bold shadow-md"
+                  : "text-slate-200 hover:bg-[#0F3854] hover:text-white"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <FolderKanban className="w-4 h-4" />
-                <span>Réalisations (Portfolio)</span>
-              </div>
-              <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold ${
-                activeTab === "projects" ? "bg-white text-[#0A2540]" : "bg-[#0F3854] text-white"
-              }`}>
-                {projects.length}
-              </span>
+              <FolderKanban className="w-4 h-4 text-[#00C2FF]" />
+              <span>Portfolio Projets</span>
             </button>
 
             <button
               onClick={() => setActiveTab("articles")}
-              className={`w-full flex items-center justify-between px-4 py-3 text-[14px] font-medium rounded-sm transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-md font-medium text-[13px] transition-all text-left ${
                 activeTab === "articles"
-                  ? "bg-[#1E56A0] text-white font-bold shadow-md border-l-4 border-white"
-                  : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
+                  ? "bg-[#1E56A0] text-white font-bold shadow-md"
+                  : "text-slate-200 hover:bg-[#0F3854] hover:text-white"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <FileText className="w-4 h-4" />
-                <span>Actualités & Presse</span>
-              </div>
-              <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold ${
-                activeTab === "articles" ? "bg-white text-[#0A2540]" : "bg-[#0F3854] text-white"
-              }`}>
-                {articles.length}
-              </span>
+              <FileText className="w-4 h-4 text-[#00C2FF]" />
+              <span>Actualités &amp; Articles</span>
             </button>
 
             <button
               onClick={() => setActiveTab("users")}
-              className={`w-full flex items-center justify-between px-4 py-3 text-[14px] font-medium rounded-sm transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-md font-medium text-[13px] transition-all text-left ${
                 activeTab === "users"
-                  ? "bg-[#1E56A0] text-white font-bold shadow-md border-l-4 border-white"
-                  : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
+                  ? "bg-[#1E56A0] text-white font-bold shadow-md"
+                  : "text-slate-200 hover:bg-[#0F3854] hover:text-white"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <Users className="w-4 h-4" />
-                <span>Gestion Utilisateurs</span>
-              </div>
-              <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold ${
-                activeTab === "users" ? "bg-white text-[#0A2540]" : "bg-[#0F3854] text-white"
-              }`}>
-                {users.length}
-              </span>
+              <Users className="w-4 h-4 text-[#00C2FF]" />
+              <span>Utilisateurs &amp; Accès</span>
             </button>
 
             <button
               onClick={() => setActiveTab("settings")}
-              className={`w-full flex items-center justify-between px-4 py-3 text-[14px] font-medium rounded-sm transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-md font-medium text-[13px] transition-all text-left ${
                 activeTab === "settings"
-                  ? "bg-[#1E56A0] text-white font-bold shadow-md border-l-4 border-white"
-                  : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
+                  ? "bg-[#1E56A0] text-white font-bold shadow-md"
+                  : "text-slate-200 hover:bg-[#0F3854] hover:text-white"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <Settings className="w-4 h-4" />
-                <span>Paramètres du Site</span>
-              </div>
+              <Settings className="w-4 h-4 text-[#00C2FF]" />
+              <span>Paramètres Site</span>
             </button>
           </nav>
 
@@ -378,7 +417,7 @@ export default function DashboardPage() {
                 <h2 className="font-display font-bold text-[26px] text-[#0A2540]">
                   Tableau de Bord Exécutif
                 </h2>
-                <p className="text-[14px] text-[#5B6B7A] mt-1">
+                <p className="text-[14px] text-slate-700 mt-1">
                   Aperçu en temps réel des activités et des contenus du site Best Builders SARLU.
                 </p>
               </div>
@@ -388,7 +427,7 @@ export default function DashboardPage() {
                 <div className="bg-white border border-[#E2E8F0] p-6 rounded-md shadow-xs relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[12px] font-mono uppercase text-[#5B6B7A] font-semibold">Messages de Contact</p>
+                      <p className="text-[12px] font-mono uppercase text-slate-700 font-semibold">Messages de Contact</p>
                       <h3 className="text-[32px] font-bold text-[#0A2540] mt-1">{messages.length}</h3>
                     </div>
                     <div className="w-12 h-12 bg-[#0A2540]/5 border border-[#1E56A0]/20 text-[#1E56A0] flex items-center justify-center rounded-md">
@@ -403,14 +442,14 @@ export default function DashboardPage() {
                 <div className="bg-white border border-[#E2E8F0] p-6 rounded-md shadow-xs relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[12px] font-mono uppercase text-[#5B6B7A] font-semibold">Projets Portfolio</p>
+                      <p className="text-[12px] font-mono uppercase text-slate-700 font-semibold">Projets Portfolio</p>
                       <h3 className="text-[32px] font-bold text-[#0A2540] mt-1">{projects.length}</h3>
                     </div>
                     <div className="w-12 h-12 bg-[#0A2540]/5 border border-[#1E56A0]/20 text-[#1E56A0] flex items-center justify-center rounded-md">
                       <FolderKanban className="w-6 h-6" />
                     </div>
                   </div>
-                  <p className="text-[12px] text-[#5B6B7A] mt-4 font-medium">
+                  <p className="text-[12px] text-slate-700 mt-4 font-medium">
                     Chantiers en vitrine
                   </p>
                 </div>
@@ -418,14 +457,14 @@ export default function DashboardPage() {
                 <div className="bg-white border border-[#E2E8F0] p-6 rounded-md shadow-xs relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[12px] font-mono uppercase text-[#5B6B7A] font-semibold">Articles Actualités</p>
+                      <p className="text-[12px] font-mono uppercase text-slate-700 font-semibold">Articles Actualités</p>
                       <h3 className="text-[32px] font-bold text-[#0A2540] mt-1">{articles.length}</h3>
                     </div>
                     <div className="w-12 h-12 bg-[#0A2540]/5 border border-[#1E56A0]/20 text-[#1E56A0] flex items-center justify-center rounded-md">
                       <FileText className="w-6 h-6" />
                     </div>
                   </div>
-                  <p className="text-[12px] text-[#5B6B7A] mt-4 font-medium">
+                  <p className="text-[12px] text-slate-700 mt-4 font-medium">
                     Publications presse
                   </p>
                 </div>
@@ -433,7 +472,7 @@ export default function DashboardPage() {
                 <div className="bg-white border border-[#E2E8F0] p-6 rounded-md shadow-xs relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[12px] font-mono uppercase text-[#5B6B7A] font-semibold">Utilisateurs Admins</p>
+                      <p className="text-[12px] font-mono uppercase text-slate-700 font-semibold">Utilisateurs Admins</p>
                       <h3 className="text-[32px] font-bold text-[#0A2540] mt-1">{users.length}</h3>
                     </div>
                     <div className="w-12 h-12 bg-[#0A2540]/5 border border-[#1E56A0]/20 text-[#1E56A0] flex items-center justify-center rounded-md">
@@ -468,10 +507,10 @@ export default function DashboardPage() {
                             {msg.service_requested}
                           </span>
                         </div>
-                        <p className="text-[13px] text-[#5B6B7A] mt-1 line-clamp-1">"{msg.message}"</p>
+                        <p className="text-[13px] text-slate-700 mt-1 line-clamp-1">"{msg.message}"</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="text-[11px] text-[#5B6B7A] block">{msg.created_at}</span>
+                        <span className="text-[11px] text-slate-700 block">{msg.created_at}</span>
                         <span className="text-[12px] text-[#0A2540] font-mono font-semibold">{msg.phone}</span>
                       </div>
                     </div>
@@ -487,12 +526,12 @@ export default function DashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-6">
                 <div>
                   <h2 className="font-display font-bold text-[24px] text-[#0A2540]">Demandes de Contact ({messages.length})</h2>
-                  <p className="text-[14px] text-[#5B6B7A] mt-1">Messages transmis directement depuis le formulaire du site.</p>
+                  <p className="text-[14px] text-slate-700 mt-1">Messages transmis directement depuis le formulaire du site.</p>
                 </div>
               </div>
 
               {messages.length === 0 ? (
-                <div className="bg-white p-12 text-center border border-[#E2E8F0] text-[#5B6B7A] rounded-md shadow-xs">
+                <div className="bg-white p-12 text-center border border-[#E2E8F0] text-slate-700 rounded-md shadow-xs">
                   Aucun message reçu pour le moment.
                 </div>
               ) : (
@@ -511,7 +550,7 @@ export default function DashboardPage() {
                             </span>
                           </div>
                         </div>
-                        <span className="text-[12px] text-[#5B6B7A] font-mono">{msg.created_at}</span>
+                        <span className="text-[12px] text-slate-700 font-mono">{msg.created_at}</span>
                       </div>
 
                       <div className="grid sm:grid-cols-2 gap-4 text-[13px] text-[#0A2540] mb-4 bg-[#F8FAFC] p-3 rounded-md border border-[#E2E8F0]">
@@ -525,7 +564,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      <div className="bg-white p-4 border border-[#E2E8F0] text-[14px] text-[#5B6B7A] leading-relaxed rounded-md">
+                      <div className="bg-white p-4 border border-[#E2E8F0] text-[14px] text-slate-700 leading-relaxed rounded-md">
                         "{msg.message}"
                       </div>
                     </div>
@@ -541,7 +580,7 @@ export default function DashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-6">
                 <div>
                   <h2 className="font-display font-bold text-[24px] text-[#0A2540]">Gestion des Utilisateurs ({users.length})</h2>
-                  <p className="text-[14px] text-[#5B6B7A] mt-1">Gérez les comptes ayant accès à la console d'administration.</p>
+                  <p className="text-[14px] text-slate-700 mt-1">Gérez les comptes ayant accès à la console d'administration.</p>
                 </div>
                 <button
                   onClick={() => setShowAddUser(!showAddUser)}
@@ -601,7 +640,7 @@ export default function DashboardPage() {
               {/* Users Table */}
               <div className="bg-white border border-[#E2E8F0] rounded-md shadow-xs overflow-hidden">
                 <table className="w-full text-left text-[14px]">
-                  <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[11px] font-mono uppercase text-[#5B6B7A]">
+                  <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0] text-[11px] font-mono uppercase text-slate-700">
                     <tr>
                       <th className="py-4 px-6">Utilisateur</th>
                       <th className="py-4 px-6">Rôle</th>
@@ -619,7 +658,7 @@ export default function DashboardPage() {
                             </div>
                             <div>
                               <p className="font-bold text-[#0A2540]">{u.name}</p>
-                              <p className="text-[12px] text-[#5B6B7A]">{u.email}</p>
+                              <p className="text-[12px] text-slate-700">{u.email}</p>
                             </div>
                           </div>
                         </td>
@@ -656,7 +695,7 @@ export default function DashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-6">
                 <div>
                   <h2 className="font-display font-bold text-[24px] text-[#0A2540]">Portfolio Réalisations ({projects.length})</h2>
-                  <p className="text-[14px] text-[#5B6B7A] mt-1">Gérez les projets de construction affichés sur la vitrine du site.</p>
+                  <p className="text-[14px] text-slate-700 mt-1">Gérez les projets de construction affichés sur la vitrine du site.</p>
                 </div>
                 <button
                   onClick={() => setShowAddProject(!showAddProject)}
@@ -716,12 +755,12 @@ export default function DashboardPage() {
                         <span className="text-[11px] font-mono bg-[#0A2540]/10 text-[#0A2540] px-2.5 py-0.5 font-bold uppercase rounded-xs">
                           {p.category}
                         </span>
-                        <span className="text-[12px] text-[#5B6B7A] font-semibold">{p.location}</span>
+                        <span className="text-[12px] text-slate-700 font-semibold">{p.location}</span>
                       </div>
                       <h4 className="font-bold text-[18px] text-[#0A2540] mb-2">{p.title}</h4>
-                      <p className="text-[13px] text-[#5B6B7A] line-clamp-2 mb-4">{p.description}</p>
+                      <p className="text-[13px] text-slate-700 line-clamp-2 mb-4">{p.description}</p>
                     </div>
-                    <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-between text-[12px] text-[#5B6B7A]">
+                    <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-between text-[12px] text-slate-700">
                       <span className="font-medium">Surface : {p.surface}</span>
                       <button
                         onClick={() => handleDeleteProject(p.id)}
@@ -742,7 +781,7 @@ export default function DashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-6">
                 <div>
                   <h2 className="font-display font-bold text-[24px] text-[#0A2540]">Articles & Publications ({articles.length})</h2>
-                  <p className="text-[14px] text-[#5B6B7A] mt-1">Rédigez et diffusez les actualités techniques de l'entreprise.</p>
+                  <p className="text-[14px] text-slate-700 mt-1">Rédigez et diffusez les actualités techniques de l'entreprise.</p>
                 </div>
                 <button
                   onClick={() => setShowAddArticle(!showAddArticle)}
@@ -784,7 +823,7 @@ export default function DashboardPage() {
                     <div>
                       <span className="text-[11px] font-mono text-[#1E56A0] font-bold block mb-1">Date : {a.published_at}</span>
                       <h4 className="font-bold text-[17px] text-[#0A2540]">{a.title}</h4>
-                      <p className="text-[13px] text-[#5B6B7A] line-clamp-1 mt-1">{a.content}</p>
+                      <p className="text-[13px] text-slate-700 line-clamp-1 mt-1">{a.content}</p>
                     </div>
                     <button
                       onClick={() => handleDeleteArticle(a.id)}
@@ -804,7 +843,7 @@ export default function DashboardPage() {
             <div className="space-y-6">
               <div className="border-b border-[#E2E8F0] pb-6">
                 <h2 className="font-display font-bold text-[24px] text-[#0A2540]">Paramètres de l'Entreprise</h2>
-                <p className="text-[14px] text-[#5B6B7A] mt-1">Mettez à jour les coordonnées affichées sur tout le site.</p>
+                <p className="text-[14px] text-slate-700 mt-1">Mettez à jour les coordonnées affichées sur tout le site.</p>
               </div>
 
               <form onSubmit={handleSaveSettings} className="bg-white border border-[#E2E8F0] p-8 rounded-md shadow-md space-y-5 max-w-3xl">

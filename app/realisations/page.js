@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowRight, Building2, MapPin } from "lucide-react";
 import { initialProjects } from "@/lib/data";
+import PageHeader from "@/components/PageHeader";
 
 const categories = [
   "Tous",
@@ -21,31 +23,25 @@ export default function PortfolioPage() {
     : initialProjects.filter(p => p.category === activeCategory);
 
   return (
-    <div className="bg-[#f5f5f5] py-16 md:py-24">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Banner */}
-        <div className="mb-12">
-          <span className="font-mono text-[12px] tracking-widest uppercase text-[#0A2540] font-bold">
-            Portfolio & Réalisations
-          </span>
-          <h1 className="font-display font-bold text-[36px] md:text-[52px] text-[#0A2540] mt-2 leading-tight">
-            Nos Chantiers & Ouvrages Réalisés
-          </h1>
-          <p className="mt-4 text-[18px] text-[#5B6B7A] max-w-3xl leading-relaxed">
-            Découvrez une sélection de nos projets de bâtiment et d'ingénierie livrés à Conakry et en région.
-          </p>
-        </div>
+    <div className="bg-[#F7F9FF] blueprint-grid pb-20 md:pb-28 min-h-screen">
+      {/* Header Banner */}
+      <PageHeader
+        badge="Portfolio BTP"
+        title="Nos Chantiers &amp; Ouvrages Réalisés"
+        description="Découvrez nos projets d&apos;ingénierie et de construction livrés à Conakry et en région."
+      />
 
+      <div className="max-w-6xl mx-auto px-6">
         {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-3 mb-12 border-b border-[#e0e0e0] pb-6">
+        <div className="flex flex-wrap gap-2.5 mb-12 border-b border-[#C4C6CE] pb-6">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 text-[13px] font-bold uppercase tracking-wider transition-colors ${
+              className={`px-4 py-2 text-[12px] font-display font-semibold uppercase tracking-wider transition-all rounded-xs ${
                 activeCategory === cat
-                  ? "bg-[#0A2540] text-white shadow-sm"
-                  : "bg-white text-[#5B6B7A] border border-[#e0e0e0] hover:border-[#0A2540] hover:text-[#0A2540]"
+                  ? "bg-[#0A2540] text-[#00C2FF] shadow-sm border border-[#0A2540]"
+                  : "bg-white text-[#334155] border border-[#C4C6CE] hover:border-[#0A2540] hover:text-[#0A2540]"
               }`}
             >
               {cat}
@@ -59,35 +55,45 @@ export default function PortfolioPage() {
             <div
               key={project.id}
               id={`project-${project.id}`}
-              className="bg-white border border-[#e0e0e0] flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow group hover:border-[#0A2540]"
+              className="card-stitch flex flex-col h-full group"
             >
-              <div className="h-56 relative bg-slate-900 overflow-hidden">
+              <div className="h-56 relative bg-slate-900 overflow-hidden border-b border-[#C4C6CE]">
                 <img
                   src={project.photo_after || project.photo_before}
                   alt={project.title}
-                  className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute top-3 right-3 bg-[#0A2540] text-white text-[11px] font-mono px-2.5 py-1 uppercase font-bold shadow-md">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                <div className="absolute top-3 right-3 bg-[#0A2540] text-[#00C2FF] text-[10px] font-mono px-2.5 py-1 uppercase font-semibold border border-[#00C2FF]/30">
                   {project.location}
                 </div>
+                {project.is_ongoing && (
+                  <div className="absolute bottom-3 left-3 bg-[#00C2FF] text-[#000F22] text-[10px] font-mono px-2.5 py-0.5 uppercase font-bold tracking-wider">
+                    En cours
+                  </div>
+                )}
               </div>
-              <div className="p-6 flex-1 flex flex-col">
-                <span className="font-mono text-[11px] uppercase tracking-wider text-[#0A2540] mb-2 font-bold">
-                  {project.category}
-                </span>
-                <h3 className="font-display font-bold text-[20px] text-[#0A2540] mb-3">
-                  {project.title}
-                </h3>
-                <p className="text-[14px] text-[#5B6B7A] leading-relaxed mb-6 flex-1">
-                  {project.description}
-                </p>
-                <div className="mt-auto pt-4 border-t border-[#e0e0e0] space-y-2 text-[13px] text-[#5B6B7A]">
-                  <div className="flex justify-between">
-                    <span>Surface :</span>
+
+              <div className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-[#295EA8] mb-2 block font-semibold">
+                    {project.category}
+                  </span>
+                  <h3 className="font-display font-bold text-[20px] text-[#0A2540] mb-3 group-hover:text-[#295EA8] transition-colors leading-snug">
+                    {project.title}
+                  </h3>
+                  <p className="font-sans text-[14px] text-[#334155] leading-relaxed line-clamp-3 mb-6">
+                    {project.description}
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-[#C4C6CE] space-y-2 text-[12px]">
+                  <div className="flex justify-between items-center font-mono">
+                    <span className="text-[#5B6B7A]">Surface :</span>
                     <span className="font-bold text-[#0A2540]">{project.surface}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Durée :</span>
+                  <div className="flex justify-between items-center font-mono">
+                    <span className="text-[#5B6B7A]">Durée :</span>
                     <span className="font-bold text-[#0A2540]">{project.duration}</span>
                   </div>
                 </div>
