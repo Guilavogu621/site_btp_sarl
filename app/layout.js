@@ -5,12 +5,24 @@ import Footer from "@/components/Footer";
 export const metadata = {
   title: "Best Builders SARLU — Bureau d'études & BTP à Conakry, Guinée",
   description: "Conception, structure, chiffrage, gestion et suivi de vos projets de bâtiment. Bureau d'études BTP à Conakry, Kipé, Guinée.",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" }
+    ],
+    apple: [
+      { url: "/apple-icon.png" }
+    ]
+  }
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="fr" className="scroll-smooth">
       <head>
+        {/* Favicon & Logo officiel dans la barre d'adresse et onglets de navigateur */}
+        <link rel="icon" href="/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
+        
         {/*
          * Google Fonts chargées via <link> standard pour éviter la dépendance
          * réseau de Turbopack (next/font/google) lors du build.
