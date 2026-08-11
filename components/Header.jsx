@@ -157,7 +157,7 @@ export default function Header() {
             onClick={() => setMenuOpen(false)}
             className="w-full text-center py-3.5 bg-[#00C2FF] text-[#000F22] font-display text-[13px] font-extrabold uppercase tracking-wider rounded-xs hover:bg-white transition-all shadow-lg flex items-center justify-center gap-2"
           >
-            <span>Demander un devis gratuit</span>
+            <span>Demander un devis</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
 
