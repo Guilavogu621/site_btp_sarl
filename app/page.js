@@ -166,7 +166,7 @@ export default function HomePage() {
 
       <main className="pt-20">
         {/* ===================== HERO SECTION AVEC BACKGROUND ANIMÉ ===================== */}
-        <section className="relative min-h-[88vh] flex items-center border-b border-[#C4C6CE] overflow-hidden text-white bg-[#0A2540]">
+        <section className="relative flex flex-col justify-between border-b border-[#C4C6CE] overflow-hidden text-white bg-[#0A2540]">
           
           {/* SLIDESHOW D'ARRIÈRE-PLAN ANIMÉ */}
           <div className="absolute inset-0 z-0">
@@ -191,9 +191,9 @@ export default function HomePage() {
             <div className="absolute inset-0 blueprint-grid-dark opacity-30 z-10" />
           </div>
 
-          <div className="max-w-6xl mx-auto px-6 w-full relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center py-20">
+          <div className="max-w-6xl mx-auto px-6 w-full relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-12 pb-16 lg:py-24">
             {/* Colonne Gauche: Contenu texte */}
-            <div className="lg:col-span-7 flex flex-col gap-8">
+            <div className="lg:col-span-7 flex flex-col gap-6 md:gap-8">
               <div className="flex items-center gap-4 fade-in-up">
                 <div className="w-12 h-px bg-[#00C2FF]" />
                 <span className="technical-badge technical-badge-vibrant">
@@ -201,41 +201,42 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <h1 className="font-display font-extrabold text-[38px] sm:text-[48px] md:text-[54px] leading-[1.08] text-white tracking-tight fade-in-up delay-100">
+              <h1 className="font-display font-extrabold text-[32px] sm:text-[44px] md:text-[54px] leading-[1.1] text-white tracking-tight fade-in-up delay-100">
                 De l&apos;esquisse à la remise des clés, <span className="text-[#00C2FF] underline decoration-[#00C2FF] decoration-4 underline-offset-8">un seul interlocuteur.</span>
               </h1>
 
-              <p className="font-sans text-[16px] md:text-[18px] text-slate-100 font-medium max-w-xl leading-relaxed fade-in-up delay-200 drop-shadow-sm">
+              <p className="font-sans text-[15px] sm:text-[16px] md:text-[18px] text-slate-100 font-medium max-w-xl leading-relaxed fade-in-up delay-200 drop-shadow-sm">
                 Conception, structure, chiffrage, gestion et suivi : nous accompagnons vos projets de bâtiment à chaque étape, avec la rigueur d&apos;un bureau d&apos;études et l&apos;œil d&apos;un chantier.
               </p>
 
-              <div className="flex flex-wrap gap-4 pt-2 fade-in-up delay-300">
+              {/* Boutons CTA — Visibles et parfaitement adaptés sur Mobile & Desktop */}
+              <div className="flex flex-col sm:flex-row gap-3.5 pt-2 fade-in-up delay-300 w-full sm:w-auto">
                 <Link
                   href="#contact"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-[#00C2FF] text-[#000F22] font-display font-bold text-[14px] uppercase tracking-wider transition-all duration-300 hover:bg-white hover:-translate-y-1 hover:shadow-xl active:scale-95 group rounded-xs border border-[#00C2FF]"
+                  className="inline-flex items-center justify-center px-7 py-4 bg-[#00C2FF] text-[#000F22] font-display font-extrabold text-[13px] sm:text-[14px] uppercase tracking-wider transition-all duration-300 hover:bg-white hover:-translate-y-1 hover:shadow-xl active:scale-95 group rounded-xs border border-[#00C2FF] shadow-lg text-center"
                 >
-                  Demander un devis
+                  <span>Demander un devis</span>
                   <ArrowRight className="ml-2 w-4 h-4 text-[#000F22] group-hover:translate-x-1 transition-transform" />
                 </Link>
 
                 <Link
                   href="/realisations"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white font-display font-bold text-[14px] uppercase tracking-wider transition-all duration-300 hover:bg-white hover:text-[#0A2540] hover:-translate-y-1 active:scale-95 rounded-xs shadow-xs"
+                  className="inline-flex items-center justify-center px-7 py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white font-display font-bold text-[13px] sm:text-[14px] uppercase tracking-wider transition-all duration-300 hover:bg-white hover:text-[#0A2540] hover:-translate-y-1 active:scale-95 rounded-xs shadow-md text-center"
                 >
                   Voir nos réalisations
                 </Link>
               </div>
             </div>
 
-            {/* Colonne Droite: Télémesure Technique & Image Animée */}
-            <div className="lg:col-span-5 hidden lg:block relative h-full min-h-[440px] fade-in-up delay-400">
-              <div className="card-stitch p-4 flex flex-col justify-between h-full shadow-2xl bg-[#0A2540]/90 backdrop-blur-md border-[#00C2FF]/30">
-                <div className="flex justify-between items-start text-[#00C2FF] font-mono text-[12px] font-semibold">
+            {/* Colonne Droite: Télémesure Technique & Image Animée (Maintenant AFFICHEE sur Mobile & Desktop) */}
+            <div className="lg:col-span-5 relative w-full h-auto fade-in-up delay-400 mt-4 lg:mt-0">
+              <div className="card-stitch p-4 flex flex-col justify-between h-full shadow-2xl bg-[#0A2540]/90 backdrop-blur-md border-[#00C2FF]/40 rounded-sm">
+                <div className="flex justify-between items-start text-[#00C2FF] font-mono text-[11px] sm:text-[12px] font-semibold">
                   <span>X: 45.209</span>
                   <span>Y: -12.983</span>
                 </div>
 
-                <div className="w-full h-72 relative my-3 overflow-hidden border border-[#00C2FF]/30 bg-[#0A2540] rounded-xs">
+                <div className="w-full h-56 sm:h-72 relative my-3 overflow-hidden border border-[#00C2FF]/30 bg-[#0A2540] rounded-xs">
                   {heroSlides.map((slide, idx) => (
                     <img
                       key={idx}
@@ -247,12 +248,12 @@ export default function HomePage() {
                     />
                   ))}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/90 via-transparent to-transparent opacity-80" />
-                  <div className="absolute bottom-3 left-3 bg-[#0A2540]/95 backdrop-blur-md border border-[#00C2FF]/50 px-3 py-1 rounded-xs text-[11px] font-mono text-[#00C2FF] font-semibold">
+                  <div className="absolute bottom-3 left-3 bg-[#0A2540]/95 backdrop-blur-md border border-[#00C2FF]/50 px-3 py-1 rounded-xs text-[10px] sm:text-[11px] font-mono text-[#00C2FF] font-semibold max-w-[85%] truncate">
                     {heroSlides[currentHeroSlide].tag}
                   </div>
                 </div>
 
-                <div className="flex justify-between items-end text-slate-300 font-mono text-[12px]">
+                <div className="flex justify-between items-end text-slate-300 font-mono text-[11px] sm:text-[12px]">
                   <span className="flex items-center gap-1.5 text-[#00C2FF] font-semibold">
                     <span className="w-2 h-2 rounded-full bg-[#00C2FF] animate-pulse" />
                     SYS. OK • DIAPORAMA
@@ -264,23 +265,23 @@ export default function HomePage() {
           </div>
 
           {/* Quick Stats Bar en Bleu Marine */}
-          <div className="absolute bottom-0 left-0 w-full bg-[#0A2540] border-t border-[#295EA8]/30 z-20 text-white">
-            <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="w-full bg-[#0A2540] border-t border-[#295EA8]/30 relative z-20 text-white">
+            <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
               <div className="flex flex-col gap-1 fade-in-up">
-                <span className="font-display font-extrabold text-[28px] md:text-[34px] text-[#00C2FF]">8+</span>
-                <span className="font-mono text-[11px] text-slate-300 uppercase tracking-wider">Années d&apos;expérience</span>
+                <span className="font-display font-extrabold text-[26px] sm:text-[30px] md:text-[34px] text-[#00C2FF]">8+</span>
+                <span className="font-mono text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-wider">Années d&apos;expérience</span>
               </div>
               <div className="flex flex-col gap-1 fade-in-up delay-100">
-                <span className="font-display font-extrabold text-[28px] md:text-[34px] text-[#00C2FF]">120+</span>
-                <span className="font-mono text-[11px] text-slate-300 uppercase tracking-wider">Projets réalisés</span>
+                <span className="font-display font-extrabold text-[26px] sm:text-[30px] md:text-[34px] text-[#00C2FF]">120+</span>
+                <span className="font-mono text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-wider">Projets réalisés</span>
               </div>
               <div className="flex flex-col gap-1 fade-in-up delay-200">
-                <span className="font-display font-extrabold text-[28px] md:text-[34px] text-[#00C2FF]">45+</span>
-                <span className="font-mono text-[11px] text-slate-300 uppercase tracking-wider">Collaborateurs qualifiés</span>
+                <span className="font-display font-extrabold text-[26px] sm:text-[30px] md:text-[34px] text-[#00C2FF]">45+</span>
+                <span className="font-mono text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-wider">Collaborateurs qualifiés</span>
               </div>
               <div className="flex flex-col gap-1 fade-in-up delay-300">
-                <span className="font-display font-extrabold text-[28px] md:text-[34px] text-[#00C2FF]">100%</span>
-                <span className="font-mono text-[11px] text-slate-300 uppercase tracking-wider">Rigueur &amp; Sécurité</span>
+                <span className="font-display font-extrabold text-[26px] sm:text-[30px] md:text-[34px] text-[#00C2FF]">100%</span>
+                <span className="font-mono text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-wider">Rigueur &amp; Sécurité</span>
               </div>
             </div>
           </div>
