@@ -20,7 +20,7 @@ export default function PageHeader({
           {title}
         </h1>
         {description && (
-          <p className="mt-4 text-[16px] md:text-[18px] text-slate-200 max-w-3xl leading-relaxed font-sans font-normal">
+          <p className="mt-4 text-[16px] md:text-[18px] text-slate-100 max-w-3xl leading-relaxed font-sans font-medium">
             {description}
           </p>
         )}

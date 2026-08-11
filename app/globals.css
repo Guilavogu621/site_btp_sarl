@@ -22,31 +22,32 @@
    BASE TYPOGRAPHY & BODY
    ============================ */
 
-body {
-  background-color: #F7F9FF;
-  color: #0A2540;
-  font-family: 'Hanken Grotesk', system-ui, sans-serif;
-  line-height: 1.65;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
+@layer base {
+  body {
+    background-color: #F7F9FF;
+    color: #0A2540;
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    line-height: 1.65;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat', system-ui, sans-serif;
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-  font-weight: 700;
-}
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    font-weight: 700;
+  }
 
-h1 { font-weight: 800; }
-h2 { font-weight: 700; }
-h3 { font-weight: 600; }
+  h1 { font-weight: 800; }
+  h2 { font-weight: 700; }
+  h3 { font-weight: 600; }
 
-p {
-  line-height: 1.7;
-  color: #334155;
+  p {
+    line-height: 1.7;
+  }
 }
 
 /* ============================

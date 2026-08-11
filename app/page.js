@@ -205,7 +205,7 @@ export default function HomePage() {
                 De l&apos;esquisse à la remise des clés, <span className="text-[#00C2FF] underline decoration-[#00C2FF] decoration-4 underline-offset-8">un seul interlocuteur.</span>
               </h1>
 
-              <p className="font-sans text-[16px] md:text-[18px] text-slate-200 max-w-xl leading-relaxed fade-in-up delay-200">
+              <p className="font-sans text-[16px] md:text-[18px] text-slate-100 font-medium max-w-xl leading-relaxed fade-in-up delay-200 drop-shadow-sm">
                 Conception, structure, chiffrage, gestion et suivi : nous accompagnons vos projets de bâtiment à chaque étape, avec la rigueur d&apos;un bureau d&apos;études et l&apos;œil d&apos;un chantier.
               </p>
 
