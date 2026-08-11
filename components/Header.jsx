@@ -25,6 +25,8 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const [mobileGroupeOpen, setMobileGroupeOpen] = useState(false);
+
   if (pathname === "/dashboard") {
     return null;
   }
@@ -141,32 +143,57 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Menu mobile - Animé */}
+      {/* Menu mobile - Plein écran & Déroulant sans coupure */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+        className={`md:hidden overflow-y-auto transition-all duration-300 ease-in-out ${
+          menuOpen ? "max-h-[calc(100vh-5rem)] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
-        <div className="px-6 pb-6 pt-2 flex flex-col gap-2 bg-[#0A2540] border-t border-[#295EA8]/30">
+        <div className="px-6 pb-8 pt-3 flex flex-col gap-3 bg-[#0A2540] border-t border-[#295EA8]/30 shadow-2xl">
+          
+          {/* CTA Demander un devis en HAUT du menu mobile */}
+          <Link
+            href="/contact"
+            onClick={() => setMenuOpen(false)}
+            className="w-full text-center py-3.5 bg-[#00C2FF] text-[#000F22] font-display text-[13px] font-extrabold uppercase tracking-wider rounded-xs hover:bg-white transition-all shadow-lg flex items-center justify-center gap-2"
+          >
+            <span>Demander un devis gratuit</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <div className="h-px bg-[#295EA8]/30 my-1" />
+
+          {/* Navigation liens principaux */}
           <Link
             href="/"
             onClick={() => setMenuOpen(false)}
-            className="py-2.5 font-display font-semibold text-[13px] text-white hover:text-[#00C2FF] px-3 rounded-xs transition-all"
+            className={`py-2.5 font-display font-semibold text-[14px] px-3 rounded-xs transition-all ${
+              pathname === "/" ? "text-[#00C2FF] bg-[#000F22]" : "text-white hover:text-[#00C2FF]"
+            }`}
           >
             Accueil
           </Link>
 
-          <div className="border-b border-[#295EA8]/30 pb-2">
-            <span className="font-mono text-[#00C2FF] block mb-2 px-3 uppercase text-[11px] tracking-wider">
-              <HardHat className="w-3.5 h-3.5 inline mr-1" /> Le Groupe
-            </span>
-            <div className="pl-3 space-y-1">
+          {/* Accordéon Le Groupe */}
+          <div className="border-y border-[#295EA8]/30 py-2">
+            <button
+              onClick={() => setMobileGroupeOpen(!mobileGroupeOpen)}
+              className="w-full flex items-center justify-between py-2 px-3 font-display font-semibold text-[14px] text-white hover:text-[#00C2FF]"
+            >
+              <span className="flex items-center gap-2">
+                <HardHat className="w-4 h-4 text-[#00C2FF]" />
+                Le Groupe
+              </span>
+              <ChevronDown className={`w-4 h-4 text-[#00C2FF] transition-transform duration-200 ${mobileGroupeOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            <div className={`pl-4 space-y-1.5 overflow-hidden transition-all duration-200 ${mobileGroupeOpen ? "pt-2 max-h-60" : "max-h-0"}`}>
               {ABOUT_SUBNAV.map((subItem, index) => (
                 <Link
                   key={index}
                   href={subItem.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block py-2 px-3 font-sans text-sm text-slate-300 hover:bg-[#000F22] hover:text-[#00C2FF] rounded-xs transition-all"
+                  className="block py-2 px-3 font-mono text-[12px] uppercase text-slate-300 hover:bg-[#000F22] hover:text-[#00C2FF] rounded-xs transition-all"
                 >
                   — {subItem.label}
                 </Link>
@@ -179,21 +206,13 @@ export default function Header() {
               key={item.href}
               href={item.href}
               onClick={() => setMenuOpen(false)}
-              className="py-2.5 font-display font-semibold text-[13px] text-white hover:text-[#00C2FF] px-3 rounded-xs transition-all"
+              className={`py-2.5 font-display font-semibold text-[14px] px-3 rounded-xs transition-all ${
+                pathname === item.href ? "text-[#00C2FF] bg-[#000F22]" : "text-white hover:text-[#00C2FF]"
+              }`}
             >
               {item.label}
             </Link>
           ))}
-
-          <div className="mt-3 pt-3 border-t border-[#295EA8]/30">
-            <Link
-              href="/contact"
-              onClick={() => setMenuOpen(false)}
-              className="block w-full text-center py-3 bg-[#00C2FF] text-[#000F22] font-display text-[13px] font-bold uppercase tracking-wider rounded-xs hover:bg-[#007AFF] hover:text-white transition-all shadow-md"
-            >
-              Demander un devis
-            </Link>
-          </div>
         </div>
       </div>
     </header>

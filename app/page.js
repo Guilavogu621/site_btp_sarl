@@ -267,7 +267,7 @@ export default function HomePage() {
           <div className="absolute bottom-0 left-0 w-full bg-[#0A2540] border-t border-[#295EA8]/30 z-20 text-white">
             <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="flex flex-col gap-1 fade-in-up">
-                <span className="font-display font-extrabold text-[28px] md:text-[34px] text-[#00C2FF]">15+</span>
+                <span className="font-display font-extrabold text-[28px] md:text-[34px] text-[#00C2FF]">8+</span>
                 <span className="font-mono text-[11px] text-slate-300 uppercase tracking-wider">Années d&apos;expérience</span>
               </div>
               <div className="flex flex-col gap-1 fade-in-up delay-100">
