@@ -21,27 +21,27 @@ export default function HomePage() {
 
   const heroSlides = [
     {
-      image: "/img/showcase/ingenieure-chantier.png",
+      image: "/img/showcase/ingenieure-chantier.webp",
       title: "Supervision & Contrôle Chantier",
       tag: "SUPERVISION TECHNIQUE • CONAKRY"
     },
     {
-      image: "/img/showcase/tour-grue-ciel.png",
+      image: "/img/showcase/tour-grue-ciel.webp",
       title: "Ouvrages en Hauteur R+12",
       tag: "GROS ŒUVRE BÉTON • GUINÉE"
     },
     {
-      image: "/img/showcase/architecte-bureau.png",
+      image: "/img/showcase/architecte-bureau.webp",
       title: "Modélisation BIM & Études CAD",
       tag: "BUREAU D'ÉTUDES • EXPERTISE"
     },
     {
-      image: "/img/showcase/immeuble-bois-survation.png",
+      image: "/img/showcase/immeuble-bois-survation.webp",
       title: "Surélévation & Structure Bois",
       tag: "INGÉNIERIE SPÉCIALE • KIPÉ"
     },
     {
-      image: "/img/showcase/architecture-africaine.jpg",
+      image: "/img/showcase/architecture-africaine.webp",
       title: "Architecture Bioclimatique",
       tag: "PATRIMOINE & MATÉRIAUX LOCAUX"
     }
@@ -54,7 +54,7 @@ export default function HomePage() {
       title: "Supervision de Chantier à Conakry",
       category: "supervision",
       categoryName: "Supervision & Suivi",
-      image: "/img/showcase/ingenieure-chantier.png",
+      image: "/img/showcase/ingenieure-chantier.webp",
       desc: "Ingénieure de chantier coordonnant les opérations avec radio de liaison."
     },
     {
@@ -62,7 +62,7 @@ export default function HomePage() {
       title: "Immeuble R+12 & Grue à Tour",
       category: "gros-oeuvre",
       categoryName: "Gros Œuvre & Hauteur",
-      image: "/img/showcase/tour-grue-ciel.png",
+      image: "/img/showcase/tour-grue-ciel.webp",
       desc: "Coulage de voiles béton et coffrage sous grue à tour."
     },
     {
@@ -70,7 +70,7 @@ export default function HomePage() {
       title: "Surélévation Ossature Bois",
       category: "renovation",
       categoryName: "Surélévation & Bois",
-      image: "/img/showcase/immeuble-bois-survation.png",
+      image: "/img/showcase/immeuble-bois-survation.webp",
       desc: "Extension de 2 étages en bois massif avec assemblage haute précision."
     },
     {
@@ -78,7 +78,7 @@ export default function HomePage() {
       title: "Conception & Modélisation CAD",
       category: "etudes",
       categoryName: "Bureau d'Études",
-      image: "/img/showcase/architecte-bureau.png",
+      image: "/img/showcase/architecte-bureau.webp",
       desc: "Modélisation numérique des structures et vérification des descentes de charges."
     },
     {
@@ -86,7 +86,7 @@ export default function HomePage() {
       title: "Architecture Bioclimatique Local",
       category: "architecture",
       categoryName: "Architecture & Patrimoine",
-      image: "/img/showcase/architecture-africaine.jpg",
+      image: "/img/showcase/architecture-africaine.webp",
       desc: "Intégration de motifs traditionnels géométriques et ventilation naturelle."
     },
     {
@@ -94,7 +94,7 @@ export default function HomePage() {
       title: "Immeuble Résidentiel & Tertiaire",
       category: "gros-oeuvre",
       categoryName: "Gros Œuvre & Hauteur",
-      image: "/img/showcase/complexes-modernes.png",
+      image: "/img/showcase/complexes-modernes.webp",
       desc: "Complexe moderne R+8 mixte avec parkings et façades vitrées."
     }
   ];
@@ -302,49 +302,82 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Grille à 2 colonnes très aérées et lisibles */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {initialServices.map((service, index) => {
                 const delayClasses = ["", "delay-100", "delay-200", "delay-300"];
 
                 return (
                   <div 
                     key={service.id} 
-                    className={`fade-in-up ${delayClasses[index]} card-stitch flex flex-col justify-between group h-full overflow-hidden`}
+                    className={`fade-in-up ${delayClasses[index]} card-stitch flex flex-col justify-between group h-full overflow-hidden border border-[#C4C6CE] shadow-md hover:shadow-xl transition-all duration-300`}
                   >
                     <div>
-                      {/* Image Réelle du Métier BTP */}
-                      <div className="relative w-full h-44 overflow-hidden bg-[#0A2540] border-b border-[#C4C6CE]">
+                      {/* Banner Image & Badge Garanties */}
+                      <div className="relative w-full h-52 sm:h-60 overflow-hidden bg-[#0A2540] border-b border-[#C4C6CE]">
                         <img 
                           src={service.image} 
                           alt={service.title}
-                          className="w-full h-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-110"
+                          className="w-full h-full object-cover opacity-95 transition-transform duration-700 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/80 via-transparent to-transparent opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/85 via-transparent to-transparent" />
                         
-                        <span className="absolute top-3 right-3 font-mono text-[10px] font-semibold text-[#00C2FF] bg-[#0A2540]/90 backdrop-blur-md px-2.5 py-1 border border-[#00C2FF]/30 rounded-xs shadow-md">
+                        <span className="absolute top-4 right-4 font-mono text-[11px] font-bold text-[#00C2FF] bg-[#0A2540]/95 backdrop-blur-md px-3 py-1.5 border border-[#00C2FF]/40 rounded-xs shadow-md uppercase tracking-wider">
                           {serviceBadges[index]}
                         </span>
+
+                        {service.guarantee && (
+                          <span className="absolute bottom-4 left-4 font-mono text-[11px] font-extrabold uppercase tracking-wider text-[#000F22] bg-[#00C2FF] px-3.5 py-1.5 rounded-xs shadow-lg border border-white/20">
+                            ✓ {service.guarantee}
+                          </span>
+                        )}
                       </div>
 
-                      <div className="p-6">
-                        <h3 className="font-display text-[19px] leading-snug font-bold text-[#0A2540] mb-3 group-hover:text-[#295EA8] transition-colors">
+                      {/* Contenu Texte Haute Lisibilité */}
+                      <div className="p-7 sm:p-8">
+                        <h3 className="font-display text-[22px] sm:text-[25px] leading-snug font-bold text-[#0A2540] mb-3 group-hover:text-[#295EA8] transition-colors">
                           {service.title}
                         </h3>
 
-                        <p className="font-sans text-[14px] text-[#5B6B7A] leading-relaxed mb-4">
+                        {service.tagline && (
+                          <div className="inline-block bg-[#EBF3FF] border border-[#295EA8]/20 px-3.5 py-1.5 rounded-xs mb-4">
+                            <p className="font-mono text-[12px] font-bold text-[#295EA8] uppercase tracking-wide">
+                              ⚡ {service.tagline}
+                            </p>
+                          </div>
+                        )}
+
+                        <p className="font-sans text-[15px] sm:text-[16px] text-[#1E293B] font-medium leading-relaxed mb-6">
                           {service.short_description}
                         </p>
+
+                        {/* Puces d'Expertise Haute Lisibilité */}
+                        {service.highlights && (
+                          <div className="space-y-3 mb-6 p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-xs">
+                            <span className="font-mono text-[11px] font-bold text-[#0A2540] uppercase tracking-wider block mb-2">
+                              Engagements &amp; Avantages Clés :
+                            </span>
+                            {service.highlights.map((point, pIdx) => (
+                              <div key={pIdx} className="flex items-start gap-2.5">
+                                <CheckCircle2 className="w-4 h-4 text-[#0088CC] shrink-0 mt-0.5" />
+                                <span className="font-sans text-[14px] font-semibold text-[#0F172A] leading-snug">
+                                  {point}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <div className="px-6 pb-6 pt-0 mt-auto">
-                      <div className="pt-4 border-t border-[#C4C6CE]/60">
+                    <div className="px-7 sm:px-8 pb-7 pt-0 mt-auto">
+                      <div className="pt-4 border-t border-[#CBD5E1]">
                         <Link 
-                          className="inline-flex items-center text-[#0A2540] font-mono text-[11px] font-semibold uppercase tracking-wider group/link transition-colors hover:text-[#295EA8]" 
+                          className="inline-flex items-center gap-2 text-[#0A2540] font-mono text-[12px] font-bold uppercase tracking-wider group/link transition-colors hover:text-[#295EA8]" 
                           href={`/services#${service.slug}`}
                         >
-                          <span>En savoir plus</span>
-                          <ChevronRight className="ml-1 w-4 h-4 text-[#00C2FF] group-hover/link:translate-x-1.5 transition-transform" />
+                          <span>Explorer l&apos;expertise complète</span>
+                          <ChevronRight className="w-4 h-4 text-[#00C2FF] group-hover/link:translate-x-1.5 transition-transform" />
                         </Link>
                       </div>
                     </div>

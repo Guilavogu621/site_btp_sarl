@@ -67,13 +67,33 @@ export default function ServicesPage() {
                       </span>
                     </div>
 
-                    <h2 className="font-display font-bold text-[24px] md:text-[30px] text-[#0A2540] mb-4 group-hover:text-[#295EA8] transition-colors leading-tight">
+                    <h2 className="font-display font-bold text-[24px] md:text-[30px] text-[#0A2540] mb-2 group-hover:text-[#295EA8] transition-colors leading-tight">
                       {service.title}
                     </h2>
+
+                    {service.tagline && (
+                      <p className="font-mono text-[12px] font-bold text-[#295EA8] mb-4 uppercase tracking-wide">
+                        ⚡ {service.tagline}
+                      </p>
+                    )}
 
                     <p className="font-sans text-[15px] text-[#334155] leading-relaxed mb-6">
                       {service.short_description}
                     </p>
+
+                    {/* Liste des points forts / Puces convaincantes */}
+                    {service.highlights && (
+                      <div className="grid sm:grid-cols-3 gap-3 mb-6">
+                        {service.highlights.map((point, pIdx) => (
+                          <div key={pIdx} className="bg-white p-3.5 border border-[#C4C6CE]/80 rounded-xs shadow-xs flex items-start gap-2.5">
+                            <CheckCircle2 className="w-4 h-4 text-[#00C2FF] shrink-0 mt-0.5" />
+                            <span className="font-sans text-[12px] font-semibold text-[#0A2540] leading-snug">
+                              {point}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="bg-[#F7F9FF] p-6 border border-[#C4C6CE]/70 rounded-md mb-6 relative overflow-hidden">
                       {/* Subtle top accent */}

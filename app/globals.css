@@ -13,9 +13,9 @@
   --color-outline: #74777E;
   --color-outline-variant: #C4C6CE;
 
-  --font-display: 'Montserrat', system-ui, sans-serif;
-  --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: var(--font-montserrat), 'Montserrat', system-ui, sans-serif;
+  --font-sans: var(--font-hanken), 'Hanken Grotesk', system-ui, sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', monospace;
 }
 
 /* ============================
@@ -26,7 +26,7 @@
   body {
     background-color: #F7F9FF;
     color: #0A2540;
-    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    font-family: var(--font-hanken), 'Hanken Grotesk', system-ui, sans-serif;
     line-height: 1.65;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
@@ -35,7 +35,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', system-ui, sans-serif;
+    font-family: var(--font-montserrat), 'Montserrat', system-ui, sans-serif;
     letter-spacing: -0.025em;
     line-height: 1.15;
     font-weight: 700;
