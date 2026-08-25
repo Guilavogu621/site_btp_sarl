@@ -23,7 +23,10 @@ import {
   Database,
   Sparkles,
   RefreshCw,
-  Building2
+  Building2,
+  Upload,
+  Image as ImageIcon,
+  Pencil
 } from "lucide-react";
 import LoginScreen from "@/components/LoginScreen";
 import {
@@ -34,9 +37,11 @@ import {
   initialSiteSettings,
   getProjects,
   createProject,
+  updateProject,
   deleteProject,
   getArticles,
   createArticle,
+  updateArticle,
   deleteArticle,
   getContactMessages
 } from "@/lib/data";
@@ -81,6 +86,10 @@ export default function DashboardPage() {
     photo_before: "/img/logo.png"
   });
 
+  // Edit states for projects
+  const [editingProjectId, setEditingProjectId] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
+
   const [showAddArticle, setShowAddArticle] = useState(false);
   const [newArticle, setNewArticle] = useState({
     title: "",
@@ -88,6 +97,12 @@ export default function DashboardPage() {
     image: "/img/logo.png",
     published_at: new Date().toISOString().split("T")[0]
   });
+
+  // Edit states for articles
+  const [editingArticleId, setEditingArticleId] = useState(null);
+  const [editingArticle, setEditingArticle] = useState(null);
+
+
 
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("Modifications enregistrées avec succès !");
@@ -103,6 +118,7 @@ export default function DashboardPage() {
           if (parsed.email) setCurrentUserEmail(parsed.email);
         }
       }
+
     } catch (e) {
       console.error("Erreur lors de la lecture de la session admin :", e);
     } finally {
@@ -110,6 +126,17 @@ export default function DashboardPage() {
     }
 
     refreshData();
+
+    const handleUpdate = () => refreshData();
+    window.addEventListener("messages_updated", handleUpdate);
+    window.addEventListener("projects_updated", handleUpdate);
+    window.addEventListener("articles_updated", handleUpdate);
+
+    return () => {
+      window.removeEventListener("messages_updated", handleUpdate);
+      window.removeEventListener("projects_updated", handleUpdate);
+      window.removeEventListener("articles_updated", handleUpdate);
+    };
   }, []);
 
   const refreshData = async () => {
@@ -217,6 +244,30 @@ export default function DashboardPage() {
     }
   };
 
+  const handleEditProject = (project) => {
+    setEditingProjectId(project.id);
+    setEditingProject({ ...project });
+    setShowAddProject(false);
+  };
+
+  const handleUpdateProject = async (e) => {
+    e.preventDefault();
+    const payload = {
+      title: sanitizeText(editingProject.title),
+      category: editingProject.category,
+      description: sanitizeText(editingProject.description),
+      location: sanitizeText(editingProject.location),
+      surface: sanitizeText(editingProject.surface),
+      duration: sanitizeText(editingProject.duration),
+      photo_before: editingProject.photo_before || "/img/logo.png"
+    };
+    const updated = await updateProject(editingProjectId, payload);
+    setProjects((prev) => prev.map((p) => (p.id === editingProjectId ? { ...p, ...updated } : p)));
+    setEditingProjectId(null);
+    setEditingProject(null);
+    triggerSuccess("Projet mis à jour avec succès !");
+  };
+
   const handleAddArticle = async (e) => {
     e.preventDefault();
     const articlePayload = {
@@ -247,6 +298,29 @@ export default function DashboardPage() {
     }
   };
 
+  const handleEditArticle = (article) => {
+    setEditingArticleId(article.id);
+    setEditingArticle({ ...article });
+    setShowAddArticle(false);
+  };
+
+  const handleUpdateArticle = async (e) => {
+    e.preventDefault();
+    const payload = {
+      title: sanitizeText(editingArticle.title),
+      content: sanitizeText(editingArticle.content),
+      image: editingArticle.image || "/img/logo.png",
+      published_at: editingArticle.published_at
+    };
+    const updated = await updateArticle(editingArticleId, payload);
+    setArticles((prev) => prev.map((a) => (a.id === editingArticleId ? { ...a, ...updated } : a)));
+    setEditingArticleId(null);
+    setEditingArticle(null);
+    triggerSuccess("Article mis à jour avec succès !");
+  };
+
+
+
   const triggerSuccess = (msg = "Modifications enregistrées avec succès !") => {
     setSuccessMessage(msg);
     setSavedSuccess(true);
@@ -257,6 +331,21 @@ export default function DashboardPage() {
     navigator.clipboard.writeText(text);
     setCopiedText(label);
     setTimeout(() => setCopiedText(null), 2000);
+  };
+
+  const handleImageFileChange = (e, callback) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("La taille de la photo ne doit pas dépasser 5 Mo.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        callback(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // Filtering lists based on search input
@@ -615,6 +704,8 @@ export default function DashboardPage() {
                   <FileText className="w-4 h-4 text-[#1E56A0]" />
                   <span>Rédiger un article</span>
                 </button>
+
+
               </div>
 
               {/* Recent Messages Section */}
@@ -778,6 +869,49 @@ export default function DashboardPage() {
                       className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
                     />
                   </div>
+                  
+                  {/* Photo Selection / Upload Field for Project */}
+                  <div>
+                    <label className="block text-[12px] font-bold uppercase tracking-wider text-[#0A2540] mb-2 flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-[#1E56A0]" /> Photo / Illustration du projet
+                    </label>
+                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 border border-slate-300 rounded-lg">
+                      <label className="cursor-pointer px-4 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-md flex items-center gap-2 transition-colors shrink-0">
+                        <Upload className="w-4 h-4 text-[#00C2FF]" />
+                        <span>Choisir une photo (Ordinateur / Téléphone)</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageFileChange(e, (base64) => setNewProject({ ...newProject, photo_before: base64 }))}
+                        />
+                      </label>
+                      <span className="text-[12px] text-slate-400 font-mono">ou</span>
+                      <input
+                        type="text"
+                        placeholder="Lien / URL d'image (ex: /img/logo.png)"
+                        value={newProject.photo_before}
+                        onChange={(e) => setNewProject({ ...newProject, photo_before: e.target.value })}
+                        className="flex-1 w-full p-2.5 bg-white border border-slate-200 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-md"
+                      />
+                    </div>
+                    {newProject.photo_before && (
+                      <div className="mt-3 flex items-center gap-3 bg-slate-100 p-2.5 rounded-lg border border-slate-200">
+                        <img src={newProject.photo_before} alt="Aperçu" className="h-16 w-24 object-cover rounded-md border border-slate-300 bg-white" />
+                        <div className="text-[12px]">
+                          <p className="font-bold text-[#0A2540]">Aperçu de la photo du projet</p>
+                          <button
+                            type="button"
+                            onClick={() => setNewProject({ ...newProject, photo_before: "/img/logo.png" })}
+                            className="text-red-500 hover:underline text-[11px] mt-0.5"
+                          >
+                            Réinitialiser
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <textarea
                     required
                     rows={3}
@@ -787,33 +921,120 @@ export default function DashboardPage() {
                     className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
                   ></textarea>
                   <button type="submit" className="px-6 py-3 bg-[#0A2540] text-white font-bold text-[13px] uppercase tracking-wider rounded-lg hover:bg-[#1E56A0] transition-colors shadow-md">
-                    Publier le projet sur Supabase
+                    Publier le projet
                   </button>
                 </form>
               )}
 
               <div className="grid sm:grid-cols-2 gap-6">
                 {filteredProjects.map((p) => (
-                  <div key={p.id} className="bg-white border border-slate-200 p-5 rounded-xl shadow-xs flex flex-col justify-between hover:border-[#1E56A0] transition-all group">
-                    <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[11px] font-mono bg-[#0A2540]/10 text-[#0A2540] px-2.5 py-0.5 font-bold uppercase rounded-xs">
-                          {p.category}
-                        </span>
-                        <span className="text-[12px] text-slate-500 font-semibold">{p.location}</span>
+                  <div key={p.id} className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden hover:border-[#1E56A0] transition-all group">
+                    {/* Inline edit form for this project */}
+                    {editingProjectId === p.id && editingProject ? (
+                      <form onSubmit={handleUpdateProject} className="p-5 space-y-3 bg-[#F1F5F9] border-b border-[#1E56A0]/30">
+                        <p className="text-[12px] font-bold uppercase text-[#1E56A0] tracking-wider flex items-center gap-1.5 mb-3">
+                          <Pencil className="w-3.5 h-3.5" /> Modifier le projet
+                        </p>
+                        <input
+                          type="text"
+                          required
+                          value={editingProject.title}
+                          onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
+                          placeholder="Titre"
+                          className="w-full p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                        />
+                        <div className="grid grid-cols-2 gap-3">
+                          <input
+                            type="text"
+                            value={editingProject.location}
+                            onChange={(e) => setEditingProject({ ...editingProject, location: e.target.value })}
+                            placeholder="Localisation"
+                            className="p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                          />
+                          <input
+                            type="text"
+                            value={editingProject.surface}
+                            onChange={(e) => setEditingProject({ ...editingProject, surface: e.target.value })}
+                            placeholder="Surface"
+                            className="p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                          />
+                        </div>
+                        <textarea
+                          rows={3}
+                          value={editingProject.description}
+                          onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
+                          placeholder="Description"
+                          className="w-full p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                        ></textarea>
+
+                        {/* Photo uploader in edit mode */}
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                          <label className="cursor-pointer px-3 py-2 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[11px] font-bold uppercase tracking-wider rounded-md flex items-center gap-1.5 shrink-0">
+                            <Upload className="w-3.5 h-3.5 text-[#00C2FF]" />
+                            <span>Changer la photo</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleImageFileChange(e, (b64) => setEditingProject({ ...editingProject, photo_before: b64 }))}
+                            />
+                          </label>
+                          {editingProject.photo_before && (
+                            <img src={editingProject.photo_before} alt="Aperçu" className="h-12 w-16 object-cover rounded-md border border-slate-300 bg-white" />
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-1">
+                          <button type="submit" className="px-4 py-2 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-lg transition-colors">
+                            Enregistrer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setEditingProjectId(null); setEditingProject(null); }}
+                            className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-[#0A2540] text-[12px] font-bold uppercase tracking-wider rounded-lg transition-colors"
+                          >
+                            Annuler
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="p-5">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-[11px] font-mono bg-[#0A2540]/10 text-[#0A2540] px-2.5 py-0.5 font-bold uppercase rounded-xs">
+                            {p.category}
+                          </span>
+                          <span className="text-[12px] text-slate-500 font-semibold">{p.location}</span>
+                        </div>
+                        <div className="flex gap-4 mb-3">
+                          {p.photo_before && (
+                            <img src={p.photo_before} alt={p.title} className="w-16 h-16 object-cover rounded-lg border border-slate-200 shrink-0 bg-slate-50" />
+                          )}
+                          <div>
+                            <h4 className="font-bold text-[17px] text-[#0A2540] group-hover:text-[#1E56A0] transition-colors">{p.title}</h4>
+                            <p className="text-[13px] text-slate-600 line-clamp-2 mt-1">{p.description}</p>
+                          </div>
+                        </div>
                       </div>
-                      <h4 className="font-bold text-[18px] text-[#0A2540] mb-2 group-hover:text-[#1E56A0] transition-colors">{p.title}</h4>
-                      <p className="text-[13px] text-slate-600 line-clamp-3 mb-4">{p.description}</p>
-                    </div>
-                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[12px] text-slate-500">
+                    )}
+                    <div className="px-5 pb-5 pt-0 border-t border-slate-100 flex items-center justify-between text-[12px] text-slate-500">
                       <span className="font-medium">Surface : {p.surface}</span>
-                      <button
-                        onClick={() => handleDeleteProject(p.id)}
-                        className="text-red-600 hover:text-red-800 font-bold uppercase text-[11px] flex items-center gap-1 hover:underline"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>Supprimer</span>
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleEditProject(p)}
+                          className="text-[#1E56A0] hover:text-[#0A2540] font-bold uppercase text-[11px] flex items-center gap-1 hover:underline"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                          <span>Modifier</span>
+                        </button>
+                        <span className="text-slate-300">|</span>
+                        <button
+                          onClick={() => handleDeleteProject(p.id)}
+                          className="text-red-600 hover:text-red-800 font-bold uppercase text-[11px] flex items-center gap-1 hover:underline"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Supprimer</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -827,15 +1048,17 @@ export default function DashboardPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
                 <div>
                   <h2 className="font-display font-bold text-[24px] text-[#0A2540]">Articles &amp; Publications ({filteredArticles.length})</h2>
-                  <p className="text-[14px] text-slate-600 mt-1">Gérez les actualités techniques diffusées sur la plateforme.</p>
+                  <p className="text-[14px] text-slate-600 mt-1">Gérez les actualités techniques et la publication d'articles sur le site web.</p>
                 </div>
-                <button
-                  onClick={() => setShowAddArticle(!showAddArticle)}
-                  className="px-5 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white font-bold text-[13px] uppercase tracking-wider flex items-center gap-2 rounded-lg transition-all shadow-md shrink-0"
-                >
-                  {showAddArticle ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4 text-[#00C2FF]" />}
-                  <span>{showAddArticle ? "Fermer" : "Nouvel Article"}</span>
-                </button>
+                <div className="flex items-center gap-3 shrink-0">
+                  <button
+                    onClick={() => setShowAddArticle(!showAddArticle)}
+                    className="px-4 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white font-bold text-[12px] uppercase tracking-wider flex items-center gap-2 rounded-lg transition-all shadow-md"
+                  >
+                    {showAddArticle ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4 text-[#00C2FF]" />}
+                    <span>{showAddArticle ? "Fermer" : "Nouvel Article"}</span>
+                  </button>
+                </div>
               </div>
 
               {showAddArticle && (
@@ -851,6 +1074,49 @@ export default function DashboardPage() {
                     onChange={(e) => setNewArticle({ ...newArticle, title: e.target.value })}
                     className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
                   />
+                  
+                  {/* Photo Selection / Upload Field for Article */}
+                  <div>
+                    <label className="block text-[12px] font-bold uppercase tracking-wider text-[#0A2540] mb-2 flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-[#1E56A0]" /> Image / Photo de l'article
+                    </label>
+                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 border border-slate-300 rounded-lg">
+                      <label className="cursor-pointer px-4 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-md flex items-center gap-2 transition-colors shrink-0">
+                        <Upload className="w-4 h-4 text-[#00C2FF]" />
+                        <span>Choisir une photo (Ordinateur / Téléphone)</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageFileChange(e, (base64) => setNewArticle({ ...newArticle, image: base64 }))}
+                        />
+                      </label>
+                      <span className="text-[12px] text-slate-400 font-mono">ou</span>
+                      <input
+                        type="text"
+                        placeholder="Lien / URL d'image (ex: /img/logo.png)"
+                        value={newArticle.image}
+                        onChange={(e) => setNewArticle({ ...newArticle, image: e.target.value })}
+                        className="flex-1 w-full p-2.5 bg-white border border-slate-200 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-md"
+                      />
+                    </div>
+                    {newArticle.image && (
+                      <div className="mt-3 flex items-center gap-3 bg-slate-100 p-2.5 rounded-lg border border-slate-200">
+                        <img src={newArticle.image} alt="Aperçu" className="h-16 w-24 object-cover rounded-md border border-slate-300 bg-white" />
+                        <div className="text-[12px]">
+                          <p className="font-bold text-[#0A2540]">Aperçu de la photo sélectionnée</p>
+                          <button
+                            type="button"
+                            onClick={() => setNewArticle({ ...newArticle, image: "/img/logo.png" })}
+                            className="text-red-500 hover:underline text-[11px] mt-0.5"
+                          >
+                            Réinitialiser
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <textarea
                     required
                     rows={5}
@@ -860,28 +1126,97 @@ export default function DashboardPage() {
                     className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
                   ></textarea>
                   <button type="submit" className="px-6 py-3 bg-[#0A2540] text-white font-bold text-[13px] uppercase tracking-wider rounded-lg hover:bg-[#1E56A0] transition-colors shadow-md">
-                    Publier sur le site web
+                    Publier l'article sur le site web
                   </button>
                 </form>
               )}
 
               <div className="space-y-4">
                 {filteredArticles.map((a) => (
-                  <div key={a.id} className="bg-white border border-slate-200 p-6 rounded-xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#1E56A0] transition-all">
-                    <div>
-                      <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 mb-1">
-                        <span>Publié le : {a.published_at}</span>
+                  <div key={a.id} className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden hover:border-[#1E56A0] transition-all">
+                    {/* Inline edit form for this article */}
+                    {editingArticleId === a.id && editingArticle ? (
+                      <form onSubmit={handleUpdateArticle} className="p-6 space-y-4 bg-[#F1F5F9] border-b border-[#1E56A0]/30">
+                        <p className="text-[12px] font-bold uppercase text-[#1E56A0] tracking-wider flex items-center gap-1.5 mb-3">
+                          <Pencil className="w-3.5 h-3.5" /> Modifier l'article
+                        </p>
+                        <input
+                          type="text"
+                          required
+                          value={editingArticle.title}
+                          onChange={(e) => setEditingArticle({ ...editingArticle, title: e.target.value })}
+                          placeholder="Titre de l'article"
+                          className="w-full p-3 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                        />
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                          <label className="cursor-pointer px-3 py-2 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[11px] font-bold uppercase tracking-wider rounded-md flex items-center gap-1.5 shrink-0">
+                            <Upload className="w-3.5 h-3.5 text-[#00C2FF]" />
+                            <span>Changer la photo</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleImageFileChange(e, (b64) => setEditingArticle({ ...editingArticle, image: b64 }))}
+                            />
+                          </label>
+                          {editingArticle.image && (
+                            <img src={editingArticle.image} alt="Aperçu" className="h-12 w-16 object-cover rounded-md border border-slate-300 bg-white" />
+                          )}
+                        </div>
+                        <textarea
+                          rows={5}
+                          required
+                          value={editingArticle.content}
+                          onChange={(e) => setEditingArticle({ ...editingArticle, content: e.target.value })}
+                          placeholder="Contenu de l'article..."
+                          className="w-full p-3 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                        ></textarea>
+                        <div className="flex items-center gap-2">
+                          <button type="submit" className="px-4 py-2 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-lg transition-colors">
+                            Enregistrer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setEditingArticleId(null); setEditingArticle(null); }}
+                            className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-[#0A2540] text-[12px] font-bold uppercase tracking-wider rounded-lg transition-colors"
+                          >
+                            Annuler
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                          {a.image && (
+                            <img src={a.image} alt={a.title} className="w-20 h-20 object-cover rounded-lg border border-slate-200 shrink-0 bg-slate-50 mt-1" />
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 mb-1">
+                              <span>Publié le : {a.published_at}</span>
+                            </div>
+                            <h4 className="font-bold text-[18px] text-[#0A2540] mb-2">{a.title}</h4>
+                            <p className="text-[13px] text-slate-600 line-clamp-2">{a.content}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
+                          <button
+                            onClick={() => handleEditArticle(a)}
+                            className="text-[#1E56A0] hover:text-[#0A2540] font-bold uppercase text-[11px] flex items-center gap-1 hover:underline"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                            <span>Modifier</span>
+                          </button>
+                          <span className="text-slate-300">|</span>
+                          <button
+                            onClick={() => handleDeleteArticle(a.id)}
+                            className="text-red-600 hover:text-red-800 font-bold uppercase text-[11px] flex items-center gap-1 hover:underline"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            <span>Supprimer</span>
+                          </button>
+                        </div>
                       </div>
-                      <h4 className="font-bold text-[18px] text-[#0A2540] mb-2">{a.title}</h4>
-                      <p className="text-[13px] text-slate-600 line-clamp-2">{a.content}</p>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteArticle(a.id)}
-                      className="text-red-600 hover:text-red-800 font-bold uppercase text-[11px] shrink-0 self-start sm:self-center flex items-center gap-1 hover:underline"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Supprimer</span>
-                    </button>
+                    )}
                   </div>
                 ))}
               </div>

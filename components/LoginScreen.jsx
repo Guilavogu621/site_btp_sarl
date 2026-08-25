@@ -22,17 +22,30 @@ export default function LoginScreen({ onLogin }) {
       return;
     }
 
-    if (loginForm.password.length < 6) {
-      setLoginError("Le mot de passe doit contenir au moins 6 caractères.");
-      return;
-    }
-
     setIsLoading(true);
-    // Simulate network authentication delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setIsLoading(false);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: loginForm.email,
+          password: loginForm.password,
+        }),
+      });
 
-    onLogin(loginForm.email);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setLoginError(data.error || "Email ou mot de passe incorrect.");
+        return;
+      }
+
+      onLogin(data.email || loginForm.email);
+    } catch (err) {
+      setLoginError("Impossible de contacter le serveur d'authentification.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
