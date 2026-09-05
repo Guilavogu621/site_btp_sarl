@@ -159,6 +159,63 @@ export default function AboutPage() {
           </div>
         </div>
 
+        {/* Section Mot du Président — Style Guicopress */}
+        <div id="mot-du-president" className="mb-20 scroll-mt-32 section-divider pt-8">
+          <div className="relative bg-white border border-[#CBD5E1] p-8 md:p-12 rounded-xs shadow-md blueprint-grid overflow-hidden">
+            
+            {/* Grand filigrane 01 */}
+            <div className="absolute -top-6 left-4 sm:left-8 font-display font-black text-[120px] sm:text-[180px] text-[#0A2540]/[0.05] pointer-events-none select-none leading-none">
+              01
+            </div>
+
+            <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center relative z-10">
+              
+              {/* Photo du Président */}
+              <div className="md:col-span-5 lg:col-span-4 flex justify-center">
+                <div className="bg-white p-3 border border-[#CBD5E1] shadow-[0_20px_40px_rgba(10,37,64,0.12)] rounded-xs w-full max-w-[280px]">
+                  <div className="h-80 sm:h-96 w-full overflow-hidden bg-[#0A2540] relative">
+                    <img
+                      src={initialTeamMembers[0].photo}
+                      alt={initialTeamMembers[0].name}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Texte du message du Président */}
+              <div className="md:col-span-7 lg:col-span-8 flex flex-col items-start">
+                <div className="mb-6">
+                  <h2 className="font-display font-extrabold text-[28px] sm:text-[36px] text-[#0A2540] uppercase tracking-tight leading-none">
+                    MOT DU PRÉSIDENT
+                  </h2>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#E8952E]" />
+                    <div className="h-0.5 w-16 bg-[#0A2540]/20" />
+                  </div>
+                </div>
+
+                <p className="font-mono text-[13px] font-bold text-[#295EA8] uppercase tracking-wider mb-4">
+                  {initialTeamMembers[0].name} — {initialTeamMembers[0].title || "Ingénieur BTP & Fondateur"}
+                </p>
+
+                <div className="prose prose-slate max-w-none text-[15px] sm:text-[16px] text-[#334155] leading-relaxed space-y-4 font-sans">
+                  <p className="font-semibold text-[#0A2540] text-[17px]">
+                    &ldquo;Le pari que nous avons fait en créant le Groupe Best Builders SARLU est de devenir la référence absolue de l'ingénierie et de la construction durable en Guinée.&rdquo;
+                  </p>
+                  <p>
+                    Face aux défis d'infrastructures et d'urbanisation de notre pays, nous avons fait le choix de la rigueur scientifique : un bureau d'études intégré, des calculs de structures certifiés selon les normes internationales (BAEL & Eurocodes), et un contrôle continu sur le terrain.
+                  </p>
+                  <p>
+                    De la conception architecturale à la remise des clés, nos ingénieurs et techniciens s'engagent chaque jour pour garantir la sécurité absolue de vos ouvrages, le respect strict des budgets et la pérennité de votre patrimoine.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
         {/* Section Équipe Dirigeante */}
         <div id="equipe" className="mb-20 scroll-mt-32 section-divider pt-8">
           <div className="text-center mb-14">
@@ -178,49 +235,51 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {initialTeamMembers.map((member) => {
-              const isGerant = member.role === "Gérant";
+              const isGerant = member.id === 1 || member.role.includes("Gérant");
               return (
                 <div
                   key={member.id}
-                  className={`card-stitch text-center p-6 flex flex-col justify-between group ${
-                    isGerant ? "border-2 border-[#0A2540] shadow-lg" : ""
+                  className={`card-stitch text-center p-6 flex flex-col justify-between group transition-all ${
+                    isGerant
+                      ? "border-2 border-[#0A2540] shadow-xl bg-white col-span-2 sm:col-span-1"
+                      : "hover:border-[#0A2540]"
                   }`}
                 >
                   <div>
                     <div className="relative mx-auto mb-5">
                       {member.photo ? (
-                        <img
-                          src={member.photo}
-                          alt={member.name}
-                          className={`w-20 h-20 object-cover mx-auto rounded-full shadow-md transition-transform group-hover:scale-105 ${
-                            isGerant ? "border-[3px] border-[#0A2540] ring-2 ring-[#00C2FF]/30" : "border-2 border-[#C4C6CE]"
-                          }`}
-                        />
+                        <div className="w-24 h-28 sm:w-28 sm:h-32 mx-auto rounded-sm overflow-hidden border-2 border-[#0A2540] shadow-lg relative group-hover:scale-105 transition-transform">
+                          <img
+                            src={member.photo}
+                            alt={member.name}
+                            className="w-full h-full object-cover object-top"
+                          />
+                        </div>
                       ) : (
                         <div
                           className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center text-[22px] font-bold transition-all shadow-md ${
                             isGerant
-                              ? "bg-[#0A2540] text-[#00C2FF] border-2 border-[#00C2FF] ring-2 ring-[#00C2FF]/20"
-                              : "bg-gradient-to-br from-[#F1F4F7] to-[#E8ECF1] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:from-[#0A2540] group-hover:to-[#0A2540] group-hover:text-[#00C2FF] group-hover:border-[#295EA8]"
+                              ? "bg-[#0A2540] text-[#00C2FF] border-2 border-[#00C2FF]"
+                              : "bg-gradient-to-br from-[#F1F4F7] to-[#E8ECF1] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:text-[#00C2FF]"
                           }`}
                         >
                           {getInitials(member.name)}
                         </div>
                       )}
                       {isGerant && (
-                        <span className="absolute -top-2 -right-2 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-semibold px-2.5 py-0.5 border border-[#00C2FF]/30 uppercase rounded-sm shadow-md">
-                          Fondateur
+                        <span className="inline-block mt-2 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-extrabold px-2.5 py-0.5 border border-[#00C2FF]/30 uppercase rounded-xs shadow-sm">
+                          ★ FONDATEUR &amp; GÉRANT
                         </span>
                       )}
                     </div>
 
-                    <h3 className="font-display font-bold text-[15px] text-[#0A2540] leading-snug group-hover:text-[#295EA8] transition-colors">
+                    <h3 className="font-display font-bold text-[16px] text-[#0A2540] leading-snug group-hover:text-[#295EA8] transition-colors mt-2">
                       {member.name}
                     </h3>
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-[#C4C6CE]/50">
-                    <span className="font-mono text-[10px] text-[#295EA8] font-semibold uppercase tracking-wider block">
+                    <span className="font-mono text-[11px] text-[#295EA8] font-semibold uppercase tracking-wider block">
                       {member.role}
                     </span>
                   </div>

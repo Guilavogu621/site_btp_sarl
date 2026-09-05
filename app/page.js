@@ -388,96 +388,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ===================== NOUVELLE SECTION GALERIE PHOTO / CHANTIERS ===================== */}
-        <section id="galerie" className="py-24 bg-white border-b border-[#C4C6CE] relative">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 fade-in-up">
-              <div>
-                <span className="technical-badge mb-3">
-                  GALERIE PHOTOS &amp; RÉALISATIONS
-                </span>
-                <h2 className="font-display font-bold text-[34px] md:text-[44px] text-[#0A2540] mt-2">
-                  Nos chantiers en <span className="text-[#295EA8]">images.</span>
-                </h2>
-                <p className="font-sans text-[16px] text-[#5B6B7A] mt-3 max-w-xl">
-                  Découvrez l&apos;exécution technique de nos projets : du terrassement au coffrage, jusqu&apos;à la finition des ouvrages.
-                </p>
-              </div>
-
-              {/* Filtres de la Galerie */}
-              <div className="flex flex-wrap gap-2 mt-6 md:mt-0">
-                {[
-                  { id: "all", label: "Toutes les photos" },
-                  { id: "supervision", label: "Supervision" },
-                  { id: "gros-oeuvre", label: "Gros Œuvre" },
-                  { id: "renovation", label: "Surélévation & Bois" },
-                  { id: "etudes", label: "Bureau d'Études" }
-                ].map(cat => (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSelectedGalleryCategory(cat.id)}
-                    className={`px-3.5 py-2 font-mono text-[11px] uppercase tracking-wider transition-all rounded-xs border ${
-                      selectedGalleryCategory === cat.id
-                        ? "bg-[#0A2540] text-[#00C2FF] border-[#0A2540] shadow-sm font-semibold"
-                        : "bg-[#F1F4F7] text-[#5B6B7A] border-[#C4C6CE] hover:border-[#0A2540] hover:text-[#0A2540]"
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Grille de la Galerie Photo Stitch */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredGallery.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => setActiveLightboxImage(item)}
-                  className="fade-in-up card-stitch group cursor-pointer overflow-hidden flex flex-col justify-between"
-                >
-                  <div className="relative h-64 overflow-hidden bg-[#0A2540]">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-95"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-75 group-hover:opacity-60 transition-opacity" />
-                    
-                    <span className="absolute top-3 left-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] border border-[#00C2FF]/30 font-mono text-[10px] font-semibold px-2.5 py-1 rounded-xs">
-                      {item.categoryName}
-                    </span>
-
-                    <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#0A2540]/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border border-[#00C2FF]/50 shadow-md">
-                      <Maximize2 className="w-4 h-4 text-[#00C2FF]" />
-                    </div>
-
-                    <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="font-display font-bold text-[18px] leading-snug drop-shadow-md group-hover:text-[#00C2FF] transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="font-sans text-[13px] text-slate-200 line-clamp-2 mt-1 drop-shadow-sm opacity-90">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="text-center mt-12">
-              <Link
-                href="/realisations"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#0A2540] text-white hover:bg-[#295EA8] font-display font-semibold text-[13px] uppercase tracking-wider rounded-xs transition-all shadow-md"
-              >
-                <span>Explorer tous nos chantiers en détail</span>
-                <ArrowRight className="w-4 h-4 text-[#00C2FF]" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ===================== GROUPE ABOUT SECTION AMÉLIORÉE ===================== */}
+        {/* ===================== GROUPE ABOUT SECTION ===================== */}
         <section id="groupe" className="py-24 bg-[#F7F9FF] blueprint-grid border-b border-[#C4C6CE] relative">
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
@@ -556,56 +467,107 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ===================== NOUVELLE SECTION ÉQUIPE & EXPERTS ===================== */}
-        <section id="equipe" className="py-24 bg-white border-b border-[#C4C6CE] relative">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-16 fade-in-up">
-              <div className="inline-flex items-center gap-2 mb-3">
-                <Users className="w-5 h-5 text-[#295EA8]" />
-                <span className="technical-badge">
-                  DIRECTION &amp; DIRECTION TECHNIQUE
-                </span>
+        {/* ===================== SECTION MOT DU PRÉSIDENT & ÉQUIPE (STYLE GUICOPRESS) ===================== */}
+        <section id="equipe" className="py-24 bg-white border-b border-[#C4C6CE] relative overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
+            
+            {/* MOT DU PRÉSIDENT — DESIGN GUICOPRESS */}
+            <div className="relative mb-20 bg-[#F8FAFC] border border-[#CBD5E1] p-8 sm:p-12 rounded-xs shadow-sm blueprint-grid">
+              
+              {/* Grand numéro filigrane 01 en arrière-plan */}
+              <div className="absolute -top-6 left-4 sm:left-8 font-display font-black text-[120px] sm:text-[180px] text-[#0A2540]/[0.05] pointer-events-none select-none leading-none">
+                01
               </div>
-              <h2 className="font-display font-bold text-[34px] md:text-[44px] text-[#0A2540] mt-2">
-                Des experts engagés sur le <span className="text-[#295EA8]">terrain.</span>
-              </h2>
-              <p className="font-sans text-[16px] text-[#5B6B7A] max-w-2xl mx-auto mt-3 leading-relaxed">
-                Ingénieurs de calculs, juristes, économistes et techniciens de chantier : une équipe pluridisciplinaire au service de la réussite de vos ouvrages.
-              </p>
+
+              <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center relative z-10">
+                
+                {/* Photo du Président encadrée avec ombre portée style Guicopress */}
+                <div className="md:col-span-5 lg:col-span-4 flex justify-center">
+                  <div className="relative group w-full max-w-[280px]">
+                    <div className="bg-white p-2.5 border border-[#CBD5E1] shadow-[0_20px_40px_rgba(10,37,64,0.12)] transition-shadow duration-500 group-hover:shadow-[0_25px_50px_rgba(10,37,64,0.2)] rounded-xs">
+                      <div className="h-72 sm:h-80 w-full overflow-hidden bg-[#0A2540] relative">
+                        <img
+                          src={initialTeamMembers[0].photo}
+                          alt={initialTeamMembers[0].name}
+                          className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mot du Président & Citation */}
+                <div className="md:col-span-7 lg:col-span-8 flex flex-col items-start">
+                  
+                  {/* Titre avec point d'accent rouge/orange style Guicopress */}
+                  <div className="mb-6">
+                    <h2 className="font-display font-extrabold text-[28px] sm:text-[36px] text-[#0A2540] uppercase tracking-tight leading-none">
+                      MOT DU PRÉSIDENT
+                    </h2>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#E8952E]" />
+                      <div className="h-0.5 w-16 bg-[#0A2540]/20" />
+                    </div>
+                  </div>
+
+                  {/* Nom & Titre */}
+                  <p className="font-mono text-[12px] font-bold text-[#295EA8] uppercase tracking-wider mb-4">
+                    {initialTeamMembers[0].name} — {initialTeamMembers[0].title || "Ingénieur BTP & Fondateur"}
+                  </p>
+
+                  {/* Extrait de la citation */}
+                  <blockquote className="font-sans text-[16px] sm:text-[18px] text-[#334155] font-medium leading-relaxed mb-8 max-w-2xl italic border-l-2 border-[#295EA8] pl-4 py-1">
+                    &ldquo;{initialTeamMembers[0].quote || "Notre ambition fondamentale est de bâtir des ouvrages d'excellence en Guinée, en associant la rigueur scientifique d'un bureau d'études de pointe et la maîtrise parfaite des réalités de nos chantiers."}&rdquo;
+                  </blockquote>
+
+                  {/* Bouton DÉCOUVRIR */}
+                  <Link
+                    href="/a-propos#mot-du-president"
+                    className="inline-flex items-center justify-center px-8 py-4 bg-[#0A2540] text-white font-display font-bold text-[13px] uppercase tracking-widest hover:bg-[#295EA8] hover:shadow-lg transition-all rounded-xs group"
+                  >
+                    <span>DÉCOUVRIR</span>
+                    <ArrowRight className="ml-2 w-4 h-4 text-[#00C2FF] group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+
+              </div>
             </div>
 
-            {/* Grille des membres d'équipe */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {initialTeamMembers.slice(0, 4).map((member) => {
-                const isGerant = member.role === "Gérant";
-                return (
+            {/* ORGANIGRAMME & ÉQUIPE TECHNIQUE */}
+            <div className="pt-8">
+              <div className="text-center mb-12 fade-in-up">
+                <span className="technical-badge mb-3">
+                  ORGANIGRAMME TECHNIQUE
+                </span>
+                <h3 className="font-display font-bold text-[28px] md:text-[36px] text-[#0A2540] mt-1">
+                  Une équipe d&apos;experts sur le <span className="text-[#295EA8]">terrain.</span>
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {initialTeamMembers.slice(1, 5).map((member) => (
                   <div
                     key={member.id}
-                    className={`card-stitch text-center p-6 flex flex-col justify-between group fade-in-up ${
-                      isGerant ? "border-2 border-[#0A2540] shadow-lg" : ""
-                    }`}
+                    className="card-stitch text-center p-6 flex flex-col justify-between group fade-in-up hover:border-[#0A2540] transition-all bg-white"
                   >
                     <div>
                       <div className="relative mx-auto mb-5">
-                        <div
-                          className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center text-[22px] font-bold transition-all shadow-md ${
-                            isGerant
-                              ? "bg-[#0A2540] text-[#00C2FF] border-2 border-[#00C2FF]"
-                              : "bg-[#F1F4F7] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:text-[#00C2FF]"
-                          }`}
-                        >
-                          {getInitials(member.name)}
-                        </div>
-                        {isGerant && (
-                          <span className="absolute -top-2 -right-1 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-semibold px-2 py-0.5 border border-[#00C2FF]/30 uppercase rounded-xs">
-                            Fondateur
-                          </span>
+                        {member.photo ? (
+                          <img
+                            src={member.photo}
+                            alt={member.name}
+                            className="w-20 h-20 object-cover mx-auto rounded-full shadow-md border-2 border-[#C4C6CE] transition-transform group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-[22px] font-bold transition-all shadow-md bg-[#F1F4F7] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:text-[#00C2FF]">
+                            {getInitials(member.name)}
+                          </div>
                         )}
                       </div>
 
-                      <h3 className="font-display font-bold text-[16px] text-[#0A2540] leading-snug group-hover:text-[#295EA8] transition-colors">
+                      <h4 className="font-display font-bold text-[16px] text-[#0A2540] leading-snug group-hover:text-[#295EA8] transition-colors">
                         {member.name}
-                      </h3>
+                      </h4>
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-[#C4C6CE]/60">
@@ -614,17 +576,107 @@ export default function HomePage() {
                       </span>
                     </div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+
+              <div className="text-center mt-10">
+                <Link
+                  href="/a-propos#equipe"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white border border-[#C4C6CE] text-[#0A2540] hover:bg-[#F1F4F7] hover:border-[#0A2540] font-display font-bold text-[13px] uppercase tracking-wider rounded-xs transition-all shadow-xs"
+                >
+                  <span>Voir tous les collaborateurs &amp; conseillers</span>
+                  <ChevronRight className="w-4 h-4 text-[#00C2FF]" />
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ===================== GALERIE PHOTO / CHANTIERS ===================== */}
+        <section id="galerie" className="py-24 bg-[#F7F9FF] blueprint-grid border-b border-[#C4C6CE] relative">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 fade-in-up">
+              <div>
+                <span className="technical-badge mb-3">
+                  GALERIE PHOTOS &amp; RÉALISATIONS
+                </span>
+                <h2 className="font-display font-bold text-[34px] md:text-[44px] text-[#0A2540] mt-2">
+                  Nos chantiers en <span className="text-[#295EA8]">images.</span>
+                </h2>
+                <p className="font-sans text-[16px] text-[#5B6B7A] mt-3 max-w-xl">
+                  Découvrez l&apos;exécution technique de nos projets : du terrassement au coffrage, jusqu&apos;à la finition des ouvrages.
+                </p>
+              </div>
+
+              {/* Filtres de la Galerie */}
+              <div className="flex flex-wrap gap-2 mt-6 md:mt-0">
+                {[
+                  { id: "all", label: "Toutes les photos" },
+                  { id: "supervision", label: "Supervision" },
+                  { id: "gros-oeuvre", label: "Gros Œuvre" },
+                  { id: "renovation", label: "Surélévation & Bois" },
+                  { id: "etudes", label: "Bureau d'Études" }
+                ].map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedGalleryCategory(cat.id)}
+                    className={`px-3.5 py-2 font-mono text-[11px] uppercase tracking-wider transition-all rounded-xs border ${
+                      selectedGalleryCategory === cat.id
+                        ? "bg-[#0A2540] text-[#00C2FF] border-[#0A2540] shadow-sm font-semibold"
+                        : "bg-[#F1F4F7] text-[#5B6B7A] border-[#C4C6CE] hover:border-[#0A2540] hover:text-[#0A2540]"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Grille de la Galerie Photo Stitch */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredGallery.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setActiveLightboxImage(item)}
+                  className="fade-in-up card-stitch group cursor-pointer overflow-hidden flex flex-col justify-between bg-white"
+                >
+                  <div className="relative h-64 overflow-hidden bg-[#0A2540]">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-95"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-75 group-hover:opacity-60 transition-opacity" />
+                    
+                    <span className="absolute top-3 left-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] border border-[#00C2FF]/30 font-mono text-[10px] font-semibold px-2.5 py-1 rounded-xs">
+                      {item.categoryName}
+                    </span>
+
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#0A2540]/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border border-[#00C2FF]/50 shadow-md">
+                      <Maximize2 className="w-4 h-4 text-[#00C2FF]" />
+                    </div>
+
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <h3 className="font-display font-bold text-[18px] leading-snug drop-shadow-md group-hover:text-[#00C2FF] transition-colors">
+                        {item.title}
+                      </h3>
+                      <p className="font-sans text-[13px] text-slate-200 line-clamp-2 mt-1 drop-shadow-sm opacity-90">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="text-center mt-12">
               <Link
-                href="/a-propos#equipe"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white border border-[#C4C6CE] text-[#0A2540] hover:bg-[#F1F4F7] hover:border-[#0A2540] font-display font-bold text-[13px] uppercase tracking-wider rounded-xs transition-all shadow-xs"
+                href="/realisations"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#0A2540] text-white hover:bg-[#295EA8] font-display font-semibold text-[13px] uppercase tracking-wider rounded-xs transition-all shadow-md"
               >
-                <span>Voir l&apos;organigramme complet du groupe</span>
-                <ChevronRight className="w-4 h-4 text-[#00C2FF]" />
+                <span>Explorer tous nos chantiers en détail</span>
+                <ArrowRight className="w-4 h-4 text-[#00C2FF]" />
               </Link>
             </div>
           </div>
