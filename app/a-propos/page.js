@@ -162,14 +162,14 @@ export default function AboutPage() {
         {/* Section Mot du Président — Style Guicopress */}
         <div id="mot-du-president" className="mb-20 scroll-mt-32 section-divider pt-8">
           <div className="relative bg-white border border-[#CBD5E1] p-8 md:p-12 rounded-xs shadow-md blueprint-grid overflow-hidden">
-            
+
             {/* Grand filigrane 01 */}
             <div className="absolute -top-6 left-4 sm:left-8 font-display font-black text-[120px] sm:text-[180px] text-[#0A2540]/[0.05] pointer-events-none select-none leading-none">
               01
             </div>
 
             <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center relative z-10">
-              
+
               {/* Photo du Président */}
               <div className="md:col-span-5 lg:col-span-4 flex justify-center">
                 <div className="bg-white p-3 border border-[#CBD5E1] shadow-[0_20px_40px_rgba(10,37,64,0.12)] rounded-xs w-full max-w-[280px]">
@@ -233,22 +233,21 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {initialTeamMembers.map((member) => {
               const isGerant = member.id === 1 || member.role.includes("Gérant");
               return (
                 <div
                   key={member.id}
-                  className={`card-stitch text-center p-6 flex flex-col justify-between group transition-all ${
-                    isGerant
-                      ? "border-2 border-[#0A2540] shadow-xl bg-white col-span-2 sm:col-span-1"
+                  className={`card-stitch text-center p-6 flex flex-col justify-between group transition-all ${isGerant
+                      ? "border-2 border-[#0A2540] shadow-xl bg-white sm:col-span-2 lg:col-span-1"
                       : "hover:border-[#0A2540]"
-                  }`}
+                    }`}
                 >
                   <div>
                     <div className="relative mx-auto mb-5">
                       {member.photo ? (
-                        <div className="w-24 h-28 sm:w-28 sm:h-32 mx-auto rounded-sm overflow-hidden border-2 border-[#0A2540] shadow-lg relative group-hover:scale-105 transition-transform">
+                        <div className="w-28 h-32 mx-auto rounded-xs overflow-hidden border-2 border-[#0A2540] shadow-lg relative group-hover:scale-105 transition-transform">
                           <img
                             src={member.photo}
                             alt={member.name}
@@ -257,11 +256,10 @@ export default function AboutPage() {
                         </div>
                       ) : (
                         <div
-                          className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center text-[22px] font-bold transition-all shadow-md ${
-                            isGerant
+                          className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center text-[22px] font-bold transition-all shadow-md ${isGerant
                               ? "bg-[#0A2540] text-[#00C2FF] border-2 border-[#00C2FF]"
                               : "bg-gradient-to-br from-[#F1F4F7] to-[#E8ECF1] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:text-[#00C2FF]"
-                          }`}
+                            }`}
                         >
                           {getInitials(member.name)}
                         </div>
@@ -273,15 +271,25 @@ export default function AboutPage() {
                       )}
                     </div>
 
-                    <h3 className="font-display font-bold text-[16px] text-[#0A2540] leading-snug group-hover:text-[#295EA8] transition-colors mt-2">
+                    <h3 className="font-display font-bold text-[17px] text-[#0A2540] leading-snug group-hover:text-[#295EA8] transition-colors mt-2">
                       {member.name}
                     </h3>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-[#C4C6CE]/50">
-                    <span className="font-mono text-[11px] text-[#295EA8] font-semibold uppercase tracking-wider block">
+                  <div className="mt-4 pt-3 border-t border-[#C4C6CE]/50 flex flex-col gap-2">
+                    <span className="font-mono text-[11px] text-[#295EA8] font-bold uppercase tracking-wider block">
                       {member.role}
                     </span>
+                    {member.bio && (
+                      <p className="font-sans text-[13px] text-[#334155] leading-relaxed">
+                        {member.bio}
+                      </p>
+                    )}
+                    {member.quote && (
+                      <p className="font-sans text-[12px] text-[#5B6B7A] italic mt-1 bg-[#F8FAFC] p-2.5 rounded-xs border border-[#E2E8F0]">
+                        &ldquo;{member.quote}&rdquo;
+                      </p>
+                    )}
                   </div>
                 </div>
               );

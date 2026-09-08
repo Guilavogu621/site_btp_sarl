@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { 
+import {
   ArrowRight, Ruler, Calculator, HardHat, Building2,
   ShieldCheck, Target, Award, Users, ChevronRight, CheckCircle2, ArrowUpRight,
   Camera, Maximize2, X
@@ -158,7 +158,7 @@ export default function HomePage() {
   return (
     <div className="bg-[#F7F9FF] text-[#0A2540] font-sans antialiased selection:bg-[#00C2FF] selection:text-[#000F22] relative min-h-screen">
       {/* Barre de Progression de Lecture au Scroll */}
-      <div 
+      <div
         id="progress-bar"
         className="fixed top-0 left-0 h-1 bg-[#00C2FF] z-[60] transition-all duration-150 ease-out shadow-[0_0_12px_#00C2FF]"
         style={{ width: `${scrollProgress}%` }}
@@ -167,15 +167,14 @@ export default function HomePage() {
       <main className="pt-20">
         {/* ===================== HERO SECTION AVEC BACKGROUND ANIMÉ ===================== */}
         <section className="relative flex flex-col justify-between border-b border-[#C4C6CE] overflow-hidden text-white bg-[#0A2540]">
-          
+
           {/* SLIDESHOW D'ARRIÈRE-PLAN ANIMÉ */}
           <div className="absolute inset-0 z-0">
             {heroSlides.map((slide, idx) => (
               <div
                 key={idx}
-                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                  idx === currentHeroSlide ? "opacity-100 scale-100" : "opacity-0 scale-105"
-                } transition-transform duration-[6000ms]`}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentHeroSlide ? "opacity-100 scale-100" : "opacity-0 scale-105"
+                  } transition-transform duration-[6000ms]`}
               >
                 <img
                   src={slide.image}
@@ -242,9 +241,8 @@ export default function HomePage() {
                       key={idx}
                       src={slide.image}
                       alt={slide.title}
-                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                        idx === currentHeroSlide ? "opacity-100 scale-105" : "opacity-0 scale-100"
-                      } transition-transform duration-700`}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${idx === currentHeroSlide ? "opacity-100 scale-105" : "opacity-0 scale-100"
+                        } transition-transform duration-700`}
                     />
                   ))}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/90 via-transparent to-transparent opacity-80" />
@@ -308,20 +306,20 @@ export default function HomePage() {
                 const delayClasses = ["", "delay-100", "delay-200", "delay-300"];
 
                 return (
-                  <div 
-                    key={service.id} 
+                  <div
+                    key={service.id}
                     className={`fade-in-up ${delayClasses[index]} card-stitch flex flex-col justify-between group h-full overflow-hidden border border-[#C4C6CE] shadow-md hover:shadow-xl transition-all duration-300`}
                   >
                     <div>
                       {/* Banner Image & Badge Garanties */}
                       <div className="relative w-full h-52 sm:h-60 overflow-hidden bg-[#0A2540] border-b border-[#C4C6CE]">
-                        <img 
-                          src={service.image} 
+                        <img
+                          src={service.image}
                           alt={service.title}
                           className="w-full h-full object-cover opacity-95 transition-transform duration-700 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/85 via-transparent to-transparent" />
-                        
+
                         <span className="absolute top-4 right-4 font-mono text-[11px] font-bold text-[#00C2FF] bg-[#0A2540]/95 backdrop-blur-md px-3 py-1.5 border border-[#00C2FF]/40 rounded-xs shadow-md uppercase tracking-wider">
                           {serviceBadges[index]}
                         </span>
@@ -372,8 +370,8 @@ export default function HomePage() {
 
                     <div className="px-7 sm:px-8 pb-7 pt-0 mt-auto">
                       <div className="pt-4 border-t border-[#CBD5E1]">
-                        <Link 
-                          className="inline-flex items-center gap-2 text-[#0A2540] font-mono text-[12px] font-bold uppercase tracking-wider group/link transition-colors hover:text-[#295EA8]" 
+                        <Link
+                          className="inline-flex items-center gap-2 text-[#0A2540] font-mono text-[12px] font-bold uppercase tracking-wider group/link transition-colors hover:text-[#295EA8]"
                           href={`/services#${service.slug}`}
                         >
                           <span>Explorer l&apos;expertise complète</span>
@@ -442,7 +440,7 @@ export default function HomePage() {
                     <span className="font-mono text-[11px] text-[#00C2FF]">FICHE TECHNIQUE • GROUPE</span>
                     <span className="w-2 h-2 rounded-full bg-[#00C2FF] animate-pulse" />
                   </div>
-                  
+
                   <div className="relative h-64 w-full rounded-xs overflow-hidden border border-[#295EA8]/40 mb-6">
                     <img
                       src="/img/showcase/architecte-bureau.png"
@@ -470,17 +468,17 @@ export default function HomePage() {
         {/* ===================== SECTION MOT DU PRÉSIDENT & ÉQUIPE (STYLE GUICOPRESS) ===================== */}
         <section id="equipe" className="py-24 bg-white border-b border-[#C4C6CE] relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-6 relative z-10">
-            
+
             {/* MOT DU PRÉSIDENT — DESIGN GUICOPRESS */}
             <div className="relative mb-20 bg-[#F8FAFC] border border-[#CBD5E1] p-8 sm:p-12 rounded-xs shadow-sm blueprint-grid">
-              
+
               {/* Grand numéro filigrane 01 en arrière-plan */}
               <div className="absolute -top-6 left-4 sm:left-8 font-display font-black text-[120px] sm:text-[180px] text-[#0A2540]/[0.05] pointer-events-none select-none leading-none">
                 01
               </div>
 
               <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center relative z-10">
-                
+
                 {/* Photo du Président encadrée avec ombre portée style Guicopress */}
                 <div className="md:col-span-5 lg:col-span-4 flex justify-center">
                   <div className="relative group w-full max-w-[280px]">
@@ -498,7 +496,7 @@ export default function HomePage() {
 
                 {/* Mot du Président & Citation */}
                 <div className="md:col-span-7 lg:col-span-8 flex flex-col items-start">
-                  
+
                   {/* Titre avec point d'accent rouge/orange style Guicopress */}
                   <div className="mb-6">
                     <h2 className="font-display font-extrabold text-[28px] sm:text-[36px] text-[#0A2540] uppercase tracking-tight leading-none">
@@ -544,20 +542,22 @@ export default function HomePage() {
                 </h3>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {initialTeamMembers.slice(1, 5).map((member) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+                {initialTeamMembers.slice(1).map((member) => (
                   <div
                     key={member.id}
                     className="card-stitch text-center p-6 flex flex-col justify-between group fade-in-up hover:border-[#0A2540] transition-all bg-white"
                   >
                     <div>
-                      <div className="relative mx-auto mb-5">
+                      <div className="relative mx-auto mb-4">
                         {member.photo ? (
-                          <img
-                            src={member.photo}
-                            alt={member.name}
-                            className="w-20 h-20 object-cover mx-auto rounded-full shadow-md border-2 border-[#C4C6CE] transition-transform group-hover:scale-105"
-                          />
+                          <div className="w-24 h-28 mx-auto rounded-xs overflow-hidden border-2 border-[#0A2540] shadow-md relative group-hover:scale-105 transition-transform">
+                            <img
+                              src={member.photo}
+                              alt={member.name}
+                              className="w-full h-full object-cover object-top"
+                            />
+                          </div>
                         ) : (
                           <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-[22px] font-bold transition-all shadow-md bg-[#F1F4F7] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:text-[#00C2FF]">
                             {getInitials(member.name)}
@@ -571,9 +571,14 @@ export default function HomePage() {
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-[#C4C6CE]/60">
-                      <span className="font-mono text-[11px] text-[#295EA8] font-semibold uppercase tracking-wider block">
+                      <span className="font-mono text-[11px] text-[#295EA8] font-semibold uppercase tracking-wider block mb-1">
                         {member.role}
                       </span>
+                      {member.quote && (
+                        <p className="font-sans text-[12px] text-[#5B6B7A] italic line-clamp-2 mt-1">
+                          &ldquo;{member.quote}&rdquo;
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -621,11 +626,10 @@ export default function HomePage() {
                   <button
                     key={cat.id}
                     onClick={() => setSelectedGalleryCategory(cat.id)}
-                    className={`px-3.5 py-2 font-mono text-[11px] uppercase tracking-wider transition-all rounded-xs border ${
-                      selectedGalleryCategory === cat.id
+                    className={`px-3.5 py-2 font-mono text-[11px] uppercase tracking-wider transition-all rounded-xs border ${selectedGalleryCategory === cat.id
                         ? "bg-[#0A2540] text-[#00C2FF] border-[#0A2540] shadow-sm font-semibold"
                         : "bg-[#F1F4F7] text-[#5B6B7A] border-[#C4C6CE] hover:border-[#0A2540] hover:text-[#0A2540]"
-                    }`}
+                      }`}
                   >
                     {cat.label}
                   </button>
@@ -648,7 +652,7 @@ export default function HomePage() {
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-95"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-75 group-hover:opacity-60 transition-opacity" />
-                    
+
                     <span className="absolute top-3 left-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] border border-[#00C2FF]/30 font-mono text-[10px] font-semibold px-2.5 py-1 rounded-xs">
                       {item.categoryName}
                     </span>
@@ -712,11 +716,11 @@ export default function HomePage() {
 
       {/* MODAL LIGHTBOX PHOTO DE GALERIE */}
       {activeLightboxImage && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-[#0A2540]/95 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setActiveLightboxImage(null)}
         >
-          <div 
+          <div
             className="relative w-full max-w-4xl bg-[#0A2540] border border-[#00C2FF]/40 rounded-sm overflow-hidden shadow-2xl blueprint-grid-dark text-white"
             onClick={(e) => e.stopPropagation()}
           >
