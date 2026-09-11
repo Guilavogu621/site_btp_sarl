@@ -96,6 +96,14 @@ export default function HomePage() {
       categoryName: "Gros Œuvre & Hauteur",
       image: "/img/showcase/complexes-modernes.webp",
       desc: "Complexe moderne R+8 mixte avec parkings et façades vitrées."
+    },
+    {
+      id: 7,
+      title: "Coffrage & Fondations Spéciales",
+      category: "gros-oeuvre",
+      categoryName: "Gros Œuvre & Hauteur",
+      image: "/img/showcase/chantier-coffrage.webp",
+      desc: "Assemblage de coffrages métalliques et ferraillage des voiles de soutènement."
     }
   ];
 
