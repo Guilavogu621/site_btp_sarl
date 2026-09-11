@@ -1,12 +1,18 @@
 export default function sitemap() {
-  const baseUrl = "https://bestbuilderssarlu.com";
+  const baseUrl = "https://bestbuilders224.com";
   
   return [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 1,
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/a-propos`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/services`,
@@ -15,22 +21,22 @@ export default function sitemap() {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/projects`,
+      url: `${baseUrl}/realisations`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/about`,
+      url: `${baseUrl}/actualites`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
+      changeFrequency: "weekly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.6,
+      changeFrequency: "monthly",
+      priority: 0.7,
     },
   ];
 }

@@ -5,6 +5,6 @@ export default function robots() {
       allow: "/",
       disallow: "/dashboard/",
     },
-    sitemap: "https://bestbuilderssarlu.com/sitemap.xml",
+    sitemap: "https://bestbuilders224.com/sitemap.xml",
   };
 }
