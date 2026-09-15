@@ -26,7 +26,8 @@ import {
   Building2,
   Upload,
   Image as ImageIcon,
-  Pencil
+  Pencil,
+  Wrench
 } from "lucide-react";
 import LoginScreen from "@/components/LoginScreen";
 import {
@@ -35,6 +36,7 @@ import {
   initialContactMessages,
   initialServices,
   initialSiteSettings,
+  initialEquipments,
   getProjects,
   createProject,
   updateProject,
@@ -43,23 +45,32 @@ import {
   createArticle,
   updateArticle,
   deleteArticle,
-  getContactMessages
+  getContactMessages,
+  getEquipments,
+  createEquipment,
+  updateEquipment,
+  deleteEquipment
 } from "@/lib/data";
 import { sanitizeText } from "@/lib/security";
+import { supabase } from "@/lib/supabase";
 
 export default function DashboardPage() {
+
   // Authentication State with Persistence
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [currentUserEmail, setCurrentUserEmail] = useState("bestbuilderssarlu@gmail.com");
+  const [currentUserEmail, setCurrentUserEmail] = useState("bestbuilders@gmail.com");
+
+  const [currentUserRole, setCurrentUserRole] = useState("super_admin");
+  const [currentFullName, setCurrentFullName] = useState("Super Admin");
 
   // User Management State
-  const [users, setUsers] = useState([
-    { id: 1, name: "Admin Principal", email: "bestbuilderssarlu@gmail.com", role: "Administrateur", status: "Actif" },
-    { id: 2, name: "Directeur Technique", email: "direction@bestbuilders.gn", role: "Éditeur", status: "Actif" }
-  ]);
+  const [users, setUsers] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
-  const [newUser, setNewUser] = useState({ name: "", email: "", role: "Éditeur" });
+  const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "admin" });
+  const [userError, setUserError] = useState("");
+  const [isSubmittingUser, setIsSubmittingUser] = useState(false);
 
   // Navigation & UI State
   const [activeTab, setActiveTab] = useState("overview");
@@ -102,109 +113,206 @@ export default function DashboardPage() {
   const [editingArticleId, setEditingArticleId] = useState(null);
   const [editingArticle, setEditingArticle] = useState(null);
 
-
+  // Equipments state
+  const [equipments, setEquipments] = useState(initialEquipments);
+  const [showAddEquipment, setShowAddEquipment] = useState(false);
+  const [newEquipment, setNewEquipment] = useState({
+    title: "",
+    category: "Engins lourds",
+    type: "both",
+    price_sale: "145 000 000 GNF",
+    price_rent: "3 500 000 GNF / Jour",
+    condition: "Neuf",
+    brand: "Caterpillar",
+    model: "CAT 320",
+    specs: "",
+    image: "/img/showcase/tour-grue-ciel.webp"
+  });
+  const [editingEquipmentId, setEditingEquipmentId] = useState(null);
+  const [editingEquipment, setEditingEquipment] = useState(null);
 
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("Modifications enregistrées avec succès !");
 
-  // Synchroniser la session et charger les données Supabase
+  // Synchroniser la session et charger les données Supabase (100% Supabase Auth Native)
   useEffect(() => {
-    try {
-      const savedSession = localStorage.getItem("best_builders_admin_session");
-      if (savedSession) {
-        const parsed = JSON.parse(savedSession);
-        if (parsed && parsed.isAuthenticated) {
-          setIsAuthenticated(true);
-          if (parsed.email) setCurrentUserEmail(parsed.email);
-        }
-      }
+    let isMounted = true;
 
-    } catch (e) {
-      console.error("Erreur lors de la lecture de la session admin :", e);
-    } finally {
-      setIsCheckingAuth(false);
+    async function checkSupabaseSession() {
+      try {
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user && isMounted) {
+            setIsAuthenticated(true);
+            setCurrentUserEmail(session.user.email);
+            const userRole = session.user.user_metadata?.role || "admin";
+            setCurrentUserRole(userRole);
+            setCurrentFullName(session.user.user_metadata?.full_name || "Administrateur");
+          } else if (isMounted) {
+            setIsAuthenticated(false);
+          }
+        }
+      } catch (e) {
+        if (isMounted) setIsAuthenticated(false);
+      } finally {
+        if (isMounted) setIsCheckingAuth(false);
+      }
     }
 
+    checkSupabaseSession();
+
+    let subscription;
+    if (supabase) {
+      const res = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!isMounted) return;
+        if (session?.user) {
+          setIsAuthenticated(true);
+          setCurrentUserEmail(session.user.email);
+          const userRole = session.user.user_metadata?.role || "admin";
+          setCurrentUserRole(userRole);
+          setCurrentFullName(session.user.user_metadata?.full_name || "Administrateur");
+        } else {
+          setIsAuthenticated(false);
+        }
+      });
+      subscription = res.data.subscription;
+    }
+
+
     refreshData();
+    fetchUsers();
 
     const handleUpdate = () => refreshData();
     window.addEventListener("messages_updated", handleUpdate);
     window.addEventListener("projects_updated", handleUpdate);
     window.addEventListener("articles_updated", handleUpdate);
+    window.addEventListener("equipments_updated", handleUpdate);
 
     return () => {
+      isMounted = false;
+      if (subscription) subscription.unsubscribe();
       window.removeEventListener("messages_updated", handleUpdate);
       window.removeEventListener("projects_updated", handleUpdate);
       window.removeEventListener("articles_updated", handleUpdate);
+      window.removeEventListener("equipments_updated", handleUpdate);
     };
   }, []);
+
+  const fetchUsers = async () => {
+    setIsLoadingUsers(true);
+    try {
+      const res = await fetch("/api/admin/users");
+      const data = await res.json();
+      if (res.ok && data.users) {
+        setUsers(data.users);
+      }
+    } catch (e) {
+      // Gérer l'erreur silencieusement
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
 
   const refreshData = async () => {
     setIsLoadingData(true);
     try {
-      const [fetchedArticles, fetchedProjects, fetchedMessages] = await Promise.all([
+      const [fetchedArticles, fetchedProjects, fetchedMessages, fetchedEquipments] = await Promise.all([
         getArticles(),
         getProjects(),
-        getContactMessages()
+        getContactMessages(),
+        getEquipments()
       ]);
       if (fetchedArticles && fetchedArticles.length > 0) setArticles(fetchedArticles);
       if (fetchedProjects && fetchedProjects.length > 0) setProjects(fetchedProjects);
       if (fetchedMessages && fetchedMessages.length > 0) setMessages(fetchedMessages);
+      if (fetchedEquipments && fetchedEquipments.length > 0) setEquipments(fetchedEquipments);
     } catch (err) {
-      console.error("Erreur de chargement des données Supabase :", err);
+      // Gérer l'erreur silencieusement
     } finally {
       setIsLoadingData(false);
     }
   };
 
-  const handleLogin = (email) => {
-    setCurrentUserEmail(email);
+  const handleLogin = (userData) => {
+    const email = typeof userData === "string" ? userData : userData?.email;
+    const role = userData?.role || "admin";
+    const fullName = userData?.full_name || userData?.fullName || "Administrateur";
+
+    if (email) setCurrentUserEmail(email);
+    setCurrentUserRole(role);
+    setCurrentFullName(fullName);
     setIsAuthenticated(true);
-    try {
-      localStorage.setItem(
-        "best_builders_admin_session",
-        JSON.stringify({ isAuthenticated: true, email })
-      );
-    } catch (e) {
-      console.error("Erreur de sauvegarde de la session admin :", e);
-    }
+    fetchUsers();
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsAuthenticated(false);
-    try {
-      localStorage.removeItem("best_builders_admin_session");
-    } catch (e) {
-      console.error("Erreur de suppression de la session admin :", e);
+    if (supabase) {
+      await supabase.auth.signOut();
     }
   };
 
-  const handleAddUser = (e) => {
+
+  const handleAddUser = async (e) => {
     e.preventDefault();
-    if (!newUser.email || !newUser.name) return;
-
-    const created = {
-      id: Date.now(),
-      name: sanitizeText(newUser.name),
-      email: sanitizeText(newUser.email),
-      role: newUser.role,
-      status: "Actif"
-    };
-
-    setUsers([...users, created]);
-    setShowAddUser(false);
-    setNewUser({ name: "", email: "", role: "Éditeur" });
-    triggerSuccess("Nouvel utilisateur créé avec succès !");
-  };
-
-  const handleDeleteUser = (id) => {
-    if (users.length <= 1) {
-      alert("Impossible de supprimer le dernier administrateur !");
+    setUserError("");
+    if (!newUser.email || !newUser.name || !newUser.password) {
+      setUserError("Veuillez remplir tous les champs (Nom, Email, Mot de passe).");
       return;
     }
-    if (confirm("Voulez-vous vraiment supprimer cet utilisateur ?")) {
-      setUsers(users.filter((u) => u.id !== id));
-      triggerSuccess("Utilisateur supprimé.");
+
+    setIsSubmittingUser(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: newUser.name,
+          email: newUser.email,
+          password: newUser.password,
+          role: newUser.role,
+          creatorEmail: currentUserEmail,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setUserError(data.error || "Erreur lors de la création de l'utilisateur.");
+        return;
+      }
+
+      triggerSuccess(`Utilisateur ${newUser.email} créé dans Supabase !`);
+      setShowAddUser(false);
+      setNewUser({ name: "", email: "", password: "", role: "admin" });
+      fetchUsers();
+    } catch (err) {
+      setUserError("Erreur de connexion au serveur.");
+    } finally {
+      setIsSubmittingUser(false);
+    }
+  };
+
+  const handleDeleteUser = async (userObj) => {
+    if (userObj.role === "super_admin" && userObj.email.toLowerCase() === (process.env.NEXT_PUBLIC_ADMIN_EMAIL || "bestbuilders@gmail.com").toLowerCase()) {
+      alert("Impossible de supprimer le Super Admin principal du système !");
+      return;
+    }
+
+    if (confirm(`Voulez-vous vraiment supprimer l'utilisateur ${userObj.email} ?`)) {
+      try {
+        const res = await fetch(`/api/admin/users?id=${userObj.id}&email=${encodeURIComponent(userObj.email)}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || "Erreur lors de la suppression.");
+          return;
+        }
+        triggerSuccess("Utilisateur supprimé de la base de données.");
+        fetchUsers();
+      } catch (err) {
+        alert("Erreur lors de la suppression de l'utilisateur.");
+      }
     }
   };
 
@@ -319,6 +427,75 @@ export default function DashboardPage() {
     triggerSuccess("Article mis à jour avec succès !");
   };
 
+  const handleAddEquipment = async (e) => {
+    e.preventDefault();
+    const equipmentPayload = {
+      title: sanitizeText(newEquipment.title),
+      category: newEquipment.category,
+      type: newEquipment.type,
+      price_sale: sanitizeText(newEquipment.price_sale),
+      price_rent: sanitizeText(newEquipment.price_rent),
+      condition: newEquipment.condition,
+      brand: sanitizeText(newEquipment.brand),
+      model: sanitizeText(newEquipment.model),
+      specs: sanitizeText(newEquipment.specs),
+      image: newEquipment.image || "/img/showcase/tour-grue-ciel.webp",
+      slug: newEquipment.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+    };
+
+    const created = await createEquipment(equipmentPayload);
+    setEquipments((prev) => [created, ...prev.filter((eq) => eq.id !== created.id)]);
+    setShowAddEquipment(false);
+    setNewEquipment({
+      title: "",
+      category: "Engins lourds",
+      type: "both",
+      price_sale: "145 000 000 GNF",
+      price_rent: "3 500 000 GNF / Jour",
+      condition: "Neuf",
+      brand: "Caterpillar",
+      model: "CAT 320",
+      specs: "",
+      image: "/img/showcase/tour-grue-ciel.webp"
+    });
+    triggerSuccess("Équipement publié avec succès dans le catalogue !");
+  };
+
+  const handleDeleteEquipment = async (id) => {
+    if (confirm("Voulez-vous supprimer cet équipement du catalogue ?")) {
+      await deleteEquipment(id);
+      setEquipments((prev) => prev.filter((eq) => eq.id !== id));
+      triggerSuccess("Équipement supprimé.");
+    }
+  };
+
+  const handleEditEquipment = (item) => {
+    setEditingEquipmentId(item.id);
+    setEditingEquipment({ ...item });
+    setShowAddEquipment(false);
+  };
+
+  const handleUpdateEquipment = async (e) => {
+    e.preventDefault();
+    const payload = {
+      title: sanitizeText(editingEquipment.title),
+      category: editingEquipment.category,
+      type: editingEquipment.type,
+      price_sale: sanitizeText(editingEquipment.price_sale),
+      price_rent: sanitizeText(editingEquipment.price_rent),
+      condition: editingEquipment.condition,
+      brand: sanitizeText(editingEquipment.brand),
+      model: sanitizeText(editingEquipment.model),
+      specs: sanitizeText(editingEquipment.specs),
+      image: editingEquipment.image || "/img/showcase/tour-grue-ciel.webp"
+    };
+    const updated = await updateEquipment(editingEquipmentId, payload);
+    setEquipments((prev) => prev.map((eq) => (eq.id === editingEquipmentId ? { ...eq, ...updated } : eq)));
+    setEditingEquipmentId(null);
+    setEditingEquipment(null);
+    triggerSuccess("Équipement mis à jour avec succès !");
+  };
+
 
 
   const triggerSuccess = (msg = "Modifications enregistrées avec succès !") => {
@@ -363,6 +540,12 @@ export default function DashboardPage() {
 
   const filteredArticles = articles.filter((a) =>
     (a.title + a.content)
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
+
+  const filteredEquipments = equipments.filter((eq) =>
+    (eq.title + eq.category + (eq.brand || "") + (eq.model || "") + eq.specs)
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
@@ -444,7 +627,12 @@ export default function DashboardPage() {
               {currentUserEmail.charAt(0).toUpperCase()}
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-[13px] font-bold text-white leading-tight">Admin Connecté</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-[13px] font-bold text-white leading-tight">{currentFullName}</p>
+                <span className={`text-[9px] font-mono px-1.5 py-0.2 uppercase font-bold rounded-xs ${currentUserRole === 'super_admin' ? 'bg-[#00C2FF] text-[#000F22]' : currentUserRole === 'admin' ? 'bg-[#1E56A0] text-white' : 'bg-slate-700 text-slate-200'}`}>
+                  {currentUserRole === 'super_admin' ? 'PDG' : currentUserRole === 'admin' ? 'Admin' : 'Éditeur'}
+                </span>
+              </div>
               <p className="text-[11px] text-slate-300 font-mono">{currentUserEmail}</p>
             </div>
             <button
@@ -536,6 +724,21 @@ export default function DashboardPage() {
                   <span>Actualités</span>
                 </div>
                 <span className="text-[11px] font-mono text-slate-400">{articles.length}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("equipments")}
+                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-lg font-medium text-[13px] transition-all text-left ${
+                  activeTab === "equipments"
+                    ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
+                    : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Wrench className={`w-4 h-4 ${activeTab === "equipments" ? "text-[#00C2FF]" : "text-slate-400"}`} />
+                  <span>Équipements &amp; Engins</span>
+                </div>
+                <span className="text-[11px] font-mono text-slate-400">{equipments.length}</span>
               </button>
 
               <button
@@ -673,6 +876,22 @@ export default function DashboardPage() {
                 <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-xs relative overflow-hidden group hover:border-[#1E56A0] transition-all">
                   <div className="flex items-center justify-between">
                     <div>
+                      <p className="text-[11px] font-mono uppercase text-slate-500 font-semibold tracking-wider">Équipements &amp; Engins</p>
+                      <h3 className="text-[32px] font-bold text-[#0A2540] mt-1">{equipments.length}</h3>
+                    </div>
+                    <div className="w-12 h-12 bg-[#0A2540]/5 border border-[#1E56A0]/20 text-[#1E56A0] flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform">
+                      <Wrench className="w-6 h-6" />
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[12px]">
+                    <span className="text-emerald-600 font-medium">Catalogue actif</span>
+                    <button onClick={() => setActiveTab("equipments")} className="text-[#1E56A0] font-semibold hover:underline">Catalogue →</button>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-xs relative overflow-hidden group hover:border-[#1E56A0] transition-all">
+                  <div className="flex items-center justify-between">
+                    <div>
                       <p className="text-[11px] font-mono uppercase text-slate-500 font-semibold tracking-wider">Utilisateurs Admins</p>
                       <h3 className="text-[32px] font-bold text-[#0A2540] mt-1">{users.length}</h3>
                     </div>
@@ -695,6 +914,14 @@ export default function DashboardPage() {
                 >
                   <Plus className="w-4 h-4 text-[#00C2FF]" />
                   <span>Publier un nouveau projet</span>
+                </button>
+
+                <button
+                  onClick={() => { setActiveTab("equipments"); setShowAddEquipment(true); }}
+                  className="px-5 py-3 bg-[#0F3854] hover:bg-[#1E56A0] text-white font-bold text-[13px] uppercase tracking-wider flex items-center gap-2.5 rounded-lg transition-all shadow-md"
+                >
+                  <Wrench className="w-4 h-4 text-[#00C2FF]" />
+                  <span>Ajouter un engin / matériel</span>
                 </button>
 
                 <button
@@ -1223,99 +1450,473 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* TAB: EQUIPMENTS & MACHINERY MANAGEMENT */}
+          {activeTab === "equipments" && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+                <div>
+                  <h2 className="font-display font-bold text-[24px] text-[#0A2540]">
+                    Catalogue Équipements &amp; Engins ({filteredEquipments.length})
+                  </h2>
+                  <p className="text-[14px] text-slate-600 mt-1">
+                    Gestion du matériel et des engins BTP disponibles à la vente et à la location.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddEquipment(!showAddEquipment)}
+                  className="px-5 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white font-bold text-[13px] uppercase tracking-wider flex items-center gap-2 rounded-lg transition-all shadow-md shrink-0"
+                >
+                  {showAddEquipment ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4 text-[#00C2FF]" />}
+                  <span>{showAddEquipment ? "Fermer" : "Ajouter un Matériel"}</span>
+                </button>
+              </div>
+
+              {/* FORMULAIRE NOUVEL ÉQUIPEMENT */}
+              {showAddEquipment && (
+                <form onSubmit={handleAddEquipment} className="bg-white border border-slate-200 p-6 rounded-xl shadow-lg space-y-4">
+                  <h3 className="font-bold text-[16px] text-[#0A2540] flex items-center gap-2">
+                    <Wrench className="w-5 h-5 text-[#1E56A0]" /> Publier un Nouvel Équipement / Engin
+                  </h3>
+                  
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Titre du Matériel</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="ex: Pelle Hydraulique Caterpillar CAT 320"
+                        value={newEquipment.title}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, title: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Catégorie</label>
+                      <select
+                        value={newEquipment.category}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, category: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      >
+                        <option value="Engins lourds">Engins lourds</option>
+                        <option value="Groupe électrogène">Groupe électrogène</option>
+                        <option value="Coffrage & Échafaudage">Coffrage & Échafaudage</option>
+                        <option value="Transport">Transport (Camion, Remorque)</option>
+                        <option value="Outillage">Outillage & Électromécanique</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Modalité de Transaction</label>
+                      <select
+                        value={newEquipment.type}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, type: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      >
+                        <option value="both">Vente &amp; Location</option>
+                        <option value="rent">Location Seule</option>
+                        <option value="sale">Vente Seule</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">État</label>
+                      <select
+                        value={newEquipment.condition}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, condition: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      >
+                        <option value="Neuf">Neuf</option>
+                        <option value="Excellent état">Excellent état</option>
+                        <option value="Occasion certifiée">Occasion certifiée</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Prix de Vente (facultatif)</label>
+                      <input
+                        type="text"
+                        placeholder="ex: 145 000 000 GNF"
+                        value={newEquipment.price_sale}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, price_sale: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Tarif Location (facultatif)</label>
+                      <input
+                        type="text"
+                        placeholder="ex: 3 500 000 GNF / Jour"
+                        value={newEquipment.price_rent}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, price_rent: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Marque</label>
+                      <input
+                        type="text"
+                        placeholder="ex: Caterpillar, Cummins"
+                        value={newEquipment.brand}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, brand: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Modèle</label>
+                      <input
+                        type="text"
+                        placeholder="ex: CAT 320 GC"
+                        value={newEquipment.model}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, model: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Photo de l'Équipement</label>
+                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                      <label className="cursor-pointer px-4 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-lg flex items-center gap-2 shrink-0">
+                        <Upload className="w-4 h-4 text-[#00C2FF]" />
+                        <span>Téléverser une Photo</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageFileChange(e, (b64) => setNewEquipment({ ...newEquipment, image: b64 }))}
+                        />
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="ou coller l'URL de la photo"
+                        value={newEquipment.image}
+                        onChange={(e) => setNewEquipment({ ...newEquipment, image: e.target.value })}
+                        className="flex-1 w-full p-2.5 bg-white border border-slate-200 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-md"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Caractéristiques &amp; Fiche Technique</label>
+                    <textarea
+                      required
+                      rows={3}
+                      placeholder="Moteur, capacité godet, autonomie, réservoir, accessoires inclus..."
+                      value={newEquipment.specs}
+                      onChange={(e) => setNewEquipment({ ...newEquipment, specs: e.target.value })}
+                      className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                    ></textarea>
+                  </div>
+
+                  <button type="submit" className="px-6 py-3 bg-[#0A2540] text-white font-bold text-[13px] uppercase tracking-wider rounded-lg hover:bg-[#1E56A0] transition-colors shadow-md">
+                    Publier l'équipement dans le catalogue
+                  </button>
+                </form>
+              )}
+
+              {/* LISTE DES ÉQUIPEMENTS */}
+              <div className="space-y-4">
+                {filteredEquipments.map((eq) => (
+                  <div key={eq.id} className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden hover:border-[#1E56A0] transition-all">
+                    {editingEquipmentId === eq.id && editingEquipment ? (
+                      <form onSubmit={handleUpdateEquipment} className="p-6 space-y-4 bg-[#F1F5F9] border-b border-[#1E56A0]/30">
+                        <p className="text-[12px] font-bold uppercase text-[#1E56A0] tracking-wider flex items-center gap-1.5 mb-3">
+                          <Pencil className="w-3.5 h-3.5" /> Modifier la Fiche Matériel
+                        </p>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          <input
+                            type="text"
+                            required
+                            value={editingEquipment.title}
+                            onChange={(e) => setEditingEquipment({ ...editingEquipment, title: e.target.value })}
+                            placeholder="Titre du matériel"
+                            className="w-full p-3 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                          />
+                          <select
+                            value={editingEquipment.category}
+                            onChange={(e) => setEditingEquipment({ ...editingEquipment, category: e.target.value })}
+                            className="w-full p-3 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                          >
+                            <option value="Engins lourds">Engins lourds</option>
+                            <option value="Groupe électrogène">Groupe électrogène</option>
+                            <option value="Coffrage & Échafaudage">Coffrage & Échafaudage</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Outillage">Outillage</option>
+                          </select>
+                        </div>
+                        <textarea
+                          rows={3}
+                          required
+                          value={editingEquipment.specs}
+                          onChange={(e) => setEditingEquipment({ ...editingEquipment, specs: e.target.value })}
+                          placeholder="Caractéristiques..."
+                          className="w-full p-3 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                        ></textarea>
+                        <div className="flex items-center gap-2">
+                          <button type="submit" className="px-4 py-2 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-lg transition-colors">
+                            Enregistrer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setEditingEquipmentId(null); setEditingEquipment(null); }}
+                            className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-[#0A2540] text-[12px] font-bold uppercase tracking-wider rounded-lg transition-colors"
+                          >
+                            Annuler
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                          <img
+                            src={eq.image || "/img/showcase/tour-grue-ciel.webp"}
+                            alt={eq.title}
+                            className="w-24 h-24 object-cover rounded-lg border border-slate-200 shrink-0 bg-slate-50 mt-1"
+                          />
+                          <div>
+                            <div className="flex items-center gap-2 text-[11px] font-mono text-[#1E56A0] mb-1 font-bold">
+                              <span>{eq.category}</span>
+                              <span>•</span>
+                              <span className="uppercase text-emerald-700">{eq.type === 'both' ? 'Vente & Location' : eq.type === 'rent' ? 'Location' : 'Vente'}</span>
+                            </div>
+                            <h4 className="font-bold text-[18px] text-[#0A2540] mb-1">{eq.title}</h4>
+                            <p className="text-[13px] text-slate-600 line-clamp-2 mb-2">{eq.specs}</p>
+                            <div className="flex flex-wrap gap-4 text-[12px] font-mono text-slate-700">
+                              {eq.price_rent && <span>Location: <strong className="text-[#1E56A0]">{eq.price_rent}</strong></span>}
+                              {eq.price_sale && <span>Vente: <strong className="text-emerald-700">{eq.price_sale}</strong></span>}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
+                          <button
+                            onClick={() => handleEditEquipment(eq)}
+                            className="text-[#1E56A0] hover:text-[#0A2540] font-bold uppercase text-[11px] flex items-center gap-1 hover:underline"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                            <span>Modifier</span>
+                          </button>
+                          {currentUserRole !== 'editor' && (
+                            <>
+                              <span className="text-slate-300">|</span>
+                              <button
+                                onClick={() => handleDeleteEquipment(eq.id)}
+                                className="text-red-600 hover:text-red-800 font-bold uppercase text-[11px] flex items-center gap-1 hover:underline"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                <span>Supprimer</span>
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* TAB: USERS MANAGEMENT */}
           {activeTab === "users" && (
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
                 <div>
-                  <h2 className="font-display font-bold text-[24px] text-[#0A2540]">Gestion des Utilisateurs ({users.length})</h2>
-                  <p className="text-[14px] text-slate-600 mt-1">Comptes administrateurs ayant accès à cette console d'administration.</p>
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-display font-bold text-[24px] text-[#0A2540]">Gestion des Utilisateurs Supabase ({users.length})</h2>
+                    <span className="bg-emerald-500/10 text-emerald-600 border border-emerald-500/30 text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      Supabase Cloud
+                    </span>
+                  </div>
+                  <p className="text-[14px] text-slate-600 mt-1">
+                    Création et gestion des accès administrateurs exécutés directement dans Supabase.
+                  </p>
                 </div>
-                <button
-                  onClick={() => setShowAddUser(!showAddUser)}
-                  className="px-5 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white font-bold text-[13px] uppercase tracking-wider flex items-center gap-2 rounded-lg transition-all shadow-md shrink-0"
-                >
-                  {showAddUser ? <X className="w-4 h-4" /> : <UserPlus className="w-4 h-4 text-[#00C2FF]" />}
-                  <span>{showAddUser ? "Fermer" : "Créer un Utilisateur"}</span>
-                </button>
+                {currentUserRole === "super_admin" && (
+                  <button
+                    onClick={() => { setShowAddUser(!showAddUser); setUserError(""); }}
+                    className="px-5 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white font-bold text-[13px] uppercase tracking-wider flex items-center gap-2 rounded-lg transition-all shadow-md shrink-0"
+                  >
+                    {showAddUser ? <X className="w-4 h-4" /> : <UserPlus className="w-4 h-4 text-[#00C2FF]" />}
+                    <span>{showAddUser ? "Fermer" : "Créer un Utilisateur"}</span>
+                  </button>
+                )}
               </div>
 
-              {showAddUser && (
-                <form onSubmit={handleAddUser} className="bg-white border border-slate-200 p-6 rounded-xl shadow-lg space-y-4">
-                  <h3 className="font-bold text-[16px] text-[#0A2540] flex items-center gap-2">
-                    <UserPlus className="w-5 h-5 text-[#1E56A0]" /> Nouveau Compte Administrateur
-                  </h3>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      required
-                      placeholder="Nom complet (ex: Paul Camara)"
-                      value={newUser.name}
-                      onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                      className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
-                    />
-                    <input
-                      type="email"
-                      required
-                      placeholder="Email (ex: paul.camara@bestbuilders.gn)"
-                      value={newUser.email}
-                      onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                      className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
-                    />
+              {/* AVERTISSEMENT SI NON SUPER ADMIN */}
+              {currentUserRole !== "super_admin" && (
+                <div className="bg-amber-500/10 border border-amber-500/30 text-amber-900 p-5 rounded-xl text-[13px] font-medium flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-bold text-[14px]">Accès Restreint — Mode Lecture</h4>
+                    <p className="mt-1 text-slate-700">
+                      Seul le <strong>Super Admin</strong> est autorisé à créer de nouveaux utilisateurs et à modifier la base de données Supabase.
+                    </p>
                   </div>
-                  <button type="submit" className="px-6 py-3 bg-[#0A2540] text-white font-bold text-[13px] uppercase tracking-wider rounded-lg hover:bg-[#1E56A0] transition-colors shadow-md">
-                    Ajouter l'utilisateur
-                  </button>
+                </div>
+              )}
+
+              {/* FORMULAIRE DE CRÉATION D'UTILISATEUR (SUPER ADMIN ONLY) */}
+              {showAddUser && currentUserRole === "super_admin" && (
+                <form onSubmit={handleAddUser} className="bg-white border border-[#1E56A0]/30 p-6 rounded-xl shadow-lg space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 className="font-bold text-[16px] text-[#0A2540] flex items-center gap-2">
+                      <UserPlus className="w-5 h-5 text-[#1E56A0]" /> Créer un Nouvel Utilisateur Supabase
+                    </h3>
+                    <span className="text-[11px] font-mono text-slate-500 uppercase">Créateur : {currentUserEmail}</span>
+                  </div>
+
+                  {userError && (
+                    <div className="bg-red-500/10 border border-red-500/30 text-red-700 p-3.5 rounded-lg text-[13px] font-medium">
+                      {userError}
+                    </div>
+                  )}
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Nom Complet</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="ex: Mamadou Diallo"
+                        value={newUser.name}
+                        onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Adresse Email</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="ex: m.diallo@bestbuilders.gn"
+                        value={newUser.email}
+                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Mot de Passe Initial</label>
+                      <input
+                        type="password"
+                        required
+                        placeholder="••••••••••••"
+                        value={newUser.password}
+                        onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-1.5">Rôle d'Accès</label>
+                      <select
+                        value={newUser.role}
+                        onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                        className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
+                      >
+                        <option value="super_admin">PDG / Super Admin (Gestion complète &amp; Utilisateurs)</option>
+                        <option value="admin">Administrateur / Directeur (Gestion chantiers &amp; devis)</option>
+                        <option value="editor">Éditeur / Agent (Publication chantiers &amp; actualités)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmittingUser}
+                      className="px-6 py-3 bg-[#0A2540] hover:bg-[#1E56A0] text-white font-bold text-[13px] uppercase tracking-wider rounded-lg transition-colors shadow-md disabled:opacity-60 flex items-center gap-2"
+                    >
+                      {isSubmittingUser ? (
+                        <>
+                          <svg className="animate-spin w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4" strokeLinecap="round" />
+                          </svg>
+                          <span>Enregistrement dans Supabase...</span>
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="w-4 h-4 text-[#00C2FF]" />
+                          <span>Enregistrer l'utilisateur dans Supabase</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </form>
               )}
 
+              {/* TABLEAU DE LISTE DES UTILISATEURS */}
               <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
-                <table className="w-full text-left text-[14px]">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-mono uppercase text-slate-500">
-                    <tr>
-                      <th className="py-4 px-6">Utilisateur</th>
-                      <th className="py-4 px-6">Rôle</th>
-                      <th className="py-4 px-6">Statut</th>
-                      <th className="py-4 px-6 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {users.map((u) => (
-                      <tr key={u.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="py-4 px-6">
-                          <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 bg-gradient-to-br from-[#0A2540] to-[#1E56A0] text-white flex items-center justify-center font-bold rounded-full shadow-xs">
-                              {u.name.charAt(0)}
-                            </div>
-                            <div>
-                              <p className="font-bold text-[#0A2540]">{u.name}</p>
-                              <p className="text-[12px] text-slate-500 font-mono">{u.email}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-6">
-                          <span className="inline-block px-3 py-1 bg-[#0A2540]/10 text-[#0A2540] font-mono text-[11px] font-bold uppercase rounded-xs">
-                            {u.role}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6">
-                          <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 font-semibold">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Actif
-                          </span>
-                        </td>
-                        <td className="py-4 px-6 text-right">
-                          <button
-                            onClick={() => handleDeleteUser(u.id)}
-                            className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Supprimer l'utilisateur"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
+                {isLoadingUsers ? (
+                  <div className="p-12 text-center text-slate-500 font-mono text-[13px]">
+                    Chargement des utilisateurs depuis la base Supabase...
+                  </div>
+                ) : users.length === 0 ? (
+                  <div className="p-12 text-center text-slate-500">
+                    Aucun utilisateur trouvé dans la base de données.
+                  </div>
+                ) : (
+                  <table className="w-full text-left text-[14px]">
+                    <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-mono uppercase text-slate-500">
+                      <tr>
+                        <th className="py-4 px-6">Utilisateur</th>
+                        <th className="py-4 px-6">Rôle</th>
+                        <th className="py-4 px-6">Statut</th>
+                        {currentUserRole === "super_admin" && <th className="py-4 px-6 text-right">Action</th>}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {users.map((u) => {
+                        const isSuperAdminRole = u.role === "super_admin";
+                        const isAdminRole = u.role === "admin";
+                        const nameDisplay = u.full_name || u.name || u.email;
+                        return (
+                          <tr key={u.id || u.email} className="hover:bg-slate-50 transition-colors">
+                            <td className="py-4 px-6">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-9 h-9 ${isSuperAdminRole ? "bg-gradient-to-br from-[#0A2540] to-[#00C2FF]" : isAdminRole ? "bg-gradient-to-br from-[#0A2540] to-[#1E56A0]" : "bg-gradient-to-br from-[#1E293B] to-[#64748B]"} text-white flex items-center justify-center font-bold rounded-full shadow-xs`}>
+                                  {nameDisplay.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                  <p className="font-bold text-[#0A2540]">{nameDisplay}</p>
+                                  <p className="text-[12px] text-slate-500 font-mono">{u.email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-4 px-6">
+                              {isSuperAdminRole ? (
+                                <span className="inline-block px-3 py-1 font-mono text-[11px] font-bold uppercase rounded-xs bg-[#0A2540] text-[#00C2FF] border border-[#00C2FF]/30 shadow-xs">
+                                  PDG / Super Admin
+                                </span>
+                              ) : isAdminRole ? (
+                                <span className="inline-block px-3 py-1 font-mono text-[11px] font-bold uppercase rounded-xs bg-[#1E56A0]/15 text-[#1E56A0] border border-[#1E56A0]/30">
+                                  Administrateur
+                                </span>
+                              ) : (
+                                <span className="inline-block px-3 py-1 font-mono text-[11px] font-bold uppercase rounded-xs bg-slate-100 text-slate-700 border border-slate-300">
+                                  Éditeur / Agent
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-4 px-6">
+                              <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 font-semibold">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> {u.status === "inactive" ? "Inactif" : "Actif"}
+                              </span>
+                            </td>
+                            {currentUserRole === "super_admin" && (
+                              <td className="py-4 px-6 text-right">
+                                <button
+                                  onClick={() => handleDeleteUser(u)}
+                                  className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                                  title="Supprimer l'utilisateur"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           )}

@@ -1,5 +1,6 @@
 -- ========================================================
 -- SCHÉMA DE BASE DE DONNÉES ET SÉCURITÉ (RLS) - BEST BUILDERS
+-- Script idempotent : peut être exécuté plusieurs fois sans erreur
 -- ========================================================
 
 -- 1. Table Paramètres du site (Singleton)
@@ -67,7 +68,7 @@ CREATE TABLE IF NOT EXISTS public.contact_messages (
 );
 
 -- ========================================================
--- ACTIVATION ET POLITIQUES DE SÉCURITÉ PAR LIGNE (RLS)
+-- ACTIVATION RLS (idempotent via ALTER TABLE)
 -- ========================================================
 
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
@@ -76,18 +77,94 @@ ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.articles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 
--- Politiques de lecture publique (Anonyme & Authentifié)
-CREATE POLICY "Public Read Settings" ON public.site_settings FOR SELECT USING (true);
-CREATE POLICY "Public Read Services" ON public.services FOR SELECT USING (true);
-CREATE POLICY "Public Read Projects" ON public.projects FOR SELECT USING (true);
-CREATE POLICY "Public Read Published Articles" ON public.articles FOR SELECT USING (is_published = true);
+-- ========================================================
+-- POLITIQUES RLS — Suppression préalable pour idempotence
+-- ========================================================
 
--- Politique de soumission publique de messages de contact
+DROP POLICY IF EXISTS "Public Read Settings" ON public.site_settings;
+DROP POLICY IF EXISTS "Admin Full Access Settings" ON public.site_settings;
+
+DROP POLICY IF EXISTS "Public Read Services" ON public.services;
+DROP POLICY IF EXISTS "Admin Full Access Services" ON public.services;
+
+DROP POLICY IF EXISTS "Public Read Projects" ON public.projects;
+DROP POLICY IF EXISTS "Admin Full Access Projects" ON public.projects;
+
+DROP POLICY IF EXISTS "Public Read Published Articles" ON public.articles;
+DROP POLICY IF EXISTS "Admin Full Access Articles" ON public.articles;
+
+DROP POLICY IF EXISTS "Public Insert Messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Admin Full Access Messages" ON public.contact_messages;
+
+-- Lecture publique
+CREATE POLICY "Public Read Settings"          ON public.site_settings     FOR SELECT USING (true);
+CREATE POLICY "Public Read Services"           ON public.services          FOR SELECT USING (true);
+CREATE POLICY "Public Read Projects"           ON public.projects          FOR SELECT USING (true);
+CREATE POLICY "Public Read Published Articles" ON public.articles          FOR SELECT USING (is_published = true);
+
+-- Soumission publique des formulaires de contact
 CREATE POLICY "Public Insert Messages" ON public.contact_messages FOR INSERT WITH CHECK (true);
 
--- Politiques de modification restreintes (Authentifié Admin uniquement)
-CREATE POLICY "Admin Full Access Settings" ON public.site_settings FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Admin Full Access Services" ON public.services FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Admin Full Access Projects" ON public.projects FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Admin Full Access Articles" ON public.articles FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Admin Full Access Messages" ON public.contact_messages FOR SELECT USING (auth.role() = 'authenticated');
+-- Accès complet Admin (authentifié)
+CREATE POLICY "Admin Full Access Settings"  ON public.site_settings     FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin Full Access Services"  ON public.services          FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin Full Access Projects"  ON public.projects          FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin Full Access Articles"  ON public.articles          FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin Full Access Messages"  ON public.contact_messages  FOR SELECT  USING (auth.role() = 'authenticated');
+
+-- ========================================================
+-- 6. TABLE GESTION DES UTILISATEURS DU DASHBOARD
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS public.admin_users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT,
+  full_name TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'admin' CHECK (role IN ('super_admin', 'admin', 'editor')),
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  created_by TEXT
+);
+
+ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Admin Users Access Policy" ON public.admin_users;
+CREATE POLICY "Admin Users Access Policy" ON public.admin_users FOR ALL USING (true);
+
+-- Super Admin par défaut (insère uniquement si absent)
+INSERT INTO public.admin_users (email, password, full_name, role, status)
+VALUES ('bestbuilders@gmail.com', 'BestBuilders2026!', 'Super Admin - Best Builders', 'super_admin', 'active')
+ON CONFLICT (email) DO NOTHING;
+
+
+-- ========================================================
+-- 7. TABLE ÉQUIPEMENTS & ENGINS BTP (VENTE & LOCATION)
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS public.equipments (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  slug TEXT UNIQUE NOT NULL,
+  title TEXT NOT NULL,
+  category TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'both' CHECK (type IN ('sale', 'rent', 'both')),
+  price_sale TEXT,
+  price_rent TEXT,
+  condition TEXT DEFAULT 'Neuf',
+  brand TEXT,
+  model TEXT,
+  specs TEXT NOT NULL,
+  image TEXT,
+  is_available BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.equipments ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public Read Equipments" ON public.equipments;
+DROP POLICY IF EXISTS "Admin Full Access Equipments" ON public.equipments;
+
+CREATE POLICY "Public Read Equipments"      ON public.equipments FOR SELECT USING (true);
+CREATE POLICY "Admin Full Access Equipments" ON public.equipments FOR ALL
+  USING (auth.role() = 'authenticated' OR auth.role() = 'service_role');

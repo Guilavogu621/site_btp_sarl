@@ -247,16 +247,16 @@ export default function AboutPage() {
                   <div>
                     <div className="relative mx-auto mb-5">
                       {member.photo ? (
-                        <div className="w-28 h-32 mx-auto rounded-xs overflow-hidden border-2 border-[#0A2540] shadow-lg relative group-hover:scale-105 transition-transform">
+                        <div className="w-full max-w-[240px] h-64 sm:h-72 mx-auto rounded-md overflow-hidden border-2 border-[#0A2540] shadow-xl relative group-hover:scale-[1.02] transition-transform bg-[#0A2540]">
                           <img
                             src={member.photo}
                             alt={member.name}
-                            className="w-full h-full object-cover object-top"
+                            className={`w-full h-full object-cover ${member.id === 4 || member.id === 6 ? "object-center" : "object-top"}`}
                           />
                         </div>
                       ) : (
                         <div
-                          className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center text-[22px] font-bold transition-all shadow-md ${isGerant
+                          className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center text-[24px] font-bold transition-all shadow-md ${isGerant
                               ? "bg-[#0A2540] text-[#00C2FF] border-2 border-[#00C2FF]"
                               : "bg-gradient-to-br from-[#F1F4F7] to-[#E8ECF1] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:text-[#00C2FF]"
                             }`}
@@ -265,8 +265,13 @@ export default function AboutPage() {
                         </div>
                       )}
                       {isGerant && (
-                        <span className="inline-block mt-2 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-extrabold px-2.5 py-0.5 border border-[#00C2FF]/30 uppercase rounded-xs shadow-sm">
+                        <span className="inline-block mt-3 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-extrabold px-3 py-1 border border-[#00C2FF]/30 uppercase rounded-xs shadow-sm">
                           ★ FONDATEUR &amp; GÉRANT
+                        </span>
+                      )}
+                      {member.id === 4 && (
+                        <span className="inline-block mt-3 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-extrabold px-3 py-1 border border-[#00C2FF]/30 uppercase rounded-xs shadow-sm">
+                          ⚖️ DIRECTION JURIDIQUE &amp; CONTRATS
                         </span>
                       )}
                     </div>

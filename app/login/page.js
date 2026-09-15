@@ -3,37 +3,52 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LoginScreen from "@/components/LoginScreen";
+import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
-    try {
-      const savedSession = localStorage.getItem("best_builders_admin_session");
-      if (savedSession) {
-        const parsed = JSON.parse(savedSession);
-        if (parsed && parsed.isAuthenticated) {
-          router.replace("/dashboard");
-          return;
+    let mounted = true;
+
+    async function checkSession() {
+      try {
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user && mounted) {
+            router.replace("/dashboard");
+            return;
+          }
         }
+      } catch (e) {
+        // Ignorer l'erreur de session
+      } finally {
+        if (mounted) setIsCheckingAuth(false);
       }
-    } catch (e) {
-      console.error("Erreur de vérification session :", e);
-    } finally {
-      setIsCheckingAuth(false);
     }
+
+    checkSession();
+
+    if (supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user && mounted) {
+          router.replace("/dashboard");
+        }
+      });
+
+      return () => {
+        mounted = false;
+        subscription.unsubscribe();
+      };
+    }
+
+    return () => {
+      mounted = false;
+    };
   }, [router]);
 
-  const handleLoginSuccess = (email) => {
-    try {
-      localStorage.setItem(
-        "best_builders_admin_session",
-        JSON.stringify({ isAuthenticated: true, email })
-      );
-    } catch (e) {
-      console.error("Erreur de sauvegarde session :", e);
-    }
+  const handleLoginSuccess = () => {
     router.push("/dashboard");
   };
 
@@ -45,7 +60,7 @@ export default function LoginPage() {
             <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4" strokeLinecap="round" />
           </svg>
           <span className="font-mono text-[12px] uppercase text-[#00C2FF] font-semibold tracking-widest animate-pulse">
-            Vérification de la session...
+            Vérification de la session Supabase...
           </span>
         </div>
       </div>
@@ -58,3 +73,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

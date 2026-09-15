@@ -3,10 +3,8 @@ import { sanitizeText, validateEmail } from "@/lib/security";
 import { supabase } from "@/lib/supabase";
 
 /**
- * API Route d'authentification Administrateur via Supabase Auth & Table `admin_users`.
- * 1. Tente l'authentification native via Supabase Auth (auth.users).
- * 2. Tente l'authentification dans la table Supabase `admin_users`.
- * 3. Vérifie les variables d'environnement (ADMIN_EMAIL / ADMIN_PASSWORD) en secours.
+ * API Route d'authentification Administrateur EXCLUSIVEMENT via Supabase Auth Native.
+ * Aucune méthode de secours ni stockage de mot de passe secondaire.
  */
 export async function POST(req) {
   try {
@@ -16,7 +14,7 @@ export async function POST(req) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Veuillez fournir un identifiant et un mot de passe." },
+        { error: "Veuillez fournir un email et un mot de passe." },
         { status: 400 }
       );
     }
@@ -28,68 +26,47 @@ export async function POST(req) {
       );
     }
 
-    if (supabase) {
-      // 1. Authentification via Supabase Auth (Native)
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (!error && data?.user) {
-          return NextResponse.json(
-            { success: true, email: data.user.email },
-            { status: 200 }
-          );
-        }
-      } catch (e) {
-        // Continue vers l'étape suivante si Auth natif n'est pas activé
-      }
-
-      // 2. Authentification via la table Supabase `admin_users`
-      try {
-        const { data, error } = await supabase
-          .from("admin_users")
-          .select("*")
-          .eq("email", email)
-          .single();
-
-        if (!error && data) {
-          // Si un mot de passe est enregistré en base pour cet utilisateur
-          if (data.password === password) {
-            return NextResponse.json(
-              { success: true, email: data.email },
-              { status: 200 }
-            );
-          }
-        }
-      } catch (e) {
-        // Table admin_users non créée encore sur Supabase
-      }
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Le service d'authentification Supabase n'est pas configuré sur le serveur." },
+        { status: 503 }
+      );
     }
 
-    // 3. Vérification via les variables d'environnement ADMIN_EMAIL / ADMIN_PASSWORD
-    const configuredEmail = (process.env.ADMIN_EMAIL || "").toLowerCase();
-    const configuredPassword = process.env.ADMIN_PASSWORD || "";
+    // Authentification EXCLUSIVE via Supabase Auth (Native)
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (configuredEmail && configuredPassword) {
-      if (email === configuredEmail && password === configuredPassword) {
-        return NextResponse.json(
-          { success: true, email: configuredEmail },
-          { status: 200 }
-        );
-      }
+    if (error || !data?.user) {
+      return NextResponse.json(
+        { error: "Identifiants invalides ou compte inexistant sur Supabase." },
+        { status: 401 }
+      );
     }
+
+    const role = data.user.user_metadata?.role || "admin";
+    const full_name = data.user.user_metadata?.full_name || "Administrateur";
 
     return NextResponse.json(
-      { error: "Identifiants invalides (email ou mot de passe incorrect)." },
-      { status: 401 }
+      {
+        success: true,
+        session: data.session,
+        user: {
+          id: data.user.id,
+          email: data.user.email,
+          role,
+          full_name,
+        },
+      },
+      { status: 200 }
     );
   } catch (error) {
-    console.error("Erreur serveur lors de la connexion :", error);
     return NextResponse.json(
       { error: "Une erreur interne s'est produite lors de l'authentification." },
       { status: 500 }
     );
   }
 }
+

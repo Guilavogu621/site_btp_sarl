@@ -559,11 +559,11 @@ export default function HomePage() {
                     <div>
                       <div className="relative mx-auto mb-4">
                         {member.photo ? (
-                          <div className="w-24 h-28 mx-auto rounded-xs overflow-hidden border-2 border-[#0A2540] shadow-md relative group-hover:scale-105 transition-transform">
+                          <div className="w-full max-w-[200px] h-56 mx-auto rounded-md overflow-hidden border-2 border-[#0A2540] shadow-md relative group-hover:scale-[1.02] transition-transform bg-[#0A2540]">
                             <img
                               src={member.photo}
                               alt={member.name}
-                              className="w-full h-full object-cover object-top"
+                              className={`w-full h-full object-cover ${member.id === 4 || member.id === 6 ? "object-center" : "object-top"}`}
                             />
                           </div>
                         ) : (

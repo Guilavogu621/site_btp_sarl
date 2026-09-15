@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/", label: "Accueil" },
   { href: "/services", label: "Nos Métiers" },
   { href: "/realisations", label: "Réalisations" },
+  { href: "/equipements", label: "Vente & Location" },
   { href: "/actualites", label: "Actualités" },
   { href: "/contact", label: "Contact" },
 ];
@@ -33,9 +34,9 @@ export default function Header() {
 
   return (
     <header className="bg-[#0A2540]/95 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#295EA8]/30 shadow-md">
-      <div className="flex justify-between items-center h-20 px-6 max-w-6xl mx-auto">
+      <div className="flex justify-between items-center h-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* LOGO ORIGINAL */}
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
           <div className="bg-white p-1.5 rounded-xs border border-[#C4C6CE]/40 shadow-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
             <img
               src="/img/logo.png"
@@ -55,10 +56,10 @@ export default function Header() {
         </Link>
 
         {/* NAV desktop */}
-        <nav className="hidden md:flex items-center gap-7">
+        <nav className="hidden md:flex items-center gap-3 lg:gap-6">
           <Link
             href="/"
-            className={`font-display text-[13px] font-semibold uppercase tracking-wider transition-colors ${
+            className={`font-display text-[12px] lg:text-[13px] font-semibold uppercase tracking-wider transition-colors ${
               pathname === "/" ? "text-[#00C2FF]" : "text-slate-200 hover:text-[#00C2FF]"
             }`}
           >
@@ -73,7 +74,7 @@ export default function Header() {
           >
             <Link
               href="/a-propos"
-              className={`flex items-center gap-1.5 font-display text-[13px] font-semibold uppercase tracking-wider transition-colors py-2 ${
+              className={`flex items-center gap-1 font-display text-[12px] lg:text-[13px] font-semibold uppercase tracking-wider transition-colors py-2 ${
                 dropdownOpen ? "text-[#00C2FF]" : "text-slate-200 hover:text-[#00C2FF]"
               }`}
             >
@@ -113,7 +114,7 @@ export default function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className={`font-display text-[13px] font-semibold uppercase tracking-wider transition-colors whitespace-nowrap ${
+              className={`font-display text-[12px] lg:text-[13px] font-semibold uppercase tracking-wider transition-colors whitespace-nowrap ${
                 pathname === item.href ? "text-[#00C2FF]" : "text-slate-200 hover:text-[#00C2FF]"
               }`}
             >
@@ -123,15 +124,16 @@ export default function Header() {
         </nav>
 
         {/* CTA desktop */}
-        <div className="hidden md:block shrink-0">
+        <div className="hidden md:block shrink-0 ml-4 lg:ml-6">
           <Link
             href="/contact"
-            className="inline-flex items-center justify-center px-5 py-2.5 bg-[#00C2FF] text-[#000F22] font-display font-bold text-[12px] md:text-[13px] uppercase tracking-wider transition-all duration-200 hover:bg-[#007AFF] hover:text-white shadow-md active:scale-95 group rounded-xs whitespace-nowrap"
+            className="inline-flex items-center justify-center px-4 lg:px-5 py-2.5 bg-[#00C2FF] text-[#000F22] font-display font-bold text-[12px] lg:text-[13px] uppercase tracking-wider transition-all duration-200 hover:bg-[#007AFF] hover:text-white shadow-md active:scale-95 group rounded-xs whitespace-nowrap"
           >
             Demander un devis
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
+
 
         {/* Burger mobile */}
         <button

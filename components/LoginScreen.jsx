@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, Building2, KeyRound } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 /**
  * Premium Executive Login Screen for Best Builders SARLU Dashboard.
- * Features: Rich Navy & Cyan Glassmorphism design, blueprint grid animations, 
- * responsive layout, password visibility toggle, and secure auth handling.
+ * Authentification 100% sécurisée via Supabase Auth Native.
  */
 export default function LoginScreen({ onLogin }) {
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
@@ -25,6 +25,28 @@ export default function LoginScreen({ onLogin }) {
 
     setIsLoading(true);
     try {
+      if (supabase) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: loginForm.email.trim().toLowerCase(),
+          password: loginForm.password,
+        });
+
+        if (error) {
+          setLoginError("Identifiants incorrects ou compte inexistant sur Supabase.");
+          return;
+        }
+
+        if (data?.session && data?.user) {
+          onLogin({
+            email: data.user.email,
+            role: data.user.user_metadata?.role || "admin",
+            full_name: data.user.user_metadata?.full_name || "Administrateur",
+          });
+          return;
+        }
+      }
+
+      // Route API de secours passant par Supabase Auth
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -37,17 +59,22 @@ export default function LoginScreen({ onLogin }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setLoginError(data.error || "Identifiants incorrects (email ou mot de passe invalide).");
+        setLoginError(data.error || "Identifiants incorrects sur Supabase.");
         return;
       }
 
-      onLogin(data.email || loginForm.email);
+      if (data.session && supabase) {
+        await supabase.auth.setSession(data.session);
+      }
+
+      onLogin(data.user);
     } catch (err) {
       setLoginError("Connexion impossible au serveur. Veuillez vérifier votre réseau.");
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="relative w-full min-h-[90vh] flex items-center justify-center py-10 px-4 overflow-hidden selection:bg-[#00C2FF] selection:text-[#000F22]">
