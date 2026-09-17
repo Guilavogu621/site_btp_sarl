@@ -378,26 +378,31 @@ export default function DashboardPage() {
 
   const handleAddArticle = async (e) => {
     e.preventDefault();
-    const articlePayload = {
-      title: sanitizeText(newArticle.title),
-      content: sanitizeText(newArticle.content),
-      image: newArticle.image || "/img/logo.png",
-      video_url: newArticle.video_url || "",
-      published_at: newArticle.published_at || new Date().toISOString().split("T")[0],
-      slug: newArticle.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
-    };
+    try {
+      const articlePayload = {
+        title: sanitizeText(newArticle.title),
+        content: sanitizeText(newArticle.content),
+        image: newArticle.image || "/img/logo.png",
+        video_url: newArticle.video_url || "",
+        published_at: newArticle.published_at || new Date().toISOString().split("T")[0],
+        slug: newArticle.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+      };
 
-    const created = await createArticle(articlePayload);
-    setArticles((prev) => [created, ...prev.filter((a) => a.id !== created.id)]);
-    setShowAddArticle(false);
-    setNewArticle({
-      title: "",
-      content: "",
-      image: "/img/logo.png",
-      video_url: "",
-      published_at: new Date().toISOString().split("T")[0]
-    });
-    triggerSuccess("Article d'actualité publié avec succès !");
+      const created = await createArticle(articlePayload);
+      setArticles((prev) => [created, ...prev.filter((a) => a.id !== created.id)]);
+      setShowAddArticle(false);
+      setNewArticle({
+        title: "",
+        content: "",
+        image: "/img/logo.png",
+        video_url: "",
+        published_at: new Date().toISOString().split("T")[0]
+      });
+      triggerSuccess("Article d'actualité publié avec succès !");
+    } catch (err) {
+      console.error("Erreur publication article :", err);
+      alert("Une erreur est survenue lors de la publication. Si vous insérez une vidéo, utilisez de préférence un lien YouTube / Vimeo.");
+    }
   };
 
   const handleDeleteArticle = async (id) => {
@@ -424,18 +429,23 @@ export default function DashboardPage() {
 
   const handleUpdateArticle = async (e) => {
     e.preventDefault();
-    const payload = {
-      title: sanitizeText(editingArticle.title),
-      content: sanitizeText(editingArticle.content),
-      image: editingArticle.image || "/img/logo.png",
-      video_url: editingArticle.video_url || "",
-      published_at: editingArticle.published_at
-    };
-    const updated = await updateArticle(editingArticleId, payload);
-    setArticles((prev) => prev.map((a) => (a.id === editingArticleId ? { ...a, ...updated } : a)));
-    setEditingArticleId(null);
-    setEditingArticle(null);
-    triggerSuccess("Article mis à jour avec succès !");
+    try {
+      const payload = {
+        title: sanitizeText(editingArticle.title),
+        content: sanitizeText(editingArticle.content),
+        image: editingArticle.image || "/img/logo.png",
+        video_url: editingArticle.video_url || "",
+        published_at: editingArticle.published_at
+      };
+      const updated = await updateArticle(editingArticleId, payload);
+      setArticles((prev) => prev.map((a) => (a.id === editingArticleId ? { ...a, ...updated } : a)));
+      setEditingArticleId(null);
+      setEditingArticle(null);
+      triggerSuccess("Article mis à jour avec succès !");
+    } catch (err) {
+      console.error("Erreur mise à jour article :", err);
+      alert("Une erreur est survenue lors de la mise à jour de l'article.");
+    }
   };
 
   const handleAddEquipment = async (e) => {
@@ -526,6 +536,21 @@ export default function DashboardPage() {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         alert("La taille de la photo ne doit pas dépasser 5 Mo.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        callback(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoFileChange = (e, callback) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      if (file.size > 8 * 1024 * 1024) {
+        alert("Le fichier vidéo sélectionné dépasse 8 Mo.\n\nPour les vidéos plus lourdes, collez plutôt un lien YouTube ou Vimeo dans la case URL afin de préserver les performances.");
         return;
       }
       const reader = new FileReader();
@@ -1363,7 +1388,7 @@ export default function DashboardPage() {
                           type="file"
                           accept="video/*"
                           className="hidden"
-                          onChange={(e) => handleImageFileChange(e, (base64) => setNewArticle({ ...newArticle, video_url: base64 }))}
+                          onChange={(e) => handleVideoFileChange(e, (base64) => setNewArticle({ ...newArticle, video_url: base64 }))}
                         />
                       </label>
                       <span className="text-[12px] text-slate-400 font-mono">ou</span>
@@ -1433,7 +1458,7 @@ export default function DashboardPage() {
                               type="file"
                               accept="video/*"
                               className="hidden"
-                              onChange={(e) => handleImageFileChange(e, (b64) => setEditingArticle({ ...editingArticle, video_url: b64 }))}
+                              onChange={(e) => handleVideoFileChange(e, (b64) => setEditingArticle({ ...editingArticle, video_url: b64 }))}
                             />
                           </label>
                           <input
