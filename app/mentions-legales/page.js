@@ -31,9 +31,9 @@ export default function MentionsLegalesPage() {
               <li><strong>Téléphone :</strong> +224 614 60 60 79</li>
               <li><strong>Email :</strong> contact@bestbuilders224.com</li>
               {/* TODO CLIENT: Fournir le numéro RCCM officiel */}
-              <li><strong>RCCM :</strong> GN.TCC.2024.B.XXXX <!-- TODO CLIENT: Renseigner le numéro RCCM définitif --></li>
+              <li><strong>RCCM :</strong> GN.TCC.2024.B.XXXX {/* TODO CLIENT: Renseigner le numéro RCCM définitif */}</li>
               {/* TODO CLIENT: Fournir le numéro NIF officiel */}
-              <li><strong>NIF :</strong> NIF-XXXXXXX <!-- TODO CLIENT: Renseigner le numéro NIF définitif --></li>
+              <li><strong>NIF :</strong> NIF-XXXXXXX {/* TODO CLIENT: Renseigner le numéro NIF définitif */}</li>
               <li><strong>Directeur de la Publication :</strong> Ing. Koivogui Jeannot Selé (Gérant / PDG)</li>
             </ul>
           </div>
