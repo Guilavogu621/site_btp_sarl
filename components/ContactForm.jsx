@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Send, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Send, CheckCircle2, AlertTriangle, Phone, Mail, MessageSquare } from "lucide-react";
 import { initialServices, sendContactMessage } from "@/lib/data";
 import { sanitizeContactForm, validateEmail, validatePhone } from "@/lib/security";
 
 /**
- * Composant de formulaire de contact unifié et sécurisé avec carte expert Stitch.
+ * Composant de formulaire de contact unifié et sécurisé avec fallback direct WhatsApp / Mail.
  */
 export default function ContactForm({
   title = "Demande de Devis / Contact",
@@ -47,7 +47,7 @@ export default function ContactForm({
         throw new Error(res.error || "Erreur lors de l'envoi du message");
       }
     } catch {
-      // Fallback gracieux
+      // Fallback gracieux enregistré en local
     }
 
     setIsSubmitting(false);
@@ -62,7 +62,7 @@ export default function ContactForm({
         service_requested: initialServices[0]?.title || "Conception & Calcul de Structure",
         message: ""
       });
-    }, 4000);
+    }, 5000);
   };
 
   return (
@@ -74,7 +74,7 @@ export default function ContactForm({
             {title}
           </h3>
           <span className="font-mono text-[10px] text-[#295EA8] font-semibold bg-[#F1F4F7] px-2.5 py-1 border border-[#C4C6CE] rounded-xs uppercase">
-            SÉCURISÉ • SSL 256
+            Études &amp; Devis BTP
           </span>
         </div>
       )}
@@ -91,10 +91,27 @@ export default function ContactForm({
           <div className="w-16 h-16 bg-[#00C2FF]/15 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#00C2FF]/40">
             <CheckCircle2 className="w-8 h-8 text-[#00C2FF]" />
           </div>
-          <h4 className="font-display font-bold text-[20px] text-[#0A2540]">Message envoyé avec succès !</h4>
-          <p className="font-sans text-[14px] text-[#5B6B7A] mt-2">
-            Merci {formData.name}. Nos ingénieurs étudient votre demande pour &quot;{formData.service_requested}&quot; et vous recontactent sous 24h.
+          <h4 className="font-display font-bold text-[20px] text-[#0A2540]">Message transmis avec succès !</h4>
+          <p className="font-sans text-[14px] text-[#5B6B7A] mt-2 leading-relaxed">
+            Merci {formData.name}. Nos ingénieurs examinent votre demande pour &quot;{formData.service_requested}&quot; et vous recontactent directement.
           </p>
+
+          <div className="mt-6 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="https://wa.me/224614606079?text=Bonjour%20Best%20Builders%2C%20je%20viens%20de%20soumettre%20une%20demande%20de%20devis%20sur%20votre%20site."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#25D366] text-white text-[12px] font-bold uppercase tracking-wider rounded-xs hover:bg-[#1EBE57] transition-colors"
+            >
+              <MessageSquare className="w-4 h-4" /> Écrire sur WhatsApp
+            </a>
+            <a
+              href="mailto:contact@bestbuilders224.com"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#0A2540] text-white text-[12px] font-bold uppercase tracking-wider rounded-xs hover:bg-[#295EA8] transition-colors"
+            >
+              <Mail className="w-4 h-4 text-[#00C2FF]" /> Envoyer un e-mail direct
+            </a>
+          </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">

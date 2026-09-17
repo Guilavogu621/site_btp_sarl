@@ -29,8 +29,8 @@ export default function HomePage() {
     },
     {
       image: "/img/showcase/tour-grue-ciel.webp",
-      title: "Ouvrages en Hauteur R+12",
-      tag: "GROS ŒUVRE BÉTON • GUINÉE"
+      title: "Chantier Gros Œuvre & Hauteur",
+      tag: "GROS ŒUVRE BÉTON • ALMAMYA"
     },
     {
       image: "/img/showcase/architecte-bureau.webp",
@@ -45,7 +45,7 @@ export default function HomePage() {
     {
       image: "/img/showcase/immeuble-r7-miniere.jpg",
       title: "Immeuble R+7 — Minière",
-      tag: "BATIMENT COLLECTIF • RÉTÉ & HAUT STANDING"
+      tag: "BÂTIMENT COLLECTIF • HAUT STANDING"
     }
   ];
 
@@ -241,8 +241,8 @@ export default function HomePage() {
             <div className="lg:col-span-5 relative w-full h-auto fade-in-up delay-400 mt-4 lg:mt-0">
               <div className="card-stitch p-4 flex flex-col justify-between h-full shadow-2xl bg-[#0A2540]/90 backdrop-blur-md border-[#00C2FF]/40 rounded-sm">
                 <div className="flex justify-between items-start text-[#00C2FF] font-mono text-[11px] sm:text-[12px] font-semibold">
-                  <span>X: 45.209</span>
-                  <span>Y: -12.983</span>
+                  <span>LAT: 9.585° N</span>
+                  <span>LON: -13.630° W (Kipé)</span>
                 </div>
 
                 <div className="w-full h-56 sm:h-72 relative my-3 overflow-hidden border border-[#00C2FF]/30 bg-[#0A2540] rounded-xs">

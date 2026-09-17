@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, ShieldCheck, Scale } from "lucide-react";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -70,7 +70,7 @@ export default function Footer() {
         <div>
           <h3 className="font-display font-bold text-[15px] text-white uppercase tracking-wider mb-6 flex items-center gap-2">
             <span className="w-2 h-2 bg-[#00C2FF] rounded-full"></span>
-            Contact
+            Contact Direct
           </h3>
           <ul className="space-y-4 text-[14px] text-slate-300">
             <li className="flex items-start gap-3">
@@ -83,36 +83,42 @@ export default function Footer() {
             </li>
             <li className="flex items-center gap-3">
               <Mail className="w-5 h-5 text-[#00C2FF] shrink-0" />
-              <span className="font-mono text-[13px]">bestbuilderssarlu@gmail.com</span>
+              <span className="font-mono text-[13px]">contact@bestbuilders224.com</span>
             </li>
           </ul>
         </div>
 
-        {/* Col 4: Horaires & Certifications */}
+        {/* Col 4: Mentions Légal & Horaires */}
         <div>
           <h3 className="font-display font-bold text-[15px] text-white uppercase tracking-wider mb-6 flex items-center gap-2">
             <span className="w-2 h-2 bg-[#00C2FF] rounded-full"></span>
-            Horaires &amp; Service
+            Informations Légales
           </h3>
-          <p className="text-[14px] text-slate-300 leading-relaxed mb-3 font-sans">
-            Du Lundi au Vendredi : <br />
-            <strong className="text-white font-mono text-[13px]">08h00 — 18h00</strong>
-          </p>
-          <p className="text-[14px] text-slate-300 leading-relaxed mb-4 font-sans">
-            Samedi : <br />
-            <strong className="text-white font-mono text-[13px]">08h30 — 13h00</strong>
-          </p>
+          <div className="space-y-2 text-[12px] text-slate-300 font-sans mb-4 bg-white/5 p-3 rounded-xs border border-white/10">
+            <p><strong className="text-[#00C2FF]">Raison sociale :</strong> Best Builders SARLU</p>
+            <p><strong className="text-[#00C2FF]">Forme :</strong> SARL Unipersonnelle</p>
+            {/* TODO CLIENT: fournir le n° RCCM officiel */}
+            <p className="font-mono text-[11px]"><strong className="text-[#00C2FF]">RCCM :</strong> GN.TCC.2024.B.XXXX (à valider)</p>
+            {/* TODO CLIENT: fournir le n° NIF officiel */}
+            <p className="font-mono text-[11px]"><strong className="text-[#00C2FF]">NIF :</strong> NIF-XXXXXXX (à valider)</p>
+            <p><strong className="text-[#00C2FF]">Siège :</strong> Kipé, Conakry, Guinée</p>
+          </div>
           <div className="inline-block px-2.5 py-1 bg-[#295EA8]/20 border border-[#295EA8]/40 rounded-xs font-mono text-[10px] text-[#00C2FF] uppercase tracking-wider font-semibold">
-            Bureau d&apos;études agréé
+            Bureau d&apos;études &amp; entreprise de construction — Conakry
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 border-t border-[#295EA8]/20 pt-8 flex flex-col md:flex-row items-center justify-between text-[13px] text-slate-400 relative z-10">
         <p className="font-sans">© {new Date().getFullYear()} Best Builders SARLU. Tous droits réservés.</p>
-        <p className="mt-2 md:mt-0 font-mono text-[11px] text-[#00C2FF]/80 uppercase tracking-widest font-semibold">
-          BEST BUILDERS SARLU • CONAKRY
-        </p>
+        <div className="mt-2 md:mt-0 flex items-center gap-4">
+          <Link href="/mentions-legales" className="font-sans text-[12px] text-slate-300 hover:text-[#00C2FF] underline transition-colors flex items-center gap-1">
+            <Scale className="w-3.5 h-3.5 text-[#00C2FF]" /> Mentions Légales
+          </Link>
+          <span className="font-mono text-[11px] text-[#00C2FF]/80 uppercase tracking-widest font-semibold">
+            CONAKRY, GUINÉE
+          </span>
+        </div>
       </div>
     </footer>
   );

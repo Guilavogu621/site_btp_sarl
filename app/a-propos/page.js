@@ -12,6 +12,10 @@ export default function AboutPage() {
   const [selectedMember, setSelectedMember] = useState(null);
   return (
     <div className="bg-[#F7F9FF] blueprint-grid pb-20 md:pb-28 min-h-screen">
+      <head>
+        <title>À Propos du Groupe Best Builders — Bureau d'Études BTP Guinée</title>
+        <meta name="description" content="Présentation du bureau d'études et de l'entreprise de construction Best Builders SARLU à Conakry, Guinée. Direction générale, équipe technique et valeurs." />
+      </head>
       {/* Header Banner */}
       <PageHeader
         id="qui-sommes-nous"

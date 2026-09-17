@@ -142,22 +142,22 @@ export default function EquipementsPage() {
             Nos Équipements de Chantier
           </h1>
           <p className="text-slate-300 max-w-2xl mx-auto text-[15px] sm:text-[16px] leading-relaxed">
-            Pour garantir la rigueur, l&apos;autonomie et l&apos;excellence technique sur tous nos chantiers, le Groupe Best Builders dispose d&apos;équipements et de matériels professionnels de pointe.
+            Le Groupe Best Builders dispose d&apos;un parc d&apos;outillage et de matériel de maçonnerie détenu en propre. Les moyens lourds (grues à tour, engins de terrassement) sont mobilisés à la demande via nos partenaires certifiés de location.
           </p>
 
           {/* Quick Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-[12px] font-mono text-slate-300">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-8 text-[12px] font-mono text-slate-300">
             <span className="flex items-center gap-2 bg-[#0F3854]/60 px-3 py-1.5 rounded-md border border-[#295EA8]/30">
               <CheckCircle2 className="w-4 h-4 text-[#00C2FF]" />
-              Matériel de Chantier Certifié
+              Matériel Propre &amp; Outillage Certifié
             </span>
             <span className="flex items-center gap-2 bg-[#0F3854]/60 px-3 py-1.5 rounded-md border border-[#295EA8]/30">
               <CheckCircle2 className="w-4 h-4 text-[#00C2FF]" />
-              Déployé sur nos Chantiers
+              Moyens Lourds via Partenaires Location
             </span>
             <span className="flex items-center gap-2 bg-[#0F3854]/60 px-3 py-1.5 rounded-md border border-[#295EA8]/30">
               <CheckCircle2 className="w-4 h-4 text-[#00C2FF]" />
-              Maintenance &amp; Conformité 100%
+              Maintenance &amp; Conformité Sécurité
             </span>
           </div>
         </div>
