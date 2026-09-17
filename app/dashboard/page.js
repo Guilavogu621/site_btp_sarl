@@ -107,6 +107,7 @@ export default function DashboardPage() {
     title: "",
     content: "",
     image: "/img/logo.png",
+    video_url: "",
     published_at: new Date().toISOString().split("T")[0]
   });
 
@@ -381,6 +382,7 @@ export default function DashboardPage() {
       title: sanitizeText(newArticle.title),
       content: sanitizeText(newArticle.content),
       image: newArticle.image || "/img/logo.png",
+      video_url: newArticle.video_url || "",
       published_at: newArticle.published_at || new Date().toISOString().split("T")[0],
       slug: newArticle.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
     };
@@ -392,6 +394,7 @@ export default function DashboardPage() {
       title: "",
       content: "",
       image: "/img/logo.png",
+      video_url: "",
       published_at: new Date().toISOString().split("T")[0]
     });
     triggerSuccess("Article d'actualité publié avec succès !");
@@ -425,6 +428,7 @@ export default function DashboardPage() {
       title: sanitizeText(editingArticle.title),
       content: sanitizeText(editingArticle.content),
       image: editingArticle.image || "/img/logo.png",
+      video_url: editingArticle.video_url || "",
       published_at: editingArticle.published_at
     };
     const updated = await updateArticle(editingArticleId, payload);
@@ -1346,6 +1350,33 @@ export default function DashboardPage() {
                     )}
                   </div>
 
+                  {/* Video Selection / Upload / URL Field for Article */}
+                  <div>
+                    <label className="block text-[12px] font-bold uppercase tracking-wider text-[#0A2540] mb-2 flex items-center gap-2">
+                      <Video className="w-4 h-4 text-[#00C2FF]" /> Vidéo de l'article (Optionnel)
+                    </label>
+                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 border border-slate-300 rounded-lg">
+                      <label className="cursor-pointer px-4 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-md flex items-center gap-2 transition-colors shrink-0">
+                        <Upload className="w-4 h-4 text-[#00C2FF]" />
+                        <span>Fichier Vidéo (MP4)</span>
+                        <input
+                          type="file"
+                          accept="video/*"
+                          className="hidden"
+                          onChange={(e) => handleImageFileChange(e, (base64) => setNewArticle({ ...newArticle, video_url: base64 }))}
+                        />
+                      </label>
+                      <span className="text-[12px] text-slate-400 font-mono">ou</span>
+                      <input
+                        type="text"
+                        placeholder="Lien vidéo YouTube / Vimeo / MP4 (ex: https://www.youtube.com/watch?v=...)"
+                        value={newArticle.video_url || ""}
+                        onChange={(e) => setNewArticle({ ...newArticle, video_url: e.target.value })}
+                        className="flex-1 w-full p-2.5 bg-white border border-slate-200 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-md"
+                      />
+                    </div>
+                  </div>
+
                   <textarea
                     required
                     rows={5}
@@ -1391,6 +1422,27 @@ export default function DashboardPage() {
                           {editingArticle.image && (
                             <img src={editingArticle.image} alt="Aperçu" className="h-12 w-16 object-cover rounded-md border border-slate-300 bg-white" />
                           )}
+                        </div>
+
+                        {/* Video input in Edit form */}
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                          <label className="cursor-pointer px-3 py-2 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[11px] font-bold uppercase tracking-wider rounded-md flex items-center gap-1.5 shrink-0">
+                            <Video className="w-3.5 h-3.5 text-[#00C2FF]" />
+                            <span>Changer la vidéo</span>
+                            <input
+                              type="file"
+                              accept="video/*"
+                              className="hidden"
+                              onChange={(e) => handleImageFileChange(e, (b64) => setEditingArticle({ ...editingArticle, video_url: b64 }))}
+                            />
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Lien vidéo (YouTube / URL MP4)"
+                            value={editingArticle.video_url || ""}
+                            onChange={(e) => setEditingArticle({ ...editingArticle, video_url: e.target.value })}
+                            className="flex-1 w-full p-2 bg-white border border-slate-300 text-[#0A2540] text-[12px] outline-none focus:border-[#1E56A0] rounded-md"
+                          />
                         </div>
                         <textarea
                           rows={5}
