@@ -26,11 +26,10 @@ import { getEquipments, sendContactMessage } from "@/lib/data";
 
 const CATEGORIES = [
   "Tous",
-  "Engins lourds",
-  "Groupe électrogène",
-  "Coffrage & Échafaudage",
-  "Transport",
-  "Outillage"
+  "Matériel de Maçonnerie & Serrage",
+  "Malaxage & Béton",
+  "Échafaudage & Sécurité",
+  "Coffrage & Soutènement"
 ];
 
 export default function EquipementsPage() {
@@ -136,29 +135,29 @@ export default function EquipementsPage() {
           
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#0F3854] border border-[#00C2FF]/40 rounded-full text-[11px] font-mono font-bold text-[#00C2FF] uppercase tracking-widest mb-4">
             <Wrench className="w-3.5 h-3.5 text-[#00C2FF]" />
-            <span>CATALOGUE MATÉRIELS &amp; ENGINS BTP</span>
+            <span>MOYENS TECHNIQUES &amp; PARC MATÉRIEL CHANTIER</span>
           </div>
 
           <h1 className="font-display font-black text-[32px] sm:text-[46px] text-white tracking-tight leading-tight mb-4">
-            Vente &amp; Location d&apos;Équipements BTP
+            Nos Équipements de Chantier
           </h1>
           <p className="text-slate-300 max-w-2xl mx-auto text-[15px] sm:text-[16px] leading-relaxed">
-            Mise à disposition d&apos;engins lourds, outillages certifiés, groupes électrogènes et systèmes de coffrage haut de gamme à Conakry et en région.
+            Pour garantir la rigueur, l&apos;autonomie et l&apos;excellence technique sur tous nos chantiers, le Groupe Best Builders dispose d&apos;équipements et de matériels professionnels de pointe.
           </p>
 
           {/* Quick Badges */}
           <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-[12px] font-mono text-slate-300">
             <span className="flex items-center gap-2 bg-[#0F3854]/60 px-3 py-1.5 rounded-md border border-[#295EA8]/30">
               <CheckCircle2 className="w-4 h-4 text-[#00C2FF]" />
-              Matériel Révisé &amp; Certifié
+              Matériel de Chantier Certifié
             </span>
             <span className="flex items-center gap-2 bg-[#0F3854]/60 px-3 py-1.5 rounded-md border border-[#295EA8]/30">
               <CheckCircle2 className="w-4 h-4 text-[#00C2FF]" />
-              Livraison Directe sur Chantier
+              Déployé sur nos Chantiers
             </span>
             <span className="flex items-center gap-2 bg-[#0F3854]/60 px-3 py-1.5 rounded-md border border-[#295EA8]/30">
               <CheckCircle2 className="w-4 h-4 text-[#00C2FF]" />
-              Assistance Technique 7j/7
+              Maintenance &amp; Conformité 100%
             </span>
           </div>
         </div>
@@ -166,14 +165,14 @@ export default function EquipementsPage() {
 
       {/* FILTER & SEARCH BAR */}
       <div className="max-w-6xl mx-auto px-6 py-8">
-        <div className="bg-[#0F3854]/90 backdrop-blur-md border border-[#00C2FF]/30 p-5 rounded-2xl shadow-2xl flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-5">
+        <div className="bg-[#0F3854]/90 backdrop-blur-md border border-[#00C2FF]/30 p-5 rounded-2xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-5">
           
           {/* Search Input */}
-          <div className="relative flex-1">
+          <div className="relative flex-1 w-full">
             <Search className="w-4 h-4 text-[#00C2FF] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Rechercher une pelle, groupe électrogène, coffrage, camion..."
+              placeholder="Rechercher un vibrateur, bétonnière, échafaudage, étais..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-[#0A2540] border border-[#295EA8]/60 rounded-xl text-white placeholder-slate-400 text-[14px] outline-none focus:border-[#00C2FF] transition-all font-sans"
@@ -186,40 +185,6 @@ export default function EquipementsPage() {
                 <X className="w-4 h-4" />
               </button>
             )}
-          </div>
-
-          {/* Transaction Type Filter (Vente / Location) */}
-          <div className="flex items-center bg-[#0A2540] p-1 rounded-xl border border-[#295EA8]/60 shrink-0">
-            <button
-              onClick={() => setSelectedType("all")}
-              className={`px-4 py-2 rounded-lg font-mono text-[12px] font-bold uppercase transition-all ${
-                selectedType === "all"
-                  ? "bg-[#00C2FF] text-[#000F22] shadow-md"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              Tous
-            </button>
-            <button
-              onClick={() => setSelectedType("rent")}
-              className={`px-4 py-2 rounded-lg font-mono text-[12px] font-bold uppercase transition-all ${
-                selectedType === "rent"
-                  ? "bg-[#00C2FF] text-[#000F22] shadow-md"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              Location
-            </button>
-            <button
-              onClick={() => setSelectedType("sale")}
-              className={`px-4 py-2 rounded-lg font-mono text-[12px] font-bold uppercase transition-all ${
-                selectedType === "sale"
-                  ? "bg-[#00C2FF] text-[#000F22] shadow-md"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              Achat
-            </button>
           </div>
         </div>
 
@@ -249,7 +214,7 @@ export default function EquipementsPage() {
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4" strokeLinecap="round" />
             </svg>
             <p className="font-mono text-[13px] text-[#00C2FF] uppercase tracking-widest animate-pulse">
-              Chargement du catalogue matériel...
+              Chargement du matériel de chantier...
             </p>
           </div>
         ) : filteredEquipments.length === 0 ? (
@@ -260,49 +225,45 @@ export default function EquipementsPage() {
               Aucun matériel ne correspond à vos filtres actuels.
             </p>
             <button
-              onClick={() => { setSelectedCategory("Tous"); setSelectedType("all"); setSearchQuery(""); }}
+              onClick={() => { setSelectedCategory("Tous"); setSearchQuery(""); }}
               className="px-5 py-2.5 bg-[#00C2FF] text-[#000F22] font-mono font-bold text-[12px] uppercase tracking-wider rounded-lg hover:bg-white transition-colors"
             >
-              Réinitialiser les filtres
+              Réinitialiser la recherche
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredEquipments.map((item) => {
-              const isSale = item.type === "sale" || item.type === "both";
-              const isRent = item.type === "rent" || item.type === "both";
+            {filteredEquipments.map((item, idx) => {
+              const equipmentCodes = ["EQ-01", "EQ-02", "EQ-03", "EQ-04"];
 
               return (
                 <div
                   key={item.id}
-                  className="group bg-[#0F3854]/80 border border-[#295EA8]/40 hover:border-[#00C2FF] rounded-2xl overflow-hidden shadow-xl hover:shadow-[0_15px_40px_rgba(0,194,255,0.15)] transition-all duration-300 flex flex-col justify-between"
+                  className="card-stitch-dark border border-[#295EA8]/60 hover:border-[#00C2FF] rounded-xs overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between group"
                 >
                   {/* Image Container */}
-                  <div className="relative h-56 w-full overflow-hidden bg-[#0A2540]">
+                  <div className="relative h-56 w-full overflow-hidden bg-[#0A2540] border-b border-[#295EA8]/50">
                     <img
                       src={item.image || "/img/showcase/tour-grue-ciel.webp"}
                       alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-cover opacity-95 transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F3854] via-transparent to-transparent opacity-80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-90" />
 
-                    {/* Top Type Badges */}
-                    <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-10">
-                      {isRent && (
-                        <span className="px-2.5 py-1 bg-[#00C2FF] text-[#000F22] font-mono text-[10px] font-black uppercase tracking-wider rounded-md shadow-md">
-                          LOCATION
-                        </span>
-                      )}
-                      {isSale && (
-                        <span className="px-2.5 py-1 bg-emerald-500 text-white font-mono text-[10px] font-black uppercase tracking-wider rounded-md shadow-md">
-                          VENTE
-                        </span>
-                      )}
+                    {/* Top Badges */}
+                    <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
+                      <span className="px-2.5 py-1 bg-[#0A2540]/95 border border-[#00C2FF]/60 text-[#00C2FF] font-mono text-[10px] font-extrabold rounded-xs shadow-md">
+                        {equipmentCodes[idx] || `EQ-0${idx + 1}`}
+                      </span>
                     </div>
 
-                    {/* Condition Badge */}
-                    <span className="absolute top-3 right-3 px-2.5 py-1 bg-[#0A2540]/90 border border-[#00C2FF]/30 text-slate-200 font-mono text-[10px] font-bold rounded-md backdrop-blur-sm">
-                      {item.condition || "Excellent état"}
+                    <span className="absolute bottom-3 left-3 font-mono text-[10px] font-black uppercase tracking-wider text-[#000F22] bg-[#00C2FF] px-2.5 py-1 rounded-xs shadow-md">
+                      MATÉRIEL CHANTIER
+                    </span>
+
+                    {/* Status Badge */}
+                    <span className="absolute top-3 right-3 px-2.5 py-1 bg-[#0A2540]/90 border border-[#00C2FF]/40 text-emerald-400 font-mono text-[10px] font-bold rounded-xs backdrop-blur-sm">
+                      Disponible sur Chantier
                     </span>
                   </div>
 
@@ -315,46 +276,36 @@ export default function EquipementsPage() {
                         {item.brand && <span>• {item.brand}</span>}
                       </div>
 
-                      <h3 className="font-display font-bold text-[18px] text-white group-hover:text-[#00C2FF] transition-colors leading-snug">
+                      <h3 className="font-display font-extrabold text-[18px] text-white group-hover:text-[#00C2FF] transition-colors leading-snug">
                         {item.title}
                       </h3>
 
-                      <p className="text-[13px] text-slate-300 mt-2 line-clamp-2 leading-relaxed">
+                      <p className="text-[13px] text-slate-200 font-normal mt-2 line-clamp-3 leading-relaxed opacity-95">
                         {item.specs}
                       </p>
                     </div>
 
-                    {/* Pricing Display */}
-                    <div className="pt-3 border-t border-[#295EA8]/40 space-y-1 font-mono text-[13px]">
-                      {item.price_rent && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-slate-400 text-[11px]">Tarif Location :</span>
-                          <span className="text-[#00C2FF] font-bold">{item.price_rent}</span>
-                        </div>
-                      )}
-                      {item.price_sale && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-slate-400 text-[11px]">Prix d&apos;Achat :</span>
-                          <span className="text-emerald-400 font-bold">{item.price_sale}</span>
-                        </div>
-                      )}
+                    {/* Ownership info */}
+                    <div className="pt-3 border-t border-[#295EA8]/50 flex items-center justify-between font-mono text-[12px]">
+                      <span className="text-slate-300 text-[11px] font-medium">Affectation :</span>
+                      <span className="text-[#00C2FF] font-bold">Chantiers Groupe Best Builders</span>
                     </div>
 
                     {/* Card Action Buttons */}
                     <div className="pt-2 grid grid-cols-2 gap-2">
                       <button
                         onClick={() => setActiveEquipment(item)}
-                        className="py-2.5 px-3 bg-[#0A2540] hover:bg-[#1E56A0] text-slate-200 text-[11px] font-mono font-bold uppercase tracking-wider rounded-xl transition-colors border border-[#295EA8]/50 flex items-center justify-center gap-1.5"
+                        className="py-2.5 px-3 bg-[#0A2540] hover:bg-[#1E56A0] text-slate-200 text-[11px] font-mono font-bold uppercase tracking-wider rounded-xs transition-colors border border-[#295EA8]/50 flex items-center justify-center gap-1.5"
                       >
                         <Info className="w-3.5 h-3.5 text-[#00C2FF]" />
-                        <span>Fiche Produit</span>
+                        <span>Fiche Technique</span>
                       </button>
 
                       <button
-                        onClick={() => handleOpenQuoteModal(item, isRent ? 'location' : 'achat')}
-                        className="py-2.5 px-3 bg-[#00C2FF] hover:bg-white text-[#000F22] text-[11px] font-mono font-extrabold uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+                        onClick={() => handleOpenQuoteModal(item)}
+                        className="py-2.5 px-3 bg-[#00C2FF] hover:bg-white text-[#000F22] text-[11px] font-mono font-extrabold uppercase tracking-wider rounded-xs transition-all shadow-md flex items-center justify-center gap-1.5 border border-[#00C2FF]"
                       >
-                        <span>Demander Devis</span>
+                        <span>Parler d&apos;un Projet</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -429,21 +380,13 @@ export default function EquipementsPage() {
                 </p>
               </div>
 
-              {/* Pricing Box */}
+              {/* Info Box */}
               <div className="p-4 bg-[#0A2540] border border-[#00C2FF]/30 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
                 <div>
-                  {activeEquipment.price_rent && (
-                    <p className="text-[13px]">
-                      <span className="text-slate-400">Location : </span>
-                      <strong className="text-[#00C2FF] font-extrabold">{activeEquipment.price_rent}</strong>
-                    </p>
-                  )}
-                  {activeEquipment.price_sale && (
-                    <p className="text-[13px] mt-1">
-                      <span className="text-slate-400">Achat : </span>
-                      <strong className="text-emerald-400 font-extrabold">{activeEquipment.price_sale}</strong>
-                    </p>
-                  )}
+                  <p className="text-[13px]">
+                    <span className="text-slate-400">Statut du matériel : </span>
+                    <strong className="text-emerald-400 font-extrabold">Parc en Propre — Actif sur nos Chantiers</strong>
+                  </p>
                 </div>
                 <button
                   onClick={() => {
@@ -453,7 +396,7 @@ export default function EquipementsPage() {
                   }}
                   className="px-6 py-3 bg-[#00C2FF] hover:bg-white text-[#000F22] font-mono font-extrabold text-[12px] uppercase tracking-wider rounded-xl transition-all shadow-md shrink-0"
                 >
-                  Obtenir un Devis
+                  Discuter d&apos;un Projet
                 </button>
               </div>
             </div>
@@ -461,7 +404,7 @@ export default function EquipementsPage() {
         </div>
       )}
 
-      {/* MODALE 2 : FORMULAIRE DE DEMANDE DE DEVIS / RÉSERVATION */}
+      {/* MODALE 2 : FORMULAIRE DE CONTACT PROJET TECHNIQUE */}
       {quoteEquipment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
           <div className="relative w-full max-w-xl bg-[#0F3854] border border-[#00C2FF]/40 rounded-2xl shadow-2xl overflow-hidden text-white my-8">
@@ -469,10 +412,10 @@ export default function EquipementsPage() {
             <div className="p-6 border-b border-[#295EA8]/40 flex items-center justify-between bg-[#0A2540]/80">
               <div>
                 <span className="text-[10px] font-mono text-[#00C2FF] uppercase font-bold tracking-widest block">
-                  DEMANDE DE DEVIS MATÉRIEL BTP
+                  CONTACT BUREAU D&apos;ÉTUDES &amp; CHANTIER
                 </span>
                 <h2 className="font-display font-extrabold text-[18px] text-white mt-0.5 line-clamp-1">
-                  {quoteEquipment.title}
+                  Équipement : {quoteEquipment.title}
                 </h2>
               </div>
               <button
@@ -487,45 +430,19 @@ export default function EquipementsPage() {
               {formSuccess ? (
                 <div className="p-8 text-center bg-emerald-500/10 border border-emerald-500/40 rounded-xl space-y-3">
                   <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
-                  <h3 className="font-display font-bold text-[18px] text-white">Demande Envoyée avec Succès !</h3>
+                  <h3 className="font-display font-bold text-[18px] text-white">Message Transmis avec Succès !</h3>
                   <p className="text-[13px] text-slate-300">
-                    Notre département matériel prend en charge votre demande. Vous recevrez une proposition tarifaire dans les plus brefs délais.
+                    Notre équipe d&apos;ingénieurs prend en charge votre demande. Nous vous recontacterons dans les plus brefs délais.
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSendQuote} className="space-y-4">
-                  {/* Transaction Option (Location vs Achat) */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setQuoteForm({ ...quoteForm, transactionType: "location" })}
-                      className={`py-3 px-4 rounded-xl font-mono text-[12px] font-bold uppercase transition-all border ${
-                        quoteForm.transactionType === "location"
-                          ? "bg-[#00C2FF] text-[#000F22] border-[#00C2FF] shadow-lg"
-                          : "bg-[#0A2540] text-slate-300 border-[#295EA8]/40 hover:text-white"
-                      }`}
-                    >
-                      Option Location
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setQuoteForm({ ...quoteForm, transactionType: "achat" })}
-                      className={`py-3 px-4 rounded-xl font-mono text-[12px] font-bold uppercase transition-all border ${
-                        quoteForm.transactionType === "achat"
-                          ? "bg-emerald-500 text-white border-emerald-500 shadow-lg"
-                          : "bg-[#0A2540] text-slate-300 border-[#295EA8]/40 hover:text-white"
-                      }`}
-                    >
-                      Option Achat
-                    </button>
-                  </div>
-
                   <div>
                     <label className="block text-[11px] font-mono uppercase text-[#00C2FF] font-bold mb-1.5">Nom Complet / Société</label>
                     <input
                       type="text"
                       required
-                      placeholder="ex: Paul Bangoura - Entreprise BTP"
+                      placeholder="ex: Paul Bangoura - Entreprise / Particulier"
                       value={quoteForm.name}
                       onChange={(e) => setQuoteForm({ ...quoteForm, name: e.target.value })}
                       className="w-full p-3 bg-[#0A2540] border border-[#295EA8]/50 rounded-xl text-white placeholder-slate-400 text-[13px] outline-none focus:border-[#00C2FF]"
@@ -557,24 +474,8 @@ export default function EquipementsPage() {
                     </div>
                   </div>
 
-                  {quoteForm.transactionType === "location" && (
-                    <div>
-                      <label className="block text-[11px] font-mono uppercase text-[#00C2FF] font-bold mb-1.5">Durée estimée de location</label>
-                      <select
-                        value={quoteForm.duration}
-                        onChange={(e) => setQuoteForm({ ...quoteForm, duration: e.target.value })}
-                        className="w-full p-3 bg-[#0A2540] border border-[#295EA8]/50 rounded-xl text-white text-[13px] outline-none focus:border-[#00C2FF]"
-                      >
-                        <option value="1 à 3 jours">1 à 3 jours (Besoin ponctuel)</option>
-                        <option value="1 semaine">1 semaine</option>
-                        <option value="1 mois">1 mois</option>
-                        <option value="Longue durée (3 mois+)">Longue durée (Plus de 3 mois)</option>
-                      </select>
-                    </div>
-                  )}
-
                   <div>
-                    <label className="block text-[11px] font-mono uppercase text-[#00C2FF] font-bold mb-1.5">Message / Détails du Chantier</label>
+                    <label className="block text-[11px] font-mono uppercase text-[#00C2FF] font-bold mb-1.5">Message / Détails de votre Projet</label>
                     <textarea
                       rows={3}
                       required
@@ -593,7 +494,7 @@ export default function EquipementsPage() {
                       <span>Envoi en cours...</span>
                     ) : (
                       <>
-                        <span>Transmettre la demande de devis</span>
+                        <span>Envoyer le message</span>
                         <Send className="w-4 h-4" />
                       </>
                     )}

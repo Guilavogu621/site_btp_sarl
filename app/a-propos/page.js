@@ -1,15 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ShieldCheck, Target, Award, ArrowRight, Users, Sparkles, Building2, Layers } from "lucide-react";
 import { initialSiteSettings, initialTeamMembers } from "@/lib/data";
 import PageHeader from "@/components/PageHeader";
+import TeamMemberModal from "@/components/TeamMemberModal";
 import { getInitials } from "@/lib/utils";
 
-export const metadata = {
-  title: "Le Groupe Best Builders — À Propos & Présentation",
-  description: "Découvrez l'histoire, la vision, les valeurs et l'équipe dirigeante du Groupe Best Builders SARLU en Guinée.",
-};
-
 export default function AboutPage() {
+  const [selectedMember, setSelectedMember] = useState(null);
   return (
     <div className="bg-[#F7F9FF] blueprint-grid pb-20 md:pb-28 min-h-screen">
       {/* Header Banner */}
@@ -239,7 +239,8 @@ export default function AboutPage() {
               return (
                 <div
                   key={member.id}
-                  className={`card-stitch text-center p-6 flex flex-col justify-between group transition-all ${isGerant
+                  onClick={() => setSelectedMember(member)}
+                  className={`card-stitch text-center p-6 flex flex-col justify-between group transition-all cursor-pointer shadow-sm hover:shadow-md ${isGerant
                       ? "border-2 border-[#0A2540] shadow-xl bg-white sm:col-span-2 lg:col-span-1"
                       : "hover:border-[#0A2540]"
                     }`}
@@ -281,20 +282,29 @@ export default function AboutPage() {
                     </h3>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-[#C4C6CE]/50 flex flex-col gap-2">
-                    <span className="font-mono text-[11px] text-[#295EA8] font-bold uppercase tracking-wider block">
-                      {member.role}
-                    </span>
-                    {member.bio && (
-                      <p className="font-sans text-[13px] text-[#334155] leading-relaxed">
-                        {member.bio}
-                      </p>
-                    )}
-                    {member.quote && (
-                      <p className="font-sans text-[12px] text-[#5B6B7A] italic mt-1 bg-[#F8FAFC] p-2.5 rounded-xs border border-[#E2E8F0]">
-                        &ldquo;{member.quote}&rdquo;
-                      </p>
-                    )}
+                  <div className="mt-4 pt-3 border-t border-[#C4C6CE]/50 flex flex-col justify-between h-full">
+                    <div>
+                      <span className="font-mono text-[11px] text-[#295EA8] font-bold uppercase tracking-wider block mb-1">
+                        {member.role}
+                      </span>
+                      {member.bio && (
+                        <p className="font-sans text-[13px] text-[#334155] leading-relaxed line-clamp-3">
+                          {member.bio}
+                        </p>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedMember(member);
+                      }}
+                      className="w-full mt-4 py-2.5 px-3 bg-[#F1F4F7] group-hover:bg-[#0A2540] text-[#0A2540] group-hover:text-[#00C2FF] font-mono font-bold text-[11px] uppercase tracking-wider rounded-xs border border-[#C4C6CE] group-hover:border-[#0A2540] transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <span>VOIR LE PROFIL DÉTAILLÉ</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
                   </div>
                 </div>
               );
@@ -329,6 +339,12 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
+
+      {/* Modale de fiche membre */}
+      <TeamMemberModal
+        member={selectedMember}
+        onClose={() => setSelectedMember(null)}
+      />
     </div>
   );
 }

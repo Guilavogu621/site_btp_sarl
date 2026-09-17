@@ -50,7 +50,7 @@ export default function Footer() {
             </li>
             <li>
               <Link href="/equipements" className="hover:text-[#00C2FF] transition-colors">
-                Vente &amp; Location Équipements
+                Nos Équipements
               </Link>
             </li>
             <li>

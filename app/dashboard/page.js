@@ -46,6 +46,7 @@ import {
   updateArticle,
   deleteArticle,
   getContactMessages,
+  deleteContactMessage,
   getEquipments,
   createEquipment,
   updateEquipment,
@@ -216,16 +217,14 @@ export default function DashboardPage() {
   const refreshData = async () => {
     setIsLoadingData(true);
     try {
-      const [fetchedArticles, fetchedProjects, fetchedMessages, fetchedEquipments] = await Promise.all([
+      const [fetchedArticles, fetchedProjects, fetchedMessages] = await Promise.all([
         getArticles(),
         getProjects(),
-        getContactMessages(),
-        getEquipments()
+        getContactMessages()
       ]);
-      if (fetchedArticles && fetchedArticles.length > 0) setArticles(fetchedArticles);
-      if (fetchedProjects && fetchedProjects.length > 0) setProjects(fetchedProjects);
-      if (fetchedMessages && fetchedMessages.length > 0) setMessages(fetchedMessages);
-      if (fetchedEquipments && fetchedEquipments.length > 0) setEquipments(fetchedEquipments);
+      if (Array.isArray(fetchedArticles)) setArticles(fetchedArticles);
+      if (Array.isArray(fetchedProjects)) setProjects(fetchedProjects);
+      if (Array.isArray(fetchedMessages)) setMessages(fetchedMessages);
     } catch (err) {
       // Gérer l'erreur silencieusement
     } finally {
@@ -406,6 +405,14 @@ export default function DashboardPage() {
     }
   };
 
+  const handleDeleteMessage = async (id) => {
+    if (confirm("Voulez-vous supprimer ce message de contact ?")) {
+      await deleteContactMessage(id);
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+      triggerSuccess("Message de contact supprimé.");
+    }
+  };
+
   const handleEditArticle = (article) => {
     setEditingArticleId(article.id);
     setEditingArticle({ ...article });
@@ -574,38 +581,38 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#F1F5F9] text-[#0A2540] flex flex-col font-sans selection:bg-[#00C2FF]/20">
       {/* EXECUTIVE STITCH TOP HEADER */}
-      <header className="h-20 bg-[#0A2540] border-b border-[#1E56A0]/40 px-6 flex items-center justify-between sticky top-0 z-40 shadow-xl backdrop-blur-md bg-opacity-95">
-        <div className="flex items-center gap-4">
-          <div className="bg-white p-2 rounded-lg flex items-center justify-center shadow-md border border-white/20">
-            <img src="/img/logo.png" alt="Best Builders SARLU" className="h-9 w-auto object-contain" />
+      <header className="min-h-20 bg-[#0A2540] border-b border-[#1E56A0]/40 px-4 sm:px-6 py-3 flex flex-wrap sm:flex-nowrap items-center justify-between sticky top-0 z-40 shadow-xl backdrop-blur-md bg-opacity-95 gap-3">
+        <div className="flex items-center gap-3">
+          <div className="bg-white p-1.5 sm:p-2 rounded-lg flex items-center justify-center shadow-md border border-white/20 shrink-0">
+            <img src="/img/logo.png" alt="Best Builders SARLU" className="h-7 sm:h-9 w-auto object-contain" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-display font-bold text-[18px] text-white tracking-wide">
+              <h1 className="font-display font-bold text-[15px] sm:text-[18px] text-white tracking-wide">
                 Best Builders SARLU
               </h1>
-              <span className="bg-[#00C2FF]/15 border border-[#00C2FF]/40 text-[#00C2FF] text-[10px] font-mono font-bold px-2.5 py-0.5 uppercase tracking-widest rounded-xs flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#00C2FF] animate-ping" />
-                Console Executive
+              <span className="hidden xs:flex bg-[#00C2FF]/15 border border-[#00C2FF]/40 text-[#00C2FF] text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 uppercase tracking-widest rounded-xs items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00C2FF] animate-ping" />
+                Console
               </span>
             </div>
-            <p className="text-[12px] text-slate-300 flex items-center gap-2 mt-0.5">
-              <span className="flex items-center gap-1 text-emerald-400 font-mono font-semibold text-[11px]">
+            <p className="text-[11px] sm:text-[12px] text-slate-300 flex items-center gap-2 mt-0.5">
+              <span className="flex items-center gap-1 text-emerald-400 font-mono font-semibold text-[10px] sm:text-[11px]">
                 <Database className="w-3 h-3 text-emerald-400" /> Supabase Actif
               </span>
-              <span>•</span>
-              <span>Gestion BTP &amp; Vitrine</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="hidden sm:inline">Gestion BTP &amp; Vitrine</span>
             </p>
           </div>
         </div>
 
         {/* TOPBAR ACTIONS */}
-        <div className="flex items-center gap-4 sm:gap-6">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 px-3.5 py-2 bg-[#0F3854] hover:bg-[#1E56A0] text-slate-200 hover:text-white border border-[#1E56A0]/60 rounded-md text-[12px] font-semibold transition-all shadow-xs"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-[#0F3854] hover:bg-[#1E56A0] text-slate-200 hover:text-white border border-[#1E56A0]/60 rounded-md text-[12px] font-semibold transition-all shadow-xs"
             title="Voir le site public dans un nouvel onglet"
           >
             <span>Voir le site</span>
@@ -622,8 +629,8 @@ export default function DashboardPage() {
           </button>
 
           {/* USER PROFILE & LOGOUT */}
-          <div className="flex items-center gap-3 border-l border-[#0F3854] pl-4 sm:pl-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#1E56A0] to-[#00C2FF] text-white flex items-center justify-center font-bold text-[15px] rounded-full shadow-lg border border-white/20">
+          <div className="flex items-center gap-2 sm:gap-3 border-l border-[#0F3854] pl-3 sm:pl-4">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-[#1E56A0] to-[#00C2FF] text-white flex items-center justify-center font-bold text-[14px] sm:text-[15px] rounded-full shadow-lg border border-white/20 shrink-0">
               {currentUserEmail.charAt(0).toUpperCase()}
             </div>
             <div className="hidden lg:block text-left">
@@ -640,7 +647,7 @@ export default function DashboardPage() {
               className="ml-1 p-2 text-slate-300 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors"
               title="Se déconnecter"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
@@ -655,19 +662,19 @@ export default function DashboardPage() {
       )}
 
       {/* DASHBOARD BODY */}
-      <div className="flex-1 flex flex-col md:flex-row">
-        {/* NAVY SIDEBAR NAVIGATION */}
-        <aside className="w-full md:w-64 bg-[#0A2540] border-r border-[#0F3854] p-5 shrink-0 shadow-lg text-white flex flex-col justify-between">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        {/* NAVY SIDEBAR NAVIGATION (Horizontal scroll on mobile, Vertical on desktop) */}
+        <aside className="w-full md:w-64 bg-[#0A2540] border-b md:border-b-0 md:border-r border-[#0F3854] p-3 sm:p-5 shrink-0 shadow-lg text-white flex flex-col justify-between">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-[#00C2FF] font-bold mb-4 px-3 flex items-center gap-2">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-[#00C2FF] font-bold mb-2 md:mb-4 px-2 sm:px-3 flex items-center gap-2">
               <Sparkles className="w-3 h-3 text-[#00C2FF]" />
               Navigation Admin
             </p>
 
-            <nav className="space-y-1.5">
+            <nav className="flex md:flex-col overflow-x-auto md:overflow-visible gap-2 md:gap-0 md:space-y-1.5 pb-2 md:pb-0">
               <button
                 onClick={() => setActiveTab("overview")}
-                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-lg font-medium text-[13px] transition-all text-left ${
+                className={`shrink-0 md:w-full flex items-center gap-2.5 px-3.5 py-2.5 sm:py-3 rounded-lg font-medium text-[12px] sm:text-[13px] transition-all text-left whitespace-nowrap ${
                   activeTab === "overview"
                     ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
                     : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
@@ -679,18 +686,18 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveTab("messages")}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-lg font-medium text-[13px] transition-all text-left ${
+                className={`shrink-0 md:w-full flex items-center justify-between gap-3 px-3.5 py-2.5 sm:py-3 rounded-lg font-medium text-[12px] sm:text-[13px] transition-all text-left whitespace-nowrap ${
                   activeTab === "messages"
                     ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
                     : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <MessageSquare className={`w-4 h-4 ${activeTab === "messages" ? "text-[#00C2FF]" : "text-slate-400"}`} />
                   <span>Demandes / Contact</span>
                 </div>
                 {messages.length > 0 && (
-                  <span className="bg-[#00C2FF] text-[#0A2540] text-[11px] font-mono font-bold px-2 py-0.5 rounded-full shadow-xs">
+                  <span className="bg-[#00C2FF] text-[#0A2540] text-[10px] sm:text-[11px] font-mono font-bold px-2 py-0.5 rounded-full shadow-xs">
                     {messages.length}
                   </span>
                 )}
@@ -698,13 +705,13 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveTab("projects")}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-lg font-medium text-[13px] transition-all text-left ${
+                className={`shrink-0 md:w-full flex items-center justify-between gap-3 px-3.5 py-2.5 sm:py-3 rounded-lg font-medium text-[12px] sm:text-[13px] transition-all text-left whitespace-nowrap ${
                   activeTab === "projects"
                     ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
                     : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <FolderKanban className={`w-4 h-4 ${activeTab === "projects" ? "text-[#00C2FF]" : "text-slate-400"}`} />
                   <span>Portfolio Projets</span>
                 </div>
@@ -713,13 +720,13 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveTab("articles")}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-lg font-medium text-[13px] transition-all text-left ${
+                className={`shrink-0 md:w-full flex items-center justify-between gap-3 px-3.5 py-2.5 sm:py-3 rounded-lg font-medium text-[12px] sm:text-[13px] transition-all text-left whitespace-nowrap ${
                   activeTab === "articles"
                     ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
                     : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <FileText className={`w-4 h-4 ${activeTab === "articles" ? "text-[#00C2FF]" : "text-slate-400"}`} />
                   <span>Actualités</span>
                 </div>
@@ -727,29 +734,14 @@ export default function DashboardPage() {
               </button>
 
               <button
-                onClick={() => setActiveTab("equipments")}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-lg font-medium text-[13px] transition-all text-left ${
-                  activeTab === "equipments"
-                    ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
-                    : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Wrench className={`w-4 h-4 ${activeTab === "equipments" ? "text-[#00C2FF]" : "text-slate-400"}`} />
-                  <span>Équipements &amp; Engins</span>
-                </div>
-                <span className="text-[11px] font-mono text-slate-400">{equipments.length}</span>
-              </button>
-
-              <button
                 onClick={() => setActiveTab("users")}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-lg font-medium text-[13px] transition-all text-left ${
+                className={`shrink-0 md:w-full flex items-center justify-between gap-3 px-3.5 py-2.5 sm:py-3 rounded-lg font-medium text-[12px] sm:text-[13px] transition-all text-left whitespace-nowrap ${
                   activeTab === "users"
                     ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
                     : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <Users className={`w-4 h-4 ${activeTab === "users" ? "text-[#00C2FF]" : "text-slate-400"}`} />
                   <span>Utilisateurs Admins</span>
                 </div>
@@ -758,7 +750,7 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveTab("settings")}
-                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-lg font-medium text-[13px] transition-all text-left ${
+                className={`shrink-0 md:w-full flex items-center gap-2.5 px-3.5 py-2.5 sm:py-3 rounded-lg font-medium text-[12px] sm:text-[13px] transition-all text-left whitespace-nowrap ${
                   activeTab === "settings"
                     ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
                     : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
@@ -770,7 +762,7 @@ export default function DashboardPage() {
             </nav>
           </div>
 
-          <div className="mt-8 p-4 bg-[#0F3854]/70 border border-[#1E56A0]/40 rounded-lg text-left">
+          <div className="hidden md:block mt-8 p-4 bg-[#0F3854]/70 border border-[#1E56A0]/40 rounded-lg text-left">
             <div className="flex items-center gap-2 text-white font-bold text-[12px] uppercase tracking-wider">
               <Shield className="w-4 h-4 text-[#00C2FF]" />
               <span>Base Supabase</span>
@@ -782,7 +774,8 @@ export default function DashboardPage() {
         </aside>
 
         {/* MAIN EXECUTIVE DASHBOARD CONTENT */}
-        <main className="flex-1 bg-[#F8FAFC] p-6 md:p-10 overflow-y-auto">
+        <main className="flex-1 bg-[#F8FAFC] p-4 sm:p-6 md:p-8 overflow-y-auto w-full max-w-full">
+
           {/* SEARCH BAR & HEADER TOOLS */}
           <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <div className="relative flex-1">
@@ -1003,7 +996,16 @@ export default function DashboardPage() {
                             </span>
                           </div>
                         </div>
-                        <span className="text-[12px] text-slate-500 font-mono">{msg.created_at || "Récemment"}</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[12px] text-slate-500 font-mono">{msg.created_at || "Récemment"}</span>
+                          <button
+                            onClick={() => handleDeleteMessage(msg.id)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200"
+                            title="Supprimer ce message"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="grid sm:grid-cols-2 gap-4 text-[13px] text-[#0A2540] mb-4 bg-slate-50 p-3.5 rounded-lg border border-slate-200">
@@ -1845,79 +1847,82 @@ export default function DashboardPage() {
               {/* TABLEAU DE LISTE DES UTILISATEURS */}
               <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
                 {isLoadingUsers ? (
-                  <div className="p-12 text-center text-slate-500 font-mono text-[13px]">
+                  <div className="p-8 sm:p-12 text-center text-slate-500 font-mono text-[13px]">
                     Chargement des utilisateurs depuis la base Supabase...
                   </div>
                 ) : users.length === 0 ? (
-                  <div className="p-12 text-center text-slate-500">
+                  <div className="p-8 sm:p-12 text-center text-slate-500">
                     Aucun utilisateur trouvé dans la base de données.
                   </div>
                 ) : (
-                  <table className="w-full text-left text-[14px]">
-                    <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-mono uppercase text-slate-500">
-                      <tr>
-                        <th className="py-4 px-6">Utilisateur</th>
-                        <th className="py-4 px-6">Rôle</th>
-                        <th className="py-4 px-6">Statut</th>
-                        {currentUserRole === "super_admin" && <th className="py-4 px-6 text-right">Action</th>}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {users.map((u) => {
-                        const isSuperAdminRole = u.role === "super_admin";
-                        const isAdminRole = u.role === "admin";
-                        const nameDisplay = u.full_name || u.name || u.email;
-                        return (
-                          <tr key={u.id || u.email} className="hover:bg-slate-50 transition-colors">
-                            <td className="py-4 px-6">
-                              <div className="flex items-center gap-3">
-                                <div className={`w-9 h-9 ${isSuperAdminRole ? "bg-gradient-to-br from-[#0A2540] to-[#00C2FF]" : isAdminRole ? "bg-gradient-to-br from-[#0A2540] to-[#1E56A0]" : "bg-gradient-to-br from-[#1E293B] to-[#64748B]"} text-white flex items-center justify-center font-bold rounded-full shadow-xs`}>
-                                  {nameDisplay.charAt(0).toUpperCase()}
+                  <div className="overflow-x-auto w-full">
+                    <table className="w-full text-left text-[13px] sm:text-[14px] min-w-[550px]">
+                      <thead className="bg-slate-50 border-b border-slate-200 text-[10px] sm:text-[11px] font-mono uppercase text-slate-500">
+                        <tr>
+                          <th className="py-3 sm:py-4 px-3 sm:px-6">Utilisateur</th>
+                          <th className="py-3 sm:py-4 px-3 sm:px-6">Rôle</th>
+                          <th className="py-3 sm:py-4 px-3 sm:px-6">Statut</th>
+                          {currentUserRole === "super_admin" && <th className="py-3 sm:py-4 px-3 sm:px-6 text-right">Action</th>}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {users.map((u) => {
+                          const isSuperAdminRole = u.role === "super_admin";
+                          const isAdminRole = u.role === "admin";
+                          const nameDisplay = u.full_name || u.name || u.email;
+                          return (
+                            <tr key={u.id || u.email} className="hover:bg-slate-50 transition-colors">
+                              <td className="py-3 sm:py-4 px-3 sm:px-6">
+                                <div className="flex items-center gap-2.5 sm:gap-3">
+                                  <div className={`w-8 h-8 sm:w-9 sm:h-9 ${isSuperAdminRole ? "bg-gradient-to-br from-[#0A2540] to-[#00C2FF]" : isAdminRole ? "bg-gradient-to-br from-[#0A2540] to-[#1E56A0]" : "bg-gradient-to-br from-[#1E293B] to-[#64748B]"} text-white flex items-center justify-center font-bold rounded-full shadow-xs shrink-0 text-[13px]`}>
+                                    {nameDisplay.charAt(0).toUpperCase()}
+                                  </div>
+                                  <div>
+                                    <p className="font-bold text-[#0A2540] text-[13px] sm:text-[14px]">{nameDisplay}</p>
+                                    <p className="text-[11px] sm:text-[12px] text-slate-500 font-mono">{u.email}</p>
+                                  </div>
                                 </div>
-                                <div>
-                                  <p className="font-bold text-[#0A2540]">{nameDisplay}</p>
-                                  <p className="text-[12px] text-slate-500 font-mono">{u.email}</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="py-4 px-6">
-                              {isSuperAdminRole ? (
-                                <span className="inline-block px-3 py-1 font-mono text-[11px] font-bold uppercase rounded-xs bg-[#0A2540] text-[#00C2FF] border border-[#00C2FF]/30 shadow-xs">
-                                  PDG / Super Admin
-                                </span>
-                              ) : isAdminRole ? (
-                                <span className="inline-block px-3 py-1 font-mono text-[11px] font-bold uppercase rounded-xs bg-[#1E56A0]/15 text-[#1E56A0] border border-[#1E56A0]/30">
-                                  Administrateur
-                                </span>
-                              ) : (
-                                <span className="inline-block px-3 py-1 font-mono text-[11px] font-bold uppercase rounded-xs bg-slate-100 text-slate-700 border border-slate-300">
-                                  Éditeur / Agent
-                                </span>
-                              )}
-                            </td>
-                            <td className="py-4 px-6">
-                              <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 font-semibold">
-                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> {u.status === "inactive" ? "Inactif" : "Actif"}
-                              </span>
-                            </td>
-                            {currentUserRole === "super_admin" && (
-                              <td className="py-4 px-6 text-right">
-                                <button
-                                  onClick={() => handleDeleteUser(u)}
-                                  className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
-                                  title="Supprimer l'utilisateur"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
                               </td>
-                            )}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                              <td className="py-3 sm:py-4 px-3 sm:px-6">
+                                {isSuperAdminRole ? (
+                                  <span className="inline-block px-2.5 py-1 font-mono text-[10px] sm:text-[11px] font-bold uppercase rounded-xs bg-[#0A2540] text-[#00C2FF] border border-[#00C2FF]/30 shadow-xs whitespace-nowrap">
+                                    PDG / Super Admin
+                                  </span>
+                                ) : isAdminRole ? (
+                                  <span className="inline-block px-2.5 py-1 font-mono text-[10px] sm:text-[11px] font-bold uppercase rounded-xs bg-[#1E56A0]/15 text-[#1E56A0] border border-[#1E56A0]/30 whitespace-nowrap">
+                                    Administrateur
+                                  </span>
+                                ) : (
+                                  <span className="inline-block px-2.5 py-1 font-mono text-[10px] sm:text-[11px] font-bold uppercase rounded-xs bg-slate-100 text-slate-700 border border-slate-300 whitespace-nowrap">
+                                    Éditeur / Agent
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-3 sm:py-4 px-3 sm:px-6">
+                                <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs text-emerald-600 font-semibold whitespace-nowrap">
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> {u.status === "inactive" ? "Inactif" : "Actif"}
+                                </span>
+                              </td>
+                              {currentUserRole === "super_admin" && (
+                                <td className="py-3 sm:py-4 px-3 sm:px-6 text-right">
+                                  <button
+                                    onClick={() => handleDeleteUser(u)}
+                                    className="p-1.5 sm:p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                                    title="Supprimer l'utilisateur"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
+
             </div>
           )}
 

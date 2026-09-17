@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { href: "/", label: "Accueil" },
   { href: "/services", label: "Nos Métiers" },
   { href: "/realisations", label: "Réalisations" },
-  { href: "/equipements", label: "Vente & Location" },
+  { href: "/equipements", label: "Nos Équipements" },
   { href: "/actualites", label: "Actualités" },
   { href: "/contact", label: "Contact" },
 ];

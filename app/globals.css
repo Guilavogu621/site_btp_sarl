@@ -163,6 +163,44 @@
   opacity: 1;
 }
 
+/* STITCH CARD DARK VARIANT */
+.card-stitch-dark {
+  background: rgba(15, 56, 84, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(41, 94, 168, 0.6);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.card-stitch-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, transparent, transparent);
+  transition: background 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+.card-stitch-dark:hover {
+  border-color: #00C2FF;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 35px rgba(0, 194, 255, 0.25);
+}
+
+.card-stitch-dark:hover::before {
+  background: linear-gradient(to right, #00C2FF, #295EA8 50%, #00C2FF);
+}
+
 /* ============================
    ICON BOX — STITCH
    ============================ */

@@ -5,12 +5,13 @@ import Link from "next/link";
 import {
   ArrowRight, Ruler, Calculator, HardHat, Building2,
   ShieldCheck, Target, Award, Users, ChevronRight, CheckCircle2, ArrowUpRight,
-  Camera, Maximize2, X
+  Camera, Maximize2, X, Wrench
 } from "lucide-react";
 import StatsCounter from "@/components/StatsCounter";
 import ContactForm from "@/components/ContactForm";
 import ContactInfo from "@/components/ContactInfo";
-import { initialServices, initialProjects, initialStats, initialProcessSteps, initialSiteSettings, initialTeamMembers } from "@/lib/data";
+import TeamMemberModal from "@/components/TeamMemberModal";
+import { initialServices, initialProjects, initialStats, initialProcessSteps, initialSiteSettings, initialTeamMembers, initialEquipments } from "@/lib/data";
 import { getInitials } from "@/lib/utils";
 
 export default function HomePage() {
@@ -18,6 +19,7 @@ export default function HomePage() {
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
   const [selectedGalleryCategory, setSelectedGalleryCategory] = useState("all");
   const [activeLightboxImage, setActiveLightboxImage] = useState(null);
+  const [selectedTeamMember, setSelectedTeamMember] = useState(null);
 
   const heroSlides = [
     {
@@ -41,9 +43,9 @@ export default function HomePage() {
       tag: "INGÉNIERIE SPÉCIALE • KIPÉ"
     },
     {
-      image: "/img/showcase/architecture-africaine.webp",
-      title: "Architecture Bioclimatique",
-      tag: "PATRIMOINE & MATÉRIAUX LOCAUX"
+      image: "/img/showcase/immeuble-r7-miniere.jpg",
+      title: "Immeuble R+7 — Minière",
+      tag: "BATIMENT COLLECTIF • RÉTÉ & HAUT STANDING"
     }
   ];
 
@@ -83,11 +85,11 @@ export default function HomePage() {
     },
     {
       id: 5,
-      title: "Architecture Bioclimatique Local",
-      category: "architecture",
-      categoryName: "Architecture & Patrimoine",
-      image: "/img/showcase/architecture-africaine.webp",
-      desc: "Intégration de motifs traditionnels géométriques et ventilation naturelle."
+      title: "Immeuble R+7 Haut Standing — Minière",
+      category: "gros-oeuvre",
+      categoryName: "Gros Œuvre & R+7",
+      image: "/img/showcase/immeuble-r7-miniere.jpg",
+      desc: "Réalisation complète d'un immeuble résidentiel R+7 haut standing à Minière."
     },
     {
       id: 6,
@@ -394,6 +396,97 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ===================== SECTION NOS ÉQUIPEMENTS (DESIGN STITCH) ===================== */}
+        <section id="equipements-section" className="py-24 bg-[#0A2540] text-white relative border-b border-[#295EA8]/30 blueprint-grid-dark overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 fade-in-up">
+              <div>
+                <span className="technical-badge technical-badge-vibrant mb-3">
+                  PARC ÉQUIPEMENTS &amp; MOYENS TECHNIQUES
+                </span>
+                <h2 className="font-display font-bold text-[34px] md:text-[44px] text-white mt-2">
+                  Nos Équipements de <span className="text-[#00C2FF]">Chantier.</span>
+                </h2>
+                <p className="font-sans text-[16px] text-slate-300 mt-3 max-w-xl">
+                  Le Groupe Best Builders détient en propre un parc d&apos;équipements modernes certifiés pour assurer l&apos;exécution parfaite et la sécurité de tous vos ouvrages.
+                </p>
+              </div>
+
+              <div className="mt-6 md:mt-0">
+                <Link
+                  href="/equipements"
+                  className="inline-flex items-center gap-2 px-7 py-4 bg-[#00C2FF] text-[#000F22] hover:bg-white font-display font-extrabold text-[13px] uppercase tracking-wider rounded-xs transition-all shadow-lg group border border-[#00C2FF]"
+                >
+                  <span>Explorer le parc complet</span>
+                  <ArrowRight className="w-4 h-4 text-[#000F22] group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Grille des 4 Équipements avec Style Stitch */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {initialEquipments.slice(0, 4).map((item, idx) => {
+                const equipmentCodes = ["EQ-01", "EQ-02", "EQ-03", "EQ-04"];
+
+                return (
+                  <div
+                    key={item.id}
+                    className="card-stitch-dark border border-[#295EA8]/60 hover:border-[#00C2FF] rounded-xs overflow-hidden shadow-2xl transition-all duration-300 flex flex-col justify-between group"
+                  >
+                    <div>
+                      {/* Image avec Overlay & Badge Code Technique */}
+                      <div className="relative h-52 w-full overflow-hidden bg-[#0A2540] border-b border-[#295EA8]/50">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-cover opacity-95 transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-90" />
+
+                        {/* Badges Code & Catégorie */}
+                        <div className="absolute top-3 left-3 flex items-center gap-2">
+                          <span className="px-2.5 py-1 bg-[#0A2540]/95 border border-[#00C2FF]/60 text-[#00C2FF] font-mono text-[10px] font-extrabold rounded-xs shadow-md">
+                            {equipmentCodes[idx]}
+                          </span>
+                        </div>
+
+                        <span className="absolute bottom-3 left-3 font-mono text-[10px] font-black uppercase tracking-wider text-[#000F22] bg-[#00C2FF] px-2.5 py-1 rounded-xs shadow-md">
+                          MATÉRIEL CHANTIER
+                        </span>
+                      </div>
+
+                      {/* Contenu Texte Haute Lisibilité */}
+                      <div className="p-5">
+                        <span className="font-mono text-[11px] text-[#00C2FF] uppercase font-bold tracking-wider block mb-1.5">
+                          {item.category}
+                        </span>
+
+                        <h3 className="font-display font-extrabold text-[17px] text-white group-hover:text-[#00C2FF] transition-colors leading-snug mb-3 drop-shadow-sm">
+                          {item.title}
+                        </h3>
+
+                        <p className="font-sans text-[13px] text-slate-200 font-normal line-clamp-3 leading-relaxed mb-4 opacity-95">
+                          {item.specs}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-5 pt-0">
+                      <div className="pt-3 border-t border-[#295EA8]/50 flex items-center justify-between font-mono text-[11px]">
+                        <span className="text-slate-300 font-medium">Statut Chantier :</span>
+                        <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                          Actif sur site
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         {/* ===================== GROUPE ABOUT SECTION ===================== */}
         <section id="groupe" className="py-24 bg-[#F7F9FF] blueprint-grid border-b border-[#C4C6CE] relative">
           <div className="max-w-6xl mx-auto px-6">
@@ -449,14 +542,14 @@ export default function HomePage() {
                     <span className="w-2 h-2 rounded-full bg-[#00C2FF] animate-pulse" />
                   </div>
 
-                  <div className="relative h-64 w-full rounded-xs overflow-hidden border border-[#295EA8]/40 mb-6">
+                  <div className="relative h-64 w-full rounded-xs overflow-hidden border border-[#00C2FF]/40 mb-6 shadow-lg">
                     <img
-                      src="/img/showcase/architecte-bureau.png"
+                      src="/img/showcase/complexes-modernes.webp"
                       alt="Bureau d'études Best Builders"
-                      className="w-full h-full object-cover grayscale contrast-125"
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-80" />
-                    <span className="absolute bottom-3 left-3 font-mono text-[10px] text-[#00C2FF] font-semibold bg-[#0A2540]/90 px-2 py-1 rounded-xs border border-[#00C2FF]/30">
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/30 to-transparent opacity-85" />
+                    <span className="absolute bottom-3 left-3 font-mono text-[10px] text-[#00C2FF] font-bold bg-[#0A2540]/95 px-3 py-1 rounded-xs border border-[#00C2FF]/40 shadow-md uppercase tracking-wider">
                       INGÉNIERIE &amp; CALCULS DE STRUCTURES
                     </span>
                   </div>
@@ -526,14 +619,22 @@ export default function HomePage() {
                     &ldquo;{initialTeamMembers[0].quote || "Notre ambition fondamentale est de bâtir des ouvrages d'excellence en Guinée, en associant la rigueur scientifique d'un bureau d'études de pointe et la maîtrise parfaite des réalités de nos chantiers."}&rdquo;
                   </blockquote>
 
-                  {/* Bouton DÉCOUVRIR */}
-                  <Link
-                    href="/a-propos#mot-du-president"
-                    className="inline-flex items-center justify-center px-8 py-4 bg-[#0A2540] text-white font-display font-bold text-[13px] uppercase tracking-widest hover:bg-[#295EA8] hover:shadow-lg transition-all rounded-xs group"
-                  >
-                    <span>DÉCOUVRIR</span>
-                    <ArrowRight className="ml-2 w-4 h-4 text-[#00C2FF] group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                  {/* Boutons DÉCOUVRIR & VOIR LA FICHE */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      onClick={() => setSelectedTeamMember(initialTeamMembers[0])}
+                      className="inline-flex items-center justify-center px-6 py-3.5 bg-[#0A2540] text-white font-display font-bold text-[13px] uppercase tracking-widest hover:bg-[#295EA8] hover:shadow-lg transition-all rounded-xs group cursor-pointer"
+                    >
+                      <span>VOIR LE PROFIL</span>
+                      <ArrowRight className="ml-2 w-4 h-4 text-[#00C2FF] group-hover:translate-x-1 transition-transform" />
+                    </button>
+                    <Link
+                      href="/a-propos#mot-du-president"
+                      className="inline-flex items-center justify-center px-6 py-3.5 bg-[#F1F4F7] border border-[#C4C6CE] text-[#0A2540] font-display font-bold text-[13px] uppercase tracking-wider hover:bg-white hover:border-[#0A2540] transition-all rounded-xs"
+                    >
+                      <span>EN SAVOIR PLUS</span>
+                    </Link>
+                  </div>
                 </div>
 
               </div>
@@ -550,11 +651,12 @@ export default function HomePage() {
                 </h3>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {initialTeamMembers.slice(1).map((member) => (
                   <div
                     key={member.id}
-                    className="card-stitch text-center p-6 flex flex-col justify-between group fade-in-up hover:border-[#0A2540] transition-all bg-white"
+                    onClick={() => setSelectedTeamMember(member)}
+                    className="card-stitch text-center p-6 flex flex-col justify-between group fade-in-up hover:border-[#0A2540] transition-all bg-white cursor-pointer shadow-xs hover:shadow-md"
                   >
                     <div>
                       <div className="relative mx-auto mb-4">
@@ -578,15 +680,30 @@ export default function HomePage() {
                       </h4>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-[#C4C6CE]/60">
-                      <span className="font-mono text-[11px] text-[#295EA8] font-semibold uppercase tracking-wider block mb-1">
-                        {member.role}
-                      </span>
-                      {member.quote && (
-                        <p className="font-sans text-[12px] text-[#5B6B7A] italic line-clamp-2 mt-1">
-                          &ldquo;{member.quote}&rdquo;
-                        </p>
-                      )}
+                    <div className="mt-4 pt-3 border-t border-[#C4C6CE]/60 flex flex-col justify-between h-full">
+                      <div>
+                        <span className="font-mono text-[11px] text-[#295EA8] font-semibold uppercase tracking-wider block mb-1">
+                          {member.role}
+                        </span>
+                        {member.quote && (
+                          <p className="font-sans text-[12px] text-[#5B6B7A] italic line-clamp-2 mt-1 mb-3">
+                            &ldquo;{member.quote}&rdquo;
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Bouton cliquable "Voir la fiche" */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedTeamMember(member);
+                        }}
+                        className="w-full mt-3 py-2 px-3 bg-[#F1F4F7] group-hover:bg-[#0A2540] text-[#0A2540] group-hover:text-[#00C2FF] font-mono font-bold text-[11px] uppercase tracking-wider rounded-xs border border-[#C4C6CE] group-hover:border-[#0A2540] transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <span>VOIR LA FICHE</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -775,6 +892,12 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* MODALE PROFIL ÉQUIPE */}
+      <TeamMemberModal
+        member={selectedTeamMember}
+        onClose={() => setSelectedTeamMember(null)}
+      />
     </div>
   );
 }
