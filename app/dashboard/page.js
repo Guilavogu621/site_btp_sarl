@@ -54,6 +54,7 @@ import {
 } from "@/lib/data";
 import { sanitizeText } from "@/lib/security";
 import { supabase } from "@/lib/supabase";
+import { compressImage } from "@/lib/utils";
 
 export default function DashboardPage() {
 
@@ -555,13 +556,14 @@ export default function DashboardPage() {
   const handleImageFileChange = (e, callback) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert("La taille de la photo ne doit pas dépasser 5 Mo.");
+      if (file.size > 10 * 1024 * 1024) {
+        alert("La taille de la photo ne doit pas dépasser 10 Mo.");
         return;
       }
       const reader = new FileReader();
-      reader.onloadend = () => {
-        callback(reader.result);
+      reader.onloadend = async () => {
+        const compressed = await compressImage(reader.result, 1200, 1200, 0.75);
+        callback(compressed);
       };
       reader.readAsDataURL(file);
     }
@@ -575,8 +577,8 @@ export default function DashboardPage() {
     let processed = 0;
 
     files.forEach((file) => {
-      if (file.size > 5 * 1024 * 1024) {
-        alert(`Le fichier "${file.name}" dépasse 5 Mo et sera ignoré.`);
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`Le fichier "${file.name}" dépasse 10 Mo et sera ignoré.`);
         processed++;
         if (processed === files.length && readFiles.length > 0) {
           callback(readFiles);
@@ -585,8 +587,9 @@ export default function DashboardPage() {
       }
 
       const reader = new FileReader();
-      reader.onloadend = () => {
-        readFiles.push(reader.result);
+      reader.onloadend = async () => {
+        const compressed = await compressImage(reader.result, 1200, 1200, 0.75);
+        readFiles.push(compressed);
         processed++;
         if (processed === files.length) {
           callback(readFiles);
