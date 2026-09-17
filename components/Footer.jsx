@@ -97,11 +97,9 @@ export default function Footer() {
           <div className="space-y-2 text-[12px] text-slate-300 font-sans mb-4 bg-white/5 p-3 rounded-xs border border-white/10">
             <p><strong className="text-[#00C2FF]">Raison sociale :</strong> Best Builders SARLU</p>
             <p><strong className="text-[#00C2FF]">Forme :</strong> SARL Unipersonnelle</p>
-            {/* TODO CLIENT: fournir le n° RCCM officiel */}
-            <p className="font-mono text-[11px]"><strong className="text-[#00C2FF]">RCCM :</strong> GN.TCC.2024.B.XXXX (à valider)</p>
-            {/* TODO CLIENT: fournir le n° NIF officiel */}
-            <p className="font-mono text-[11px]"><strong className="text-[#00C2FF]">NIF :</strong> NIF-XXXXXXX (à valider)</p>
-            <p><strong className="text-[#00C2FF]">Siège :</strong> Kipé, Conakry, Guinée</p>
+            <p className="font-mono text-[11px]"><strong className="text-[#00C2FF]">RCCM :</strong> GN.TCC.2024.B.12454</p>
+            <p className="font-mono text-[11px]"><strong className="text-[#00C2FF]">NIF :</strong> 802569368</p>
+            <p><strong className="text-[#00C2FF]">Siège :</strong> Ratoma / Kipé, Conakry, Guinée</p>
           </div>
           <div className="inline-block px-2.5 py-1 bg-[#295EA8]/20 border border-[#295EA8]/40 rounded-xs font-mono text-[10px] text-[#00C2FF] uppercase tracking-wider font-semibold">
             Bureau d&apos;études &amp; entreprise de construction — Conakry

@@ -27,14 +27,15 @@ export default function MentionsLegalesPage() {
             <ul className="list-disc pl-6 space-y-2 bg-[#F1F4F7] p-4 rounded-xs border border-[#C4C6CE]/60 font-mono text-[13px]">
               <li><strong>Dénomination Sociale :</strong> Best Builders SARLU</li>
               <li><strong>Forme Juridique :</strong> Société à Responsabilité Limitée Unipersonnelle (SARLU)</li>
-              <li><strong>Siège Social :</strong> Conakry, Quartier Kipé, République de Guinée</li>
-              <li><strong>Téléphone :</strong> +224 614 60 60 79</li>
+              <li><strong>Siège Social :</strong> Quartier Ratoma / Kipé, Conakry, République de Guinée</li>
+              <li><strong>Téléphone :</strong> +224 614 60 60 79 / +224 621 37 51 85</li>
               <li><strong>Email :</strong> contact@bestbuilders224.com</li>
-              {/* TODO CLIENT: Fournir le numéro RCCM officiel */}
-              <li><strong>RCCM :</strong> GN.TCC.2024.B.XXXX {/* TODO CLIENT: Renseigner le numéro RCCM définitif */}</li>
-              {/* TODO CLIENT: Fournir le numéro NIF officiel */}
-              <li><strong>NIF :</strong> NIF-XXXXXXX {/* TODO CLIENT: Renseigner le numéro NIF définitif */}</li>
-              <li><strong>Directeur de la Publication :</strong> Ing. Koivogui Jeannot Selé (Gérant / PDG)</li>
+              <li><strong>N° RCCM (Entreprise) :</strong> GN.TCC.2024.B.12454</li>
+              <li><strong>N° Formalité RCCM :</strong> GN.TCC.2024.13958</li>
+              <li><strong>N° Identification Fiscale (NIF) :</strong> 802569368</li>
+              <li><strong>Date d&apos;immatriculation :</strong> 20 Septembre 2024</li>
+              <li><strong>Juridiction / Greffe :</strong> Tribunal de Commerce de Conakry (Cour d&apos;Appel de Conakry)</li>
+              <li><strong>Gérant / PDG :</strong> M. Jeannot Koivogui</li>
             </ul>
           </div>
         </div>
