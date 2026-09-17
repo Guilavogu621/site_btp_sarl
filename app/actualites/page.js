@@ -40,78 +40,89 @@ export default function BlogPage() {
 
       <div className="max-w-6xl mx-auto px-6">
         {/* Articles Grid */}
-        <div className="grid sm:grid-cols-2 gap-8">
-          {articles.map((article) => {
-            const youtubeEmbed = getYouTubeEmbedUrl(article.video_url);
-            const isVideoFile = article.video_url && !youtubeEmbed;
-            const hasVideo = Boolean(article.video_url);
+        {articles.length === 0 ? (
+          <div className="bg-white p-12 text-center border border-[#C4C6CE] text-[#5B6B7A] rounded-sm shadow-sm space-y-3">
+            <h3 className="font-display font-bold text-[20px] text-[#0A2540]">
+              Aucun article publié pour le moment
+            </h3>
+            <p className="font-sans text-[14px] text-[#5B6B7A] max-w-lg mx-auto">
+              Les actualités, conseils d&apos;ingénierie et suivis de chantiers du bureau d&apos;études seront bientôt publiés par notre équipe.
+            </p>
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-8">
+            {articles.map((article) => {
+              const youtubeEmbed = getYouTubeEmbedUrl(article.video_url);
+              const isVideoFile = article.video_url && !youtubeEmbed;
+              const hasVideo = Boolean(article.video_url);
 
-            return (
-              <div
-                key={article.id}
-                className="card-stitch flex flex-col h-full group cursor-pointer"
-                onClick={() => setSelectedArticle(article)}
-              >
-                {/* Media Header */}
-                <div className="h-60 bg-[#0A2540] flex items-center justify-center relative overflow-hidden border-b border-[#C4C6CE] blueprint-grid-dark">
-                  {youtubeEmbed ? (
-                    <iframe
-                      src={youtubeEmbed}
-                      title={article.title}
-                      className="w-full h-full object-cover border-0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  ) : isVideoFile ? (
-                    <video
-                      src={article.video_url}
-                      controls
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <img
-                      src={article.image || "/img/logo.png"}
-                      alt={article.title}
-                      className="max-h-40 w-auto object-contain opacity-95 group-hover:scale-105 transition-transform duration-500 bg-white/95 p-3 rounded-xs shadow-md border border-[#00C2FF]/30"
-                    />
-                  )}
+              return (
+                <div
+                  key={article.id}
+                  className="card-stitch flex flex-col h-full group cursor-pointer"
+                  onClick={() => setSelectedArticle(article)}
+                >
+                  {/* Media Header */}
+                  <div className="h-60 bg-[#0A2540] flex items-center justify-center relative overflow-hidden border-b border-[#C4C6CE] blueprint-grid-dark">
+                    {youtubeEmbed ? (
+                      <iframe
+                        src={youtubeEmbed}
+                        title={article.title}
+                        className="w-full h-full object-cover border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    ) : isVideoFile ? (
+                      <video
+                        src={article.video_url}
+                        controls
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img
+                        src={article.image || "/img/logo.png"}
+                        alt={article.title}
+                        className="max-h-40 w-auto object-contain opacity-95 group-hover:scale-105 transition-transform duration-500 bg-white/95 p-3 rounded-xs shadow-md border border-[#00C2FF]/30"
+                      />
+                    )}
 
-                  {hasVideo && (
-                    <div className="absolute top-3 right-3 bg-[#00C2FF] text-[#0A2540] font-mono text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md flex items-center gap-1.5">
-                      <Video className="w-3.5 h-3.5 fill-[#0A2540]" />
-                      <span>Vidéo</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="p-8 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-2 font-mono text-[11px] text-[#295EA8] font-semibold uppercase mb-3 bg-[#F1F4F7] px-2.5 py-1 border border-[#C4C6CE] rounded-xs inline-flex">
-                      <Calendar className="w-3.5 h-3.5 text-[#00C2FF]" />
-                      <span>{article.published_at}</span>
-                    </div>
-
-                    <h2 className="font-display font-bold text-[22px] text-[#0A2540] leading-snug mb-4 group-hover:text-[#295EA8] transition-colors">
-                      {article.title}
-                    </h2>
-
-                    <p className="font-sans text-[15px] text-[#334155] leading-relaxed mb-6 line-clamp-3">
-                      {article.content}
-                    </p>
+                    {hasVideo && (
+                      <div className="absolute top-3 right-3 bg-[#00C2FF] text-[#0A2540] font-mono text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md flex items-center gap-1.5">
+                        <Video className="w-3.5 h-3.5 fill-[#0A2540]" />
+                        <span>Vidéo</span>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="pt-4 border-t border-[#C4C6CE] mt-auto">
-                    <span className="inline-flex items-center font-display font-semibold text-[13px] uppercase tracking-wider text-[#0A2540] group-hover:text-[#295EA8] transition-colors">
-                      <span>{hasVideo ? "Regarder la vidéo &amp; lire" : "Lire l'article complet"}</span>
-                      <ArrowRight className="w-4 h-4 ml-2 text-[#00C2FF] transition-transform group-hover:translate-x-1.5" />
-                    </span>
+                  {/* Content */}
+                  <div className="p-8 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 font-mono text-[11px] text-[#295EA8] font-semibold uppercase mb-3 bg-[#F1F4F7] px-2.5 py-1 border border-[#C4C6CE] rounded-xs inline-flex">
+                        <Calendar className="w-3.5 h-3.5 text-[#00C2FF]" />
+                        <span>{article.published_at}</span>
+                      </div>
+
+                      <h2 className="font-display font-bold text-[22px] text-[#0A2540] leading-snug mb-4 group-hover:text-[#295EA8] transition-colors">
+                        {article.title}
+                      </h2>
+
+                      <p className="font-sans text-[15px] text-[#334155] leading-relaxed mb-6 line-clamp-3">
+                        {article.content}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 border-t border-[#C4C6CE] mt-auto">
+                      <span className="inline-flex items-center font-display font-semibold text-[13px] uppercase tracking-wider text-[#0A2540] group-hover:text-[#295EA8] transition-colors">
+                        <span>{hasVideo ? "Regarder la vidéo &amp; lire" : "Lire l'article complet"}</span>
+                        <ArrowRight className="w-4 h-4 ml-2 text-[#00C2FF] transition-transform group-hover:translate-x-1.5" />
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Article Detail Modal */}

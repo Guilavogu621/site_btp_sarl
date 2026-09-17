@@ -95,7 +95,8 @@ export default function DashboardPage() {
     location: "Conakry",
     surface: "1 000 m²",
     duration: "12 mois",
-    photo_before: "/img/logo.png"
+    photo_before: "/img/logo.png",
+    photos: []
   });
 
   // Edit states for projects
@@ -318,6 +319,10 @@ export default function DashboardPage() {
 
   const handleAddProject = async (e) => {
     e.preventDefault();
+    const projectPhotos = (newProject.photos && newProject.photos.length > 0)
+      ? newProject.photos
+      : (newProject.photo_before ? [newProject.photo_before] : ["/img/logo.png"]);
+
     const projectPayload = {
       title: sanitizeText(newProject.title),
       category: newProject.category,
@@ -325,7 +330,9 @@ export default function DashboardPage() {
       location: sanitizeText(newProject.location),
       surface: sanitizeText(newProject.surface),
       duration: sanitizeText(newProject.duration),
-      photo_before: newProject.photo_before || "/img/logo.png",
+      photo_before: projectPhotos[0] || "/img/logo.png",
+      photo_after: projectPhotos[1] || "",
+      photos: projectPhotos,
       slug: newProject.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
     };
 
@@ -339,9 +346,10 @@ export default function DashboardPage() {
       location: "Conakry",
       surface: "1 000 m²",
       duration: "12 mois",
-      photo_before: "/img/logo.png"
+      photo_before: "/img/logo.png",
+      photos: []
     });
-    triggerSuccess("Projet publié sur la base de données Supabase !");
+    triggerSuccess("Projet publié avec la galerie multi-photos !");
   };
 
   const handleDeleteProject = async (id) => {
@@ -354,12 +362,23 @@ export default function DashboardPage() {
 
   const handleEditProject = (project) => {
     setEditingProjectId(project.id);
-    setEditingProject({ ...project });
+    const existingPhotos = project.photos && project.photos.length > 0
+      ? [...project.photos]
+      : [project.photo_before, project.photo_after].filter(Boolean);
+
+    setEditingProject({
+      ...project,
+      photos: existingPhotos.length > 0 ? existingPhotos : ["/img/logo.png"]
+    });
     setShowAddProject(false);
   };
 
   const handleUpdateProject = async (e) => {
     e.preventDefault();
+    const projectPhotos = (editingProject.photos && editingProject.photos.length > 0)
+      ? editingProject.photos
+      : (editingProject.photo_before ? [editingProject.photo_before] : ["/img/logo.png"]);
+
     const payload = {
       title: sanitizeText(editingProject.title),
       category: editingProject.category,
@@ -367,13 +386,15 @@ export default function DashboardPage() {
       location: sanitizeText(editingProject.location),
       surface: sanitizeText(editingProject.surface),
       duration: sanitizeText(editingProject.duration),
-      photo_before: editingProject.photo_before || "/img/logo.png"
+      photo_before: projectPhotos[0] || "/img/logo.png",
+      photo_after: projectPhotos[1] || "",
+      photos: projectPhotos
     };
     const updated = await updateProject(editingProjectId, payload);
     setProjects((prev) => prev.map((p) => (p.id === editingProjectId ? { ...p, ...updated } : p)));
     setEditingProjectId(null);
     setEditingProject(null);
-    triggerSuccess("Projet mis à jour avec succès !");
+    triggerSuccess("Projet et sa galerie mis à jour avec succès !");
   };
 
   const handleAddArticle = async (e) => {
@@ -544,6 +565,35 @@ export default function DashboardPage() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleMultipleImagesChange = (e, callback) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (files.length === 0) return;
+
+    const readFiles = [];
+    let processed = 0;
+
+    files.forEach((file) => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`Le fichier "${file.name}" dépasse 5 Mo et sera ignoré.`);
+        processed++;
+        if (processed === files.length && readFiles.length > 0) {
+          callback(readFiles);
+        }
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        readFiles.push(reader.result);
+        processed++;
+        if (processed === files.length) {
+          callback(readFiles);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleVideoFileChange = (e, callback) => {
@@ -1128,45 +1178,141 @@ export default function DashboardPage() {
                     />
                   </div>
                   
-                  {/* Photo Selection / Upload Field for Project */}
-                  <div>
-                    <label className="block text-[12px] font-bold uppercase tracking-wider text-[#0A2540] mb-2 flex items-center gap-2">
-                      <ImageIcon className="w-4 h-4 text-[#1E56A0]" /> Photo / Illustration du projet
+                  {/* Galerie Multi-Photos du projet */}
+                  <div className="space-y-3">
+                    <label className="block text-[12px] font-bold uppercase tracking-wider text-[#0A2540] flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-[#1E56A0]" /> Galerie photos du projet ({newProject.photos?.length || 0} photo{(newProject.photos?.length || 0) > 1 ? "s" : ""})
+                      </span>
+                      <span className="text-[11px] font-normal text-slate-500 font-mono">
+                        Sélectionnez plusieurs photos à la fois
+                      </span>
                     </label>
-                    <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 border border-slate-300 rounded-lg">
-                      <label className="cursor-pointer px-4 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-md flex items-center gap-2 transition-colors shrink-0">
+
+                    <div className="flex flex-col sm:flex-row items-center gap-3 bg-slate-50 p-4 border border-slate-300 rounded-lg">
+                      <label className="cursor-pointer px-4 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-md flex items-center gap-2 transition-colors shrink-0 shadow-xs">
                         <Upload className="w-4 h-4 text-[#00C2FF]" />
-                        <span>Choisir une photo (Ordinateur / Téléphone)</span>
+                        <span>Choisir plusieurs photos (PC / Téléphone)</span>
                         <input
                           type="file"
                           accept="image/*"
+                          multiple
                           className="hidden"
-                          onChange={(e) => handleImageFileChange(e, (base64) => setNewProject({ ...newProject, photo_before: base64 }))}
+                          onChange={(e) =>
+                            handleMultipleImagesChange(e, (newBase64s) => {
+                              const current = newProject.photos || [];
+                              const updated = [...current, ...newBase64s];
+                              setNewProject({
+                                ...newProject,
+                                photos: updated,
+                                photo_before: updated[0] || newProject.photo_before
+                              });
+                            })
+                          }
                         />
                       </label>
                       <span className="text-[12px] text-slate-400 font-mono">ou</span>
-                      <input
-                        type="text"
-                        placeholder="Lien / URL d'image (ex: /img/logo.png)"
-                        value={newProject.photo_before}
-                        onChange={(e) => setNewProject({ ...newProject, photo_before: e.target.value })}
-                        className="flex-1 w-full p-2.5 bg-white border border-slate-200 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-md"
-                      />
+                      <div className="flex gap-2 flex-1 w-full">
+                        <input
+                          type="text"
+                          id="new-project-url-input"
+                          placeholder="Coller l'URL d'une photo (ex: /img/showcase/nom.jpg)"
+                          className="flex-1 w-full p-2.5 bg-white border border-slate-200 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-md"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const inputEl = document.getElementById("new-project-url-input");
+                            if (inputEl && inputEl.value.trim()) {
+                              const val = inputEl.value.trim();
+                              const current = newProject.photos || [];
+                              const updated = [...current, val];
+                              setNewProject({
+                                ...newProject,
+                                photos: updated,
+                                photo_before: updated[0] || newProject.photo_before
+                              });
+                              inputEl.value = "";
+                            }
+                          }}
+                          className="px-3 py-2.5 bg-[#1E56A0] hover:bg-[#0A2540] text-white font-bold text-[11px] uppercase tracking-wider rounded-md transition-colors shrink-0"
+                        >
+                          + Ajouter
+                        </button>
+                      </div>
                     </div>
-                    {newProject.photo_before && (
-                      <div className="mt-3 flex items-center gap-3 bg-slate-100 p-2.5 rounded-lg border border-slate-200">
-                        <img src={newProject.photo_before} alt="Aperçu" className="h-16 w-24 object-cover rounded-md border border-slate-300 bg-white" />
-                        <div className="text-[12px]">
-                          <p className="font-bold text-[#0A2540]">Aperçu de la photo du projet</p>
-                          <button
-                            type="button"
-                            onClick={() => setNewProject({ ...newProject, photo_before: "/img/logo.png" })}
-                            className="text-red-500 hover:underline text-[11px] mt-0.5"
-                          >
-                            Réinitialiser
-                          </button>
+
+                    {/* Grille d'aperçu des photos du projet */}
+                    {(newProject.photos && newProject.photos.length > 0) ? (
+                      <div className="space-y-2">
+                        <p className="text-[11px] font-mono text-[#0A2540] font-bold uppercase">
+                          Photos chargées pour ce projet ({newProject.photos.length}) :
+                        </p>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-100 p-3 rounded-lg border border-slate-200">
+                          {newProject.photos.map((photo, idx) => (
+                            <div key={idx} className="relative bg-white p-1.5 rounded-md border border-slate-300 shadow-xs flex flex-col items-center">
+                              <div className="h-24 w-full overflow-hidden rounded-xs relative bg-slate-900">
+                                <img src={photo} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                                {idx === 0 && (
+                                  <span className="absolute top-1 left-1 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] px-1.5 py-0.5 rounded-xs font-bold uppercase shadow-xs">
+                                    ★ Couverture
+                                  </span>
+                                )}
+                              </div>
+                              <div className="w-full mt-2 flex items-center justify-between gap-1">
+                                {idx !== 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const reordered = [photo, ...newProject.photos.filter((_, i) => i !== idx)];
+                                      setNewProject({
+                                        ...newProject,
+                                        photos: reordered,
+                                        photo_before: reordered[0]
+                                      });
+                                    }}
+                                    className="text-[10px] text-[#1E56A0] hover:underline font-mono font-bold"
+                                    title="Définir comme photo principale de couverture"
+                                  >
+                                    ★ Couverture
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = newProject.photos.filter((_, i) => i !== idx);
+                                    setNewProject({
+                                      ...newProject,
+                                      photos: updated,
+                                      photo_before: updated[0] || "/img/logo.png"
+                                    });
+                                  }}
+                                  className="text-red-500 hover:text-red-700 text-[11px] font-bold ml-auto"
+                                  title="Supprimer cette photo"
+                                >
+                                  ✕ Supprimer
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
+                    ) : (
+                      newProject.photo_before && newProject.photo_before !== "/img/logo.png" && (
+                        <div className="flex items-center gap-3 bg-slate-100 p-2.5 rounded-lg border border-slate-200">
+                          <img src={newProject.photo_before} alt="Aperçu" className="h-16 w-24 object-cover rounded-md border border-slate-300 bg-white" />
+                          <div className="text-[12px]">
+                            <p className="font-bold text-[#0A2540]">Photo principale unique</p>
+                            <button
+                              type="button"
+                              onClick={() => setNewProject({ ...newProject, photo_before: "/img/logo.png", photos: [] })}
+                              className="text-red-500 hover:underline text-[11px] mt-0.5"
+                            >
+                              Supprimer
+                            </button>
+                          </div>
+                        </div>
+                      )
                     )}
                   </div>
 
@@ -1225,20 +1371,64 @@ export default function DashboardPage() {
                           className="w-full p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
                         ></textarea>
 
-                        {/* Photo uploader in edit mode */}
-                        <div className="flex flex-col sm:flex-row items-center gap-3">
-                          <label className="cursor-pointer px-3 py-2 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[11px] font-bold uppercase tracking-wider rounded-md flex items-center gap-1.5 shrink-0">
-                            <Upload className="w-3.5 h-3.5 text-[#00C2FF]" />
-                            <span>Changer la photo</span>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => handleImageFileChange(e, (b64) => setEditingProject({ ...editingProject, photo_before: b64 }))}
-                            />
+                        {/* Gestionnaire multi-photos en mode édition */}
+                        <div className="space-y-2 pt-2 border-t border-slate-300">
+                          <label className="block text-[11px] font-bold uppercase tracking-wider text-[#0A2540] flex items-center justify-between">
+                            <span>Galerie photos ({editingProject.photos?.length || 0} photo{(editingProject.photos?.length || 0) > 1 ? "s" : ""})</span>
                           </label>
-                          {editingProject.photo_before && (
-                            <img src={editingProject.photo_before} alt="Aperçu" className="h-12 w-16 object-cover rounded-md border border-slate-300 bg-white" />
+                          <div className="flex items-center gap-2">
+                            <label className="cursor-pointer px-3 py-1.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[11px] font-bold uppercase tracking-wider rounded-md flex items-center gap-1.5 shrink-0">
+                              <Upload className="w-3.5 h-3.5 text-[#00C2FF]" />
+                              <span>+ Ajouter des photos</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                                onChange={(e) =>
+                                  handleMultipleImagesChange(e, (newBase64s) => {
+                                    const current = editingProject.photos || (editingProject.photo_before ? [editingProject.photo_before] : []);
+                                    const updated = [...current, ...newBase64s];
+                                    setEditingProject({
+                                      ...editingProject,
+                                      photos: updated,
+                                      photo_before: updated[0] || editingProject.photo_before
+                                    });
+                                  })
+                                }
+                              />
+                            </label>
+                          </div>
+
+                          {(editingProject.photos && editingProject.photos.length > 0) && (
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
+                              {editingProject.photos.map((photo, idx) => (
+                                <div key={idx} className="relative bg-white p-1 rounded-md border border-slate-300 flex flex-col items-center">
+                                  <div className="h-16 w-full overflow-hidden rounded-xs relative bg-slate-900">
+                                    <img src={photo} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                                    {idx === 0 && (
+                                      <span className="absolute top-0.5 left-0.5 bg-[#0A2540] text-[#00C2FF] font-mono text-[8px] px-1 py-0.2 rounded-xs font-bold uppercase">
+                                        ★ Couverture
+                                      </span>
+                                    )}
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = editingProject.photos.filter((_, i) => i !== idx);
+                                      setEditingProject({
+                                        ...editingProject,
+                                        photos: updated,
+                                        photo_before: updated[0] || "/img/logo.png"
+                                      });
+                                    }}
+                                    className="text-red-500 hover:text-red-700 text-[10px] font-bold mt-1"
+                                  >
+                                    ✕ Supprimer
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
                           )}
                         </div>
 

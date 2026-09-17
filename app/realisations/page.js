@@ -34,6 +34,7 @@ export default function PortfolioPage() {
   const [activeCategory, setActiveCategory] = useState("Tous les types");
   const [imageToggleState, setImageToggleState] = useState({}); // { [projectId]: 'after' | 'before' }
   const [activeLightboxProject, setActiveLightboxProject] = useState(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   // Charger les projets en temps réel depuis Supabase
   useEffect(() => {
@@ -152,8 +153,13 @@ export default function PortfolioPage() {
 
         {/* ================= GRILLE DES PROJETS DU PORTFOLIO ================= */}
         {filteredProjects.length === 0 ? (
-          <div className="bg-white p-12 text-center border border-[#C4C6CE] text-[#5B6B7A] rounded-sm shadow-sm">
-            Aucun projet ne correspond à ces critères de recherche.
+          <div className="bg-white p-12 text-center border border-[#C4C6CE] text-[#5B6B7A] rounded-sm shadow-sm space-y-3">
+            <h3 className="font-display font-bold text-[20px] text-[#0A2540]">
+              Aucun ouvrage publié pour le moment
+            </h3>
+            <p className="font-sans text-[14px] text-[#5B6B7A] max-w-lg mx-auto">
+              Nos réalisations et fiches chantiers seront publiées très prochainement par notre équipe technique depuis le Dashboard.
+            </p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -262,87 +268,117 @@ export default function PortfolioPage() {
         )}
       </div>
 
-      {/* ================= MODAL LIGHTBOX COMPARATEUR AVANT/APRÈS ================= */}
-      {activeLightboxProject && (
-        <div
-          className="fixed inset-0 z-50 bg-[#0A2540]/95 backdrop-blur-md flex items-center justify-center p-4"
-          onClick={() => setActiveLightboxProject(null)}
-        >
+      {/* ================= MODAL LIGHTBOX GALERIE MULTI-PHOTOS ================= */}
+      {activeLightboxProject && (() => {
+        const projectPhotos = (activeLightboxProject.photos && activeLightboxProject.photos.length > 0)
+          ? activeLightboxProject.photos
+          : [activeLightboxProject.photo_before, activeLightboxProject.photo_after].filter(Boolean);
+        
+        const safePhotos = projectPhotos.length > 0 ? projectPhotos : ["/img/logo.png"];
+        const currentPhoto = safePhotos[activeImageIndex] || safePhotos[0];
+
+        return (
           <div
-            className="relative w-full max-w-5xl bg-[#0A2540] border border-[#00C2FF]/40 rounded-sm overflow-hidden shadow-2xl blueprint-grid-dark text-white"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 bg-[#0A2540]/95 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+            onClick={() => { setActiveLightboxProject(null); setActiveImageIndex(0); }}
           >
-            <div className="p-4 bg-[#0A2540] border-b border-[#295EA8]/40 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00C2FF] animate-pulse" />
-                <h4 className="font-display font-bold text-[18px] text-white">
-                  {activeLightboxProject.title}
-                </h4>
-              </div>
-              <button
-                onClick={() => setActiveLightboxProject(null)}
-                className="p-1.5 text-slate-300 hover:text-white hover:bg-[#295EA8] rounded-xs transition-all"
-                aria-label="Fermer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* GRILLE DE COMPARAISON AVANT / APRÈS */}
-            <div className="p-6 grid md:grid-cols-2 gap-6 bg-slate-950">
-              {activeLightboxProject.photo_before && (
-                <div>
-                  <span className="font-mono text-[11px] text-[#00C2FF] font-bold uppercase tracking-wider block mb-2">
-                    1. Début / Terrain de départ :
-                  </span>
-                  <div className="h-64 rounded-xs overflow-hidden border border-slate-700 bg-black">
-                    <img
-                      src={activeLightboxProject.photo_before}
-                      alt="Début de chantier"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+            <div
+              className="relative w-full max-w-5xl bg-[#0A2540] border border-[#00C2FF]/40 rounded-sm overflow-hidden shadow-2xl blueprint-grid-dark text-white my-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-4 bg-[#0A2540] border-b border-[#295EA8]/40 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#00C2FF] animate-pulse" />
+                  <h4 className="font-display font-bold text-[18px] text-white">
+                    {activeLightboxProject.title}
+                  </h4>
                 </div>
-              )}
-
-              {activeLightboxProject.photo_after && (
-                <div>
-                  <span className="font-mono text-[11px] text-emerald-400 font-bold uppercase tracking-wider block mb-2">
-                    2. Ouvrage Finalisé / Terminé :
-                  </span>
-                  <div className="h-64 rounded-xs overflow-hidden border border-emerald-500/40 bg-black">
-                    <img
-                      src={activeLightboxProject.photo_after}
-                      alt="Ouvrage terminé"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="p-6 bg-[#0A2540] border-t border-[#295EA8]/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-3 font-mono text-[12px] text-[#00C2FF] mb-1">
-                  <span>Localisation : {activeLightboxProject.location}</span>
-                  <span>•</span>
-                  <span>Surface : {activeLightboxProject.surface}</span>
-                </div>
-                <p className="font-sans text-[14px] text-slate-200">
-                  {activeLightboxProject.description}
-                </p>
+                <button
+                  onClick={() => { setActiveLightboxProject(null); setActiveImageIndex(0); }}
+                  className="p-1.5 text-slate-300 hover:text-white hover:bg-[#295EA8] rounded-xs transition-all"
+                  aria-label="Fermer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              <button
-                onClick={() => setActiveLightboxProject(null)}
-                className="px-6 py-2.5 bg-[#00C2FF] text-[#000F22] font-display font-bold text-[12px] uppercase tracking-wider rounded-xs hover:bg-white transition-all shadow-md shrink-0"
-              >
-                Fermer l&apos;aperçu
-              </button>
+              {/* AFFICHAGE GRANDE PHOTO */}
+              <div className="p-6 bg-slate-950 flex flex-col items-center">
+                <div className="relative w-full h-80 sm:h-[420px] rounded-xs overflow-hidden border border-slate-800 bg-black flex items-center justify-center">
+                  <img
+                    src={currentPhoto}
+                    alt={`${activeLightboxProject.title} - Photo ${activeImageIndex + 1}`}
+                    className="w-full h-full object-contain"
+                  />
+
+                  {/* Boutons Suivant / Précédent si plusieurs photos */}
+                  {safePhotos.length > 1 && (
+                    <>
+                      <button
+                        onClick={() => setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : safePhotos.length - 1))}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 bg-[#0A2540]/80 hover:bg-[#00C2FF] text-[#00C2FF] hover:text-[#000F22] rounded-full border border-[#00C2FF]/40 transition-all shadow-lg"
+                        title="Photo précédente"
+                      >
+                        ◀
+                      </button>
+                      <button
+                        onClick={() => setActiveImageIndex((prev) => (prev < safePhotos.length - 1 ? prev + 1 : 0))}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-[#0A2540]/80 hover:bg-[#00C2FF] text-[#00C2FF] hover:text-[#000F22] rounded-full border border-[#00C2FF]/40 transition-all shadow-lg"
+                        title="Photo suivante"
+                      >
+                        ▶
+                      </button>
+                    </>
+                  )}
+
+                  <div className="absolute top-3 left-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] text-[11px] font-mono px-3 py-1 font-bold rounded-xs border border-[#00C2FF]/30">
+                    Photo {activeImageIndex + 1} / {safePhotos.length}
+                  </div>
+                </div>
+
+                {/* MINIATURES DE LA GALERIE */}
+                {safePhotos.length > 1 && (
+                  <div className="mt-4 flex items-center justify-center gap-3 flex-wrap max-w-full overflow-x-auto pb-2">
+                    {safePhotos.map((imgUrl, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveImageIndex(i)}
+                        className={`h-16 w-24 rounded-xs overflow-hidden border-2 transition-all ${
+                          activeImageIndex === i
+                            ? "border-[#00C2FF] scale-105 shadow-md ring-2 ring-[#00C2FF]/50"
+                            : "border-slate-700 opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        <img src={imgUrl} alt={`Miniature ${i + 1}`} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="p-6 bg-[#0A2540] border-t border-[#295EA8]/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-3 font-mono text-[12px] text-[#00C2FF] mb-1">
+                    <span>Localisation : {activeLightboxProject.location}</span>
+                    <span>•</span>
+                    <span>Surface : {activeLightboxProject.surface}</span>
+                  </div>
+                  <p className="font-sans text-[14px] text-slate-200">
+                    {activeLightboxProject.description}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => { setActiveLightboxProject(null); setActiveImageIndex(0); }}
+                  className="px-6 py-2.5 bg-[#00C2FF] text-[#000F22] font-display font-bold text-[12px] uppercase tracking-wider rounded-xs hover:bg-white transition-all shadow-md shrink-0"
+                >
+                  Fermer la galerie
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
