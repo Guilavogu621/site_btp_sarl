@@ -1,21 +1,17 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, ShieldCheck, Target, Award, ArrowRight, Users, Sparkles, Building2, Layers } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Target, Award, ArrowRight } from "lucide-react";
 import { initialSiteSettings, initialTeamMembers } from "@/lib/data";
 import PageHeader from "@/components/PageHeader";
-import TeamMemberModal from "@/components/TeamMemberModal";
-import { getInitials } from "@/lib/utils";
+import TeamSection from "@/components/TeamSection";
+
+export const metadata = {
+  title: "À Propos du Groupe Best Builders — Bureau d'Études BTP Guinée",
+  description: "Présentation du bureau d'études et de l'entreprise de construction Best Builders SARLU à Conakry, Guinée. Direction générale, équipe technique et valeurs.",
+};
 
 export default function AboutPage() {
-  const [selectedMember, setSelectedMember] = useState(null);
   return (
     <div className="bg-[#F7F9FF] blueprint-grid pb-20 md:pb-28 min-h-screen">
-      <head>
-        <title>À Propos du Groupe Best Builders — Bureau d'Études BTP Guinée</title>
-        <meta name="description" content="Présentation du bureau d'études et de l'entreprise de construction Best Builders SARLU à Conakry, Guinée. Direction générale, équipe technique et valeurs." />
-      </head>
       {/* Header Banner */}
       <PageHeader
         id="qui-sommes-nous"
@@ -44,7 +40,7 @@ export default function AboutPage() {
               {[
                 "Études de structures conformes aux normes Eurocodes/BAEL",
                 "Maîtrise totale des délais et du chiffrage budgétaire",
-                "Supervision continue sur le terrain par des ingénieurs certifiés"
+                "Supervision continuous sur le terrain par des ingénieurs certifiés"
               ].map((item, idx) => (
                 <div key={idx} className="flex items-start gap-3 group">
                   <div className="w-7 h-7 rounded-md bg-[#F1F4F7] border border-[#C4C6CE] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#0A2540] group-hover:border-[#0A2540] transition-all">
@@ -220,101 +216,8 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Section Équipe Dirigeante */}
-        <div id="equipe" className="mb-20 scroll-mt-32 section-divider pt-8">
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 mb-4">
-              <Users className="w-5 h-5 text-[#295EA8]" />
-              <span className="technical-badge">
-                ORGANIGRAMME &amp; ÉQUIPE
-              </span>
-            </div>
-            <h2 className="font-display font-bold text-[30px] md:text-[38px] text-[#0A2540] mt-1">
-              Des experts engagés sur le <span className="text-[#295EA8]">terrain</span>
-            </h2>
-            <p className="font-sans text-[16px] text-[#5B6B7A] max-w-2xl mx-auto mt-3 leading-relaxed">
-              Ingénieurs, juristes, économistes et techniciens : une équipe pluridisciplinaire au service de vos projets.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {initialTeamMembers.map((member) => {
-              const isGerant = member.id === 1 || member.role.includes("Gérant");
-              return (
-                <div
-                  key={member.id}
-                  onClick={() => setSelectedMember(member)}
-                  className={`card-stitch text-center p-6 flex flex-col justify-between group transition-all cursor-pointer shadow-sm hover:shadow-md ${isGerant
-                      ? "border-2 border-[#0A2540] shadow-xl bg-white sm:col-span-2 lg:col-span-1"
-                      : "hover:border-[#0A2540]"
-                    }`}
-                >
-                  <div>
-                    <div className="relative mx-auto mb-5">
-                      {member.photo ? (
-                        <div className="w-full max-w-[240px] h-64 sm:h-72 mx-auto rounded-md overflow-hidden border-2 border-[#0A2540] shadow-xl relative group-hover:scale-[1.02] transition-transform bg-[#0A2540]">
-                          <img
-                            src={member.photo}
-                            alt={member.name}
-                            className={`w-full h-full object-cover ${member.id === 4 || member.id === 6 ? "object-center" : "object-top"}`}
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center text-[24px] font-bold transition-all shadow-md ${isGerant
-                              ? "bg-[#0A2540] text-[#00C2FF] border-2 border-[#00C2FF]"
-                              : "bg-gradient-to-br from-[#F1F4F7] to-[#E8ECF1] text-[#0A2540] border border-[#C4C6CE] group-hover:bg-[#0A2540] group-hover:text-[#00C2FF]"
-                            }`}
-                        >
-                          {getInitials(member.name)}
-                        </div>
-                      )}
-                      {isGerant && (
-                        <span className="inline-block mt-3 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-extrabold px-3 py-1 border border-[#00C2FF]/30 uppercase rounded-xs shadow-sm">
-                          ★ FONDATEUR &amp; GÉRANT
-                        </span>
-                      )}
-                      {member.id === 4 && (
-                        <span className="inline-block mt-3 bg-[#0A2540] text-[#00C2FF] font-mono text-[9px] font-extrabold px-3 py-1 border border-[#00C2FF]/30 uppercase rounded-xs shadow-sm">
-                          ⚖️ DIRECTION JURIDIQUE &amp; CONTRATS
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="font-display font-bold text-[17px] text-[#0A2540] leading-snug group-hover:text-[#295EA8] transition-colors mt-2">
-                      {member.name}
-                    </h3>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-[#C4C6CE]/50 flex flex-col justify-between h-full">
-                    <div>
-                      <span className="font-mono text-[11px] text-[#295EA8] font-bold uppercase tracking-wider block mb-1">
-                        {member.role}
-                      </span>
-                      {member.bio && (
-                        <p className="font-sans text-[13px] text-[#334155] leading-relaxed line-clamp-3">
-                          {member.bio}
-                        </p>
-                      )}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedMember(member);
-                      }}
-                      className="w-full mt-4 py-2.5 px-3 bg-[#F1F4F7] group-hover:bg-[#0A2540] text-[#0A2540] group-hover:text-[#00C2FF] font-mono font-bold text-[11px] uppercase tracking-wider rounded-xs border border-[#C4C6CE] group-hover:border-[#0A2540] transition-all flex items-center justify-center gap-1.5"
-                    >
-                      <span>VOIR LE PROFIL DÉTAILLÉ</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {/* Section Équipe Dirigeante (Composant Client) */}
+        <TeamSection />
 
         {/* Banner CTA — Premium */}
         <div className="relative bg-[#0A2540] text-white p-12 md:p-16 text-center rounded-md shadow-2xl blueprint-grid-dark border border-[#295EA8]/30 overflow-hidden">
@@ -343,12 +246,6 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
-
-      {/* Modale de fiche membre */}
-      <TeamMemberModal
-        member={selectedMember}
-        onClose={() => setSelectedMember(null)}
-      />
     </div>
   );
 }
