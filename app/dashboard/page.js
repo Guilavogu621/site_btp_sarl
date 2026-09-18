@@ -408,7 +408,8 @@ export default function DashboardPage() {
         image: newArticle.image || "/img/logo.png",
         video_url: newArticle.video_url || "",
         published_at: newArticle.published_at || new Date().toISOString().split("T")[0],
-        slug: newArticle.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+        slug: newArticle.title.toLowerCase().replace(/[^a-z0-9\u00e0-\u00ff]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, ""),
+        is_published: true
       };
 
       const created = await createArticle(articlePayload);
