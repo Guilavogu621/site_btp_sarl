@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calendar, ArrowRight, Video, X, Play } from "lucide-react";
+import { Calendar, ArrowRight, Video as VideoIcon, X, Play } from "lucide-react";
 import { initialArticles, getStoredArticles } from "@/lib/data";
 import PageHeader from "@/components/PageHeader";
 
@@ -88,7 +88,7 @@ export default function BlogPage() {
 
                     {hasVideo && (
                       <div className="absolute top-3 right-3 bg-[#00C2FF] text-[#0A2540] font-mono text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md flex items-center gap-1.5">
-                        <Video className="w-3.5 h-3.5 fill-[#0A2540]" />
+                        <VideoIcon className="w-3.5 h-3.5 fill-[#0A2540]" />
                         <span>Vidéo</span>
                       </div>
                     )}

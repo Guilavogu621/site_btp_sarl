@@ -26,6 +26,7 @@ import {
   Building2,
   Upload,
   Image as ImageIcon,
+  Video as VideoIcon,
   Pencil,
   Wrench
 } from "lucide-react";
@@ -1571,7 +1572,7 @@ export default function DashboardPage() {
                   {/* Video Selection / Upload / URL Field for Article */}
                   <div>
                     <label className="block text-[12px] font-bold uppercase tracking-wider text-[#0A2540] mb-2 flex items-center gap-2">
-                      <Video className="w-4 h-4 text-[#00C2FF]" /> Vidéo de l'article (Optionnel)
+                      <VideoIcon className="w-4 h-4 text-[#00C2FF]" /> Vidéo de l'article (Optionnel)
                     </label>
                     <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 border border-slate-300 rounded-lg">
                       <label className="cursor-pointer px-4 py-2.5 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[12px] font-bold uppercase tracking-wider rounded-md flex items-center gap-2 transition-colors shrink-0">
@@ -1645,7 +1646,7 @@ export default function DashboardPage() {
                         {/* Video input in Edit form */}
                         <div className="flex flex-col sm:flex-row items-center gap-3">
                           <label className="cursor-pointer px-3 py-2 bg-[#0A2540] hover:bg-[#1E56A0] text-white text-[11px] font-bold uppercase tracking-wider rounded-md flex items-center gap-1.5 shrink-0">
-                            <Video className="w-3.5 h-3.5 text-[#00C2FF]" />
+                            <VideoIcon className="w-3.5 h-3.5 text-[#00C2FF]" />
                             <span>Changer la vidéo</span>
                             <input
                               type="file"
