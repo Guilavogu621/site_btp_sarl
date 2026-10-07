@@ -3,6 +3,17 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 
+/**
+ * Viewport — CRITIQUE pour l'affichage mobile correct.
+ * Sans ce paramètre, les navigateurs mobiles rendent la page en largeur
+ * desktop (~980px) puis zooment dessus, ce qui casse la mise en page.
+ */
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata = {
   metadataBase: new URL("https://bestbuilders224.com"),
   title: "Best Builders SARLU — Bureau d'études & Ingénierie BTP à Conakry",
@@ -53,7 +64,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
         />
       </head>
-      <body className="w-full min-h-screen flex flex-col justify-between bg-[#F7F9FF] text-[#0A2540] font-sans selection:bg-[#00C2FF] selection:text-[#0A2540] antialiased">
+      <body className="w-full min-h-screen flex flex-col justify-between bg-[#F7F9FF] text-[#0A2540] font-sans selection:bg-[#00C2FF] selection:text-[#0A2540] antialiased overflow-x-hidden">
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
