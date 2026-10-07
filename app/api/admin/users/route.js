@@ -30,7 +30,7 @@ export async function GET() {
           return NextResponse.json({ users });
         }
       } catch (authErr) {
-        // Fallback vers table admin_users si admin API indisponible
+        console.warn("Supabase Auth admin listUsers indisponible, fallback vers table admin_users :", authErr);
       }
     }
 
@@ -48,8 +48,9 @@ export async function GET() {
 
     return NextResponse.json({ users: [] });
   } catch (error) {
+    console.error("Erreur de récupération des utilisateurs dans /api/admin/users :", error);
     return NextResponse.json(
-      { error: "Impossible de récupérer la liste des utilisateurs." },
+      { error: "Impossible de récupérer la liste des utilisateurs.", code: "FETCH_USERS_ERROR", status: 500 },
       { status: 500 }
     );
   }
@@ -67,21 +68,21 @@ export async function POST(req) {
 
     if (!email || !password || !full_name) {
       return NextResponse.json(
-        { error: "Tous les champs (Nom, Email, Mot de passe) sont requis." },
+        { error: "Tous les champs (Nom, Email, Mot de passe) sont requis.", code: "MISSING_FIELDS", status: 400 },
         { status: 400 }
       );
     }
 
     if (!validateEmail(email)) {
       return NextResponse.json(
-        { error: "Format d'adresse email invalide." },
+        { error: "Format d'adresse email invalide.", code: "INVALID_EMAIL", status: 400 },
         { status: 400 }
       );
     }
 
     if (password.length < 6) {
       return NextResponse.json(
-        { error: "Le mot de passe doit contenir au moins 6 caractères." },
+        { error: "Le mot de passe doit contenir au moins 6 caractères.", code: "PASSWORD_TOO_SHORT", status: 400 },
         { status: 400 }
       );
     }
@@ -99,7 +100,7 @@ export async function POST(req) {
 
       if (authError) {
         return NextResponse.json(
-          { error: `Erreur Supabase Auth : ${authError.message}` },
+          { error: `Erreur Supabase Auth : ${authError.message}`, code: "SUPABASE_AUTH_ERROR", status: 400 },
           { status: 400 }
         );
       }
@@ -141,8 +142,9 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (error) {
+    console.error("Erreur création utilisateur dans /api/admin/users :", error);
     return NextResponse.json(
-      { error: "Une erreur est survenue lors de la création de l'utilisateur." },
+      { error: "Une erreur est survenue lors de la création de l'utilisateur.", code: "CREATE_USER_ERROR", status: 500 },
       { status: 500 }
     );
   }
@@ -157,7 +159,7 @@ export async function DELETE(req) {
 
     if (!userId && !userEmail) {
       return NextResponse.json(
-        { error: "ID ou email d'utilisateur requis." },
+        { error: "ID ou email d'utilisateur requis.", code: "MISSING_IDENTIFIER", status: 400 },
         { status: 400 }
       );
     }
@@ -181,10 +183,12 @@ export async function DELETE(req) {
       message: "Utilisateur supprimé de Supabase avec succès.",
     });
   } catch (error) {
+    console.error("Erreur suppression utilisateur dans /api/admin/users :", error);
     return NextResponse.json(
-      { error: "Une erreur est survenue lors de la suppression." },
+      { error: "Une erreur est survenue lors de la suppression.", code: "DELETE_USER_ERROR", status: 500 },
       { status: 500 }
     );
   }
 }
+
 

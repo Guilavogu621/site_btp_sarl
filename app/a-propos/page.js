@@ -201,13 +201,13 @@ export default function AboutPage() {
 
                 <div className="prose prose-slate max-w-none text-[15px] sm:text-[16px] text-[#334155] leading-relaxed space-y-4 font-sans">
                   <p className="font-semibold text-[#0A2540] text-[17px]">
-                    &ldquo;Le pari que nous avons fait en créant le Groupe Best Builders SARLU est de devenir la référence absolue de l'ingénierie et de la construction durable en Guinée.&rdquo;
+                    &ldquo;Le pari que nous avons fait en créant le Groupe Best Builders SARLU est de devenir la référence absolue de l&apos;ingénierie et de la construction durable en Guinée.&rdquo;
                   </p>
                   <p>
-                    Face aux défis d'infrastructures et d'urbanisation de notre pays, nous avons fait le choix de la rigueur scientifique : un bureau d'études intégré, des calculs de structures certifiés selon les normes internationales (BAEL & Eurocodes), et un contrôle continu sur le terrain.
+                    Face aux défis d&apos;infrastructures et d&apos;urbanisation de notre pays, nous avons fait le choix de la rigueur scientifique : un bureau d&apos;études intégré, des calculs de structures certifiés selon les normes internationales (BAEL &amp; Eurocodes), et un contrôle continu sur le terrain.
                   </p>
                   <p>
-                    De la conception architecturale à la remise des clés, nos ingénieurs et techniciens s'engagent chaque jour pour garantir la sécurité absolue de vos ouvrages, le respect strict des budgets et la pérennité de votre patrimoine.
+                    De la conception architecturale à la remise des clés, nos ingénieurs et techniciens s&apos;engagent chaque jour pour garantir la sécurité absolue de vos ouvrages, le respect strict des budgets et la pérennité de votre patrimoine.
                   </p>
                 </div>
               </div>

@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS public.projects (
   duration TEXT,
   photo_before TEXT,
   photo_after TEXT,
+  photos TEXT[] DEFAULT '{}',
   is_ongoing BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -50,6 +51,8 @@ CREATE TABLE IF NOT EXISTS public.articles (
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   image TEXT,
+  photos TEXT[] DEFAULT '{}',
+  video_url TEXT DEFAULT '',
   published_at DATE DEFAULT CURRENT_DATE NOT NULL,
   is_published BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -103,7 +106,11 @@ CREATE POLICY "Public Read Projects"           ON public.projects          FOR S
 CREATE POLICY "Public Read Published Articles" ON public.articles          FOR SELECT USING (is_published = true);
 
 -- Soumission publique des formulaires de contact
-CREATE POLICY "Public Insert Messages" ON public.contact_messages FOR INSERT WITH CHECK (true);
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT INSERT, SELECT ON TABLE public.contact_messages TO anon, authenticated;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+
+CREATE POLICY "Public Insert Messages" ON public.contact_messages FOR INSERT TO anon, authenticated WITH CHECK (true);
 
 -- Accès complet Admin (authentifié)
 CREATE POLICY "Admin Full Access Settings"  ON public.site_settings     FOR ALL USING (auth.role() = 'authenticated');

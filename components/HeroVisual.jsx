@@ -165,8 +165,8 @@ export default function HeroVisual() {
                   onClick={() => alert('Vidéo à intégrer')}>
                   <Play className="w-10 h-10 fill-current ml-1.5" />
                 </div>
-                <h3 className="font-display font-bold text-[26px] text-white drop-shadow-lg">Rigueur & Ingénierie sur le Terrain</h3>
-                <p className="text-[15px] text-slate-200 max-w-md mt-2 drop-shadow-md">Découvrez l'ensemble de nos équipes et chantiers de construction en Guinée.</p>
+                <h3 className="font-display font-bold text-[26px] text-white drop-shadow-lg">Rigueur &amp; Ingénierie sur le Terrain</h3>
+                <p className="text-[15px] text-slate-200 max-w-md mt-2 drop-shadow-md">Découvrez l&apos;ensemble de nos équipes et chantiers de construction en Guinée.</p>
               </div>
             </div>
 

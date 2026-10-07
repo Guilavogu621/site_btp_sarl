@@ -110,6 +110,7 @@ export default function DashboardPage() {
     title: "",
     content: "",
     image: "/img/logo.png",
+    photos: [],
     video_url: "",
     published_at: new Date().toISOString().split("T")[0]
   });
@@ -139,6 +140,39 @@ export default function DashboardPage() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("Modifications enregistrées avec succès !");
 
+  const fetchUsers = async () => {
+    setIsLoadingUsers(true);
+    try {
+      const res = await fetch("/api/admin/users");
+      const data = await res.json();
+      if (res.ok && data.users) {
+        setUsers(data.users);
+      }
+    } catch {
+      // Gérer l'erreur silencieusement
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
+  const refreshData = async () => {
+    setIsLoadingData(true);
+    try {
+      const [fetchedArticles, fetchedProjects, fetchedMessages] = await Promise.all([
+        getArticles(),
+        getProjects(),
+        getContactMessages()
+      ]);
+      if (Array.isArray(fetchedArticles)) setArticles(fetchedArticles);
+      if (Array.isArray(fetchedProjects)) setProjects(fetchedProjects);
+      if (Array.isArray(fetchedMessages)) setMessages(fetchedMessages);
+    } catch {
+      // Gérer l'erreur silencieusement
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
   // Synchroniser la session et charger les données Supabase (100% Supabase Auth Native)
   useEffect(() => {
     let isMounted = true;
@@ -157,7 +191,7 @@ export default function DashboardPage() {
             setIsAuthenticated(false);
           }
         }
-      } catch (e) {
+      } catch {
         if (isMounted) setIsAuthenticated(false);
       } finally {
         if (isMounted) setIsCheckingAuth(false);
@@ -183,7 +217,6 @@ export default function DashboardPage() {
       subscription = res.data.subscription;
     }
 
-
     refreshData();
     fetchUsers();
 
@@ -202,39 +235,6 @@ export default function DashboardPage() {
       window.removeEventListener("equipments_updated", handleUpdate);
     };
   }, []);
-
-  const fetchUsers = async () => {
-    setIsLoadingUsers(true);
-    try {
-      const res = await fetch("/api/admin/users");
-      const data = await res.json();
-      if (res.ok && data.users) {
-        setUsers(data.users);
-      }
-    } catch (e) {
-      // Gérer l'erreur silencieusement
-    } finally {
-      setIsLoadingUsers(false);
-    }
-  };
-
-  const refreshData = async () => {
-    setIsLoadingData(true);
-    try {
-      const [fetchedArticles, fetchedProjects, fetchedMessages] = await Promise.all([
-        getArticles(),
-        getProjects(),
-        getContactMessages()
-      ]);
-      if (Array.isArray(fetchedArticles)) setArticles(fetchedArticles);
-      if (Array.isArray(fetchedProjects)) setProjects(fetchedProjects);
-      if (Array.isArray(fetchedMessages)) setMessages(fetchedMessages);
-    } catch (err) {
-      // Gérer l'erreur silencieusement
-    } finally {
-      setIsLoadingData(false);
-    }
-  };
 
   const handleLogin = (userData) => {
     const email = typeof userData === "string" ? userData : userData?.email;
@@ -402,10 +402,15 @@ export default function DashboardPage() {
   const handleAddArticle = async (e) => {
     e.preventDefault();
     try {
+      const articlePhotos = (newArticle.photos && newArticle.photos.length > 0)
+        ? newArticle.photos
+        : (newArticle.image ? [newArticle.image] : ["/img/logo.png"]);
+
       const articlePayload = {
         title: sanitizeText(newArticle.title),
         content: sanitizeText(newArticle.content),
-        image: newArticle.image || "/img/logo.png",
+        image: articlePhotos[0] || "/img/logo.png",
+        photos: articlePhotos,
         video_url: newArticle.video_url || "",
         published_at: newArticle.published_at || new Date().toISOString().split("T")[0],
         slug: newArticle.title.toLowerCase().replace(/[^a-z0-9\u00e0-\u00ff]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, ""),
@@ -419,6 +424,7 @@ export default function DashboardPage() {
         title: "",
         content: "",
         image: "/img/logo.png",
+        photos: [],
         video_url: "",
         published_at: new Date().toISOString().split("T")[0]
       });
@@ -447,17 +453,29 @@ export default function DashboardPage() {
 
   const handleEditArticle = (article) => {
     setEditingArticleId(article.id);
-    setEditingArticle({ ...article });
+    const existingPhotos = article.photos && article.photos.length > 0
+      ? [...article.photos]
+      : (article.image ? [article.image] : ["/img/logo.png"]);
+
+    setEditingArticle({
+      ...article,
+      photos: existingPhotos
+    });
     setShowAddArticle(false);
   };
 
   const handleUpdateArticle = async (e) => {
     e.preventDefault();
     try {
+      const articlePhotos = (editingArticle.photos && editingArticle.photos.length > 0)
+        ? editingArticle.photos
+        : (editingArticle.image ? [editingArticle.image] : ["/img/logo.png"]);
+
       const payload = {
         title: sanitizeText(editingArticle.title),
         content: sanitizeText(editingArticle.content),
-        image: editingArticle.image || "/img/logo.png",
+        image: articlePhotos[0] || "/img/logo.png",
+        photos: articlePhotos,
         video_url: editingArticle.video_url || "",
         published_at: editingArticle.published_at
       };

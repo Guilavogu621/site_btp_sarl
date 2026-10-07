@@ -11,7 +11,11 @@ import { useEffect, useRef, useState } from "react";
  * @param {number}        duration  - Animation duration in ms (default 1800)
  */
 export default function StatsCounter({ value, className = "", duration = 1800 }) {
-  const [displayValue, setDisplayValue] = useState("0");
+  const [displayValue, setDisplayValue] = useState(() => {
+    const raw = String(value);
+    const match = raw.match(/^(\d+(?:\.\d+)?)(.*)/);
+    return match ? "0" : raw;
+  });
   const hasAnimated = useRef(false);
   const elementRef = useRef(null);
 
@@ -21,7 +25,6 @@ export default function StatsCounter({ value, className = "", duration = 1800 })
     const match = raw.match(/^(\d+(?:\.\d+)?)(.*)/);
 
     if (!match) {
-      setDisplayValue(raw);
       return;
     }
 

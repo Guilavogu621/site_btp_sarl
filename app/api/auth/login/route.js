@@ -14,21 +14,21 @@ export async function POST(req) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Veuillez fournir un email et un mot de passe." },
+        { error: "Veuillez fournir un email et un mot de passe.", code: "MISSING_CREDENTIALS", status: 400 },
         { status: 400 }
       );
     }
 
     if (!validateEmail(email)) {
       return NextResponse.json(
-        { error: "Format d'adresse email invalide." },
+        { error: "Format d'adresse email invalide.", code: "INVALID_EMAIL", status: 400 },
         { status: 400 }
       );
     }
 
     if (!supabase) {
       return NextResponse.json(
-        { error: "Le service d'authentification Supabase n'est pas configuré sur le serveur." },
+        { error: "Le service d'authentification Supabase n'est pas configuré sur le serveur.", code: "AUTH_SERVICE_UNAVAILABLE", status: 503 },
         { status: 503 }
       );
     }
@@ -41,7 +41,7 @@ export async function POST(req) {
 
     if (error || !data?.user) {
       return NextResponse.json(
-        { error: "Identifiants invalides ou compte inexistant sur Supabase." },
+        { error: "Identifiants invalides ou compte inexistant sur Supabase.", code: "INVALID_CREDENTIALS", status: 401 },
         { status: 401 }
       );
     }
@@ -63,10 +63,12 @@ export async function POST(req) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Erreur interne lors de l'authentification :", error);
     return NextResponse.json(
-      { error: "Une erreur interne s'est produite lors de l'authentification." },
+      { error: "Une erreur interne s'est produite lors de l'authentification.", code: "INTERNAL_AUTH_ERROR", status: 500 },
       { status: 500 }
     );
   }
 }
+
 

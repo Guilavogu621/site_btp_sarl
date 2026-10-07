@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { escapeHtml } from "@/lib/security";
 
 const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587", 10);
@@ -21,21 +22,23 @@ export async function POST(request) {
   let payload;
   try {
     payload = await request.json();
-  } catch {
+  } catch (parseError) {
+    console.error("Erreur de parsing JSON dans /api/notify :", parseError);
     return Response.json(
-      { success: false, error: "Données invalides." },
+      { error: "Corps de requête JSON invalide.", code: "INVALID_BODY", status: 400 },
       { status: 400 }
     );
   }
 
-  const { name, email, phone, service_requested, message } = payload;
+  const { name, email, phone, service_requested, message } = payload || {};
 
   if (!name || !email || !message) {
     return Response.json(
-      { success: false, error: "Champs obligatoires manquants." },
+      { error: "Champs obligatoires manquants (nom, email, message).", code: "MISSING_FIELDS", status: 400 },
       { status: 400 }
     );
   }
+
 
   const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
@@ -52,6 +55,12 @@ export async function POST(request) {
     timeStyle: "short",
     timeZone: "Africa/Conakry",
   });
+
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  const safePhone = escapeHtml(phone || "");
+  const safeService = escapeHtml(service_requested || "Non précisé");
+  const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
 
   const htmlBody = `
     <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;background:#f8fafc;border:2px solid #0A2540;border-radius:4px;overflow:hidden">
@@ -74,27 +83,27 @@ export async function POST(request) {
         <table style="width:100%;border-collapse:collapse;font-size:14px">
           <tr style="border-bottom:1px solid #e2e8f0">
             <td style="padding:10px 12px;color:#5b6b7a;font-weight:600;width:140px;vertical-align:top">👤 Nom</td>
-            <td style="padding:10px 12px;color:#0A2540;font-weight:700">${name}</td>
+            <td style="padding:10px 12px;color:#0A2540;font-weight:700">${safeName}</td>
           </tr>
           <tr style="border-bottom:1px solid #e2e8f0">
             <td style="padding:10px 12px;color:#5b6b7a;font-weight:600;vertical-align:top">📧 Email</td>
             <td style="padding:10px 12px;color:#0A2540">
-              <a href="mailto:${email}" style="color:#295EA8;text-decoration:none">${email}</a>
+              <a href="mailto:${safeEmail}" style="color:#295EA8;text-decoration:none">${safeEmail}</a>
             </td>
           </tr>
           <tr style="border-bottom:1px solid #e2e8f0">
             <td style="padding:10px 12px;color:#5b6b7a;font-weight:600;vertical-align:top">📱 Téléphone</td>
             <td style="padding:10px 12px;color:#0A2540">
-              <a href="tel:${phone || ""}" style="color:#295EA8;text-decoration:none">${phone || "Non renseigné"}</a>
+              <a href="tel:${safePhone}" style="color:#295EA8;text-decoration:none">${safePhone || "Non renseigné"}</a>
             </td>
           </tr>
           <tr style="border-bottom:1px solid #e2e8f0">
             <td style="padding:10px 12px;color:#5b6b7a;font-weight:600;vertical-align:top">🔧 Service</td>
-            <td style="padding:10px 12px;color:#0A2540;font-weight:600">${service_requested || "Non précisé"}</td>
+            <td style="padding:10px 12px;color:#0A2540;font-weight:600">${safeService}</td>
           </tr>
           <tr>
             <td style="padding:10px 12px;color:#5b6b7a;font-weight:600;vertical-align:top">💬 Message</td>
-            <td style="padding:10px 12px;color:#334155;line-height:1.6">${message.replace(/\n/g, "<br>")}</td>
+            <td style="padding:10px 12px;color:#334155;line-height:1.6">${safeMessage}</td>
           </tr>
         </table>
 
@@ -126,11 +135,13 @@ export async function POST(request) {
       text: `Nouvelle demande de devis de ${name}\nEmail: ${email}\nTéléphone: ${phone || "N/A"}\nService: ${service_requested || "N/A"}\nMessage: ${message}`,
     });
 
-    return Response.json({ success: true });
-  } catch (err) {
+    return Response.json({ success: true, message: "Notification email envoyée." }, { status: 200 });
+  } catch (mailError) {
+    console.error("Erreur d'envoi de notification email SMTP :", mailError);
     return Response.json(
-      { success: false, error: "Erreur technique lors de l'envoi de l'email." },
+      { error: "Erreur technique lors de l'envoi de l'email.", code: "SMTP_SEND_FAILED", status: 500 },
       { status: 500 }
     );
   }
 }
+
