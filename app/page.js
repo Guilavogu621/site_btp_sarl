@@ -11,7 +11,7 @@ import StatsCounter from "@/components/StatsCounter";
 import ContactForm from "@/components/ContactForm";
 import ContactInfo from "@/components/ContactInfo";
 import TeamMemberModal from "@/components/TeamMemberModal";
-import { initialServices, initialProjects, initialStats, initialProcessSteps, initialSiteSettings, initialTeamMembers, initialEquipments } from "@/lib/data";
+import { initialServices, initialProjects, initialStats, initialProcessSteps, initialSiteSettings, initialTeamMembers, initialEquipments, getProjects } from "@/lib/data";
 import { getInitials } from "@/lib/utils";
 
 export default function HomePage() {
@@ -20,6 +20,19 @@ export default function HomePage() {
   const [selectedGalleryCategory, setSelectedGalleryCategory] = useState("all");
   const [activeLightboxImage, setActiveLightboxImage] = useState(null);
   const [selectedTeamMember, setSelectedTeamMember] = useState(null);
+
+  /** Photos statiques de fallback affichées si Supabase est vide ou en pause */
+  const staticGalleryItems = [
+    { id: 1, title: "Supervision de Chantier à Conakry", category: "Supervision & Contrôle OPC", image: "/img/showcase/ingenieure-chantier.webp", description: "Ingénieure de chantier coordonnant les opérations avec radio de liaison.", location: "Conakry" },
+    { id: 2, title: "Immeuble R+12 & Grue à Tour", category: "Gros Œuvre & Structure", image: "/img/showcase/tour-grue-ciel.webp", description: "Coulage de voiles béton et coffrage sous grue à tour.", location: "Almamya" },
+    { id: 3, title: "Surélévation Ossature Bois", category: "Rénovation & Surélévation", image: "/img/showcase/immeuble-bois-survation.webp", description: "Extension de 2 étages en bois massif avec assemblage haute précision.", location: "Kipé" },
+    { id: 4, title: "Conception & Modélisation CAD", category: "Supervision & Contrôle OPC", image: "/img/showcase/architecte-bureau.webp", description: "Modélisation numérique des structures et vérification des descentes de charges.", location: "Conakry" },
+    { id: 5, title: "Immeuble R+7 Haut Standing — Minière", category: "Gros Œuvre & Structure", image: "/img/showcase/immeuble-r7-miniere.jpg", description: "Réalisation complète d'un immeuble résidentiel R+7 haut standing.", location: "Minière" },
+    { id: 6, title: "Complexe R+8 Mixte", category: "Mixte bureaux / commerces", image: "/img/showcase/complexes-modernes.webp", description: "Complexe moderne R+8 mixte avec parkings et façades vitrées.", location: "Conakry" },
+    { id: 7, title: "Coffrage & Fondations Spéciales", category: "Gros Œuvre & Structure", image: "/img/showcase/chantier-coffrage.webp", description: "Assemblage de coffrages métalliques et ferraillage des voiles de soutènement.", location: "Conakry" }
+  ];
+
+  const [liveGalleryItems, setLiveGalleryItems] = useState(staticGalleryItems);
 
   const heroSlides = [
     {
@@ -109,9 +122,41 @@ export default function HomePage() {
     }
   ];
 
+  /**
+   * Charge les projets réels depuis Supabase et les injecte dans la galerie.
+   * Si Supabase est en pause ou vide, les photos statiques restent affichées.
+   */
+  useEffect(() => {
+    getProjects().then((projects) => {
+      if (projects && projects.length > 0) {
+        const mapped = projects
+          .filter((p) => p.photo_before && p.photo_before !== "/img/logo.png")
+          .slice(0, 9)
+          .map((p) => ({
+            id: p.id,
+            title: p.title,
+            category: p.category || "Gros Œuvre & Structure",
+            image: (p.photos && p.photos.length > 0) ? p.photos[0] : p.photo_before,
+            description: p.description || "",
+            location: p.location || "Conakry"
+          }));
+        if (mapped.length > 0) setLiveGalleryItems(mapped);
+      }
+    }).catch(() => {
+      // Supabase en pause — on garde les photos statiques
+    });
+  }, []);
+
   const filteredGallery = selectedGalleryCategory === "all"
-    ? galleryItems
-    : galleryItems.filter(item => item.category === selectedGalleryCategory);
+    ? liveGalleryItems
+    : liveGalleryItems.filter((item) => item.category === selectedGalleryCategory);
+
+  /** Catégories uniques extraites dynamiquement des projets chargés */
+  const galleryCategories = [
+    { id: "all", label: "Toutes les photos" },
+    ...Array.from(new Set(liveGalleryItems.map((p) => p.category)))
+      .map((cat) => ({ id: cat, label: cat }))
+  ];
 
   // Auto-slide Hero Background every 5 seconds
   useEffect(() => {
@@ -739,15 +784,9 @@ export default function HomePage() {
                 </p>
               </div>
 
-              {/* Filtres de la Galerie */}
+              {/* Filtres de la Galerie — dynamiques selon les projets chargés */}
               <div className="flex flex-wrap gap-2 mt-6 md:mt-0">
-                {[
-                  { id: "all", label: "Toutes les photos" },
-                  { id: "supervision", label: "Supervision" },
-                  { id: "gros-oeuvre", label: "Gros Œuvre" },
-                  { id: "renovation", label: "Surélévation & Bois" },
-                  { id: "etudes", label: "Bureau d'Études" }
-                ].map(cat => (
+                {galleryCategories.map(cat => (
                   <button
                     key={cat.id}
                     onClick={() => setSelectedGalleryCategory(cat.id)}
@@ -779,7 +818,7 @@ export default function HomePage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-75 group-hover:opacity-60 transition-opacity" />
 
                     <span className="absolute top-3 left-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] border border-[#00C2FF]/30 font-mono text-[10px] font-semibold px-2.5 py-1 rounded-xs">
-                      {item.categoryName}
+                      {item.category}
                     </span>
 
                     <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#0A2540]/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border border-[#00C2FF]/50 shadow-md">
@@ -791,7 +830,7 @@ export default function HomePage() {
                         {item.title}
                       </h3>
                       <p className="font-sans text-[13px] text-slate-200 line-clamp-2 mt-1 drop-shadow-sm opacity-90">
-                        {item.desc}
+                        {item.description || item.desc || ""}
                       </p>
                     </div>
                   </div>
