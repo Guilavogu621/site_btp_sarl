@@ -92,11 +92,13 @@ export default function DashboardPage() {
   const [showAddProject, setShowAddProject] = useState(false);
   const [newProject, setNewProject] = useState({
     title: "",
-    category: "Équipement public",
+    category: "Gros Œuvre & Structure",
     description: "",
     location: "Conakry",
     surface: "1 000 m²",
     duration: "12 mois",
+    is_ongoing: true,
+    video_url: "",
     photo_before: "/img/logo.png",
     photos: []
   });
@@ -124,7 +126,7 @@ export default function DashboardPage() {
   const [showAddEquipment, setShowAddEquipment] = useState(false);
   const [newEquipment, setNewEquipment] = useState({
     title: "",
-    category: "Engins lourds",
+    category: "Engins Lourds & Levage",
     type: "both",
     price_sale: "145 000 000 GNF",
     price_rent: "3 500 000 GNF / Jour",
@@ -332,6 +334,8 @@ export default function DashboardPage() {
       location: sanitizeText(newProject.location),
       surface: sanitizeText(newProject.surface),
       duration: sanitizeText(newProject.duration),
+      is_ongoing: Boolean(newProject.is_ongoing),
+      video_url: newProject.video_url || "",
       photo_before: projectPhotos[0] || "/img/logo.png",
       photo_after: projectPhotos[1] || "",
       photos: projectPhotos,
@@ -343,11 +347,13 @@ export default function DashboardPage() {
     setShowAddProject(false);
     setNewProject({
       title: "",
-      category: "Équipement public",
+      category: "Gros Œuvre & Structure",
       description: "",
       location: "Conakry",
       surface: "1 000 m²",
       duration: "12 mois",
+      is_ongoing: true,
+      video_url: "",
       photo_before: "/img/logo.png",
       photos: []
     });
@@ -388,6 +394,8 @@ export default function DashboardPage() {
       location: sanitizeText(editingProject.location),
       surface: sanitizeText(editingProject.surface),
       duration: sanitizeText(editingProject.duration),
+      is_ongoing: Boolean(editingProject.is_ongoing),
+      video_url: editingProject.video_url || "",
       photo_before: projectPhotos[0] || "/img/logo.png",
       photo_after: projectPhotos[1] || "",
       photos: projectPhotos
@@ -1200,7 +1208,50 @@ export default function DashboardPage() {
                       className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
                     />
                   </div>
-                  
+
+                   {/* Catégorie + Durée + Statut + Vidéo */}
+                   <div className="grid sm:grid-cols-2 gap-4">
+                     <select
+                       value={newProject.category}
+                       onChange={(e) => setNewProject({ ...newProject, category: e.target.value })}
+                       className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
+                     >
+                       <option value="Gros Œuvre & Structure">Gros Œuvre & Structure</option>
+                       <option value="Rénovation & Surélévation">Rénovation & Surélévation</option>
+                       <option value="Bâtiment collectif R+12">Bâtiment collectif R+12</option>
+                       <option value="Mixte bureaux / commerces">Mixte bureaux / commerces</option>
+                       <option value="Équipement public & Culture">Équipement public & Culture</option>
+                       <option value="Supervision & Contrôle OPC">Supervision & Contrôle OPC</option>
+                     </select>
+                     <input
+                       type="text"
+                       placeholder="Durée (ex: 18 mois)"
+                       value={newProject.duration}
+                       onChange={(e) => setNewProject({ ...newProject, duration: e.target.value })}
+                       className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
+                     />
+                   </div>
+                   <div className="grid sm:grid-cols-2 gap-4">
+                     <label className="flex items-center gap-3 cursor-pointer p-3 bg-slate-50 border border-slate-300 rounded-lg">
+                       <input
+                         type="checkbox"
+                         checked={Boolean(newProject.is_ongoing)}
+                         onChange={(e) => setNewProject({ ...newProject, is_ongoing: e.target.checked })}
+                         className="w-4 h-4 accent-[#00C2FF]"
+                       />
+                       <span className={`text-[12px] font-bold uppercase tracking-wide ${newProject.is_ongoing ? 'text-[#00C2FF]' : 'text-emerald-500'}`}>
+                         {newProject.is_ongoing ? '⚡ Chantier En Cours' : '✓ Ouvrage Livré'}
+                       </span>
+                     </label>
+                     <input
+                       type="url"
+                       placeholder="Lien vidéo YouTube (optionnel)"
+                       value={newProject.video_url}
+                       onChange={(e) => setNewProject({ ...newProject, video_url: e.target.value })}
+                       className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg"
+                     />
+                   </div>
+
                   {/* Galerie Multi-Photos du projet */}
                   <div className="space-y-3">
                     <label className="block text-[12px] font-bold uppercase tracking-wider text-[#0A2540] flex items-center justify-between">
@@ -1393,6 +1444,49 @@ export default function DashboardPage() {
                           placeholder="Description"
                           className="w-full p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
                         ></textarea>
+
+                        {/* Catégorie + Durée + Statut + Vidéo (édition) */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <select
+                            value={editingProject.category || "Gros Œuvre & Structure"}
+                            onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
+                            className="p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                          >
+                            <option value="Gros Œuvre & Structure">Gros Œuvre & Structure</option>
+                            <option value="Rénovation & Surélévation">Rénovation & Surélévation</option>
+                            <option value="Bâtiment collectif R+12">Bâtiment collectif R+12</option>
+                            <option value="Mixte bureaux / commerces">Mixte bureaux / commerces</option>
+                            <option value="Équipement public & Culture">Équipement public & Culture</option>
+                            <option value="Supervision & Contrôle OPC">Supervision & Contrôle OPC</option>
+                          </select>
+                          <input
+                            type="text"
+                            value={editingProject.duration || ""}
+                            onChange={(e) => setEditingProject({ ...editingProject, duration: e.target.value })}
+                            placeholder="Durée (ex: 18 mois)"
+                            className="p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <label className="flex items-center gap-2 cursor-pointer p-2.5 bg-white border border-slate-300 rounded-lg">
+                            <input
+                              type="checkbox"
+                              checked={Boolean(editingProject.is_ongoing)}
+                              onChange={(e) => setEditingProject({ ...editingProject, is_ongoing: e.target.checked })}
+                              className="w-4 h-4 accent-[#00C2FF]"
+                            />
+                            <span className={`text-[11px] font-bold uppercase ${editingProject.is_ongoing ? 'text-[#00C2FF]' : 'text-emerald-500'}`}>
+                              {editingProject.is_ongoing ? '⚡ En Cours' : '✓ Livré'}
+                            </span>
+                          </label>
+                          <input
+                            type="url"
+                            value={editingProject.video_url || ""}
+                            onChange={(e) => setEditingProject({ ...editingProject, video_url: e.target.value })}
+                            placeholder="Lien vidéo YouTube"
+                            className="p-2.5 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
+                          />
+                        </div>
 
                         {/* Gestionnaire multi-photos en mode édition */}
                         <div className="space-y-2 pt-2 border-t border-slate-300">
@@ -1789,11 +1883,13 @@ export default function DashboardPage() {
                         onChange={(e) => setNewEquipment({ ...newEquipment, category: e.target.value })}
                         className="w-full p-3 bg-slate-50 border border-slate-300 text-[#0A2540] outline-none focus:border-[#1E56A0] rounded-lg text-[13px]"
                       >
-                        <option value="Engins lourds">Engins lourds</option>
-                        <option value="Groupe électrogène">Groupe électrogène</option>
-                        <option value="Coffrage & Échafaudage">Coffrage & Échafaudage</option>
-                        <option value="Transport">Transport (Camion, Remorque)</option>
-                        <option value="Outillage">Outillage & Électromécanique</option>
+                        <option value="Engins Lourds & Levage">Engins Lourds & Levage</option>
+                        <option value="Coffrage & Étaiement">Coffrage & Étaiement</option>
+                        <option value="Malaxage & Béton">Malaxage & Béton</option>
+                        <option value="Échafaudage & Sécurité">Échafaudage & Sécurité</option>
+                        <option value="Groupe Électrogène">Groupe Électrogène</option>
+                        <option value="Transport & Logistique">Transport & Logistique</option>
+                        <option value="Outillage & Matériel Divers">Outillage & Matériel Divers</option>
                       </select>
                     </div>
                     <div>
@@ -1926,11 +2022,13 @@ export default function DashboardPage() {
                             onChange={(e) => setEditingEquipment({ ...editingEquipment, category: e.target.value })}
                             className="w-full p-3 bg-white border border-slate-300 text-[#0A2540] text-[13px] outline-none focus:border-[#1E56A0] rounded-lg"
                           >
-                            <option value="Engins lourds">Engins lourds</option>
-                            <option value="Groupe électrogène">Groupe électrogène</option>
-                            <option value="Coffrage & Échafaudage">Coffrage & Échafaudage</option>
-                            <option value="Transport">Transport</option>
-                            <option value="Outillage">Outillage</option>
+                            <option value="Engins Lourds & Levage">Engins Lourds & Levage</option>
+                            <option value="Coffrage & Étaiement">Coffrage & Étaiement</option>
+                            <option value="Malaxage & Béton">Malaxage & Béton</option>
+                            <option value="Échafaudage & Sécurité">Échafaudage & Sécurité</option>
+                            <option value="Groupe Électrogène">Groupe Électrogène</option>
+                            <option value="Transport & Logistique">Transport & Logistique</option>
+                            <option value="Outillage & Matériel Divers">Outillage & Matériel Divers</option>
                           </select>
                         </div>
                         <textarea

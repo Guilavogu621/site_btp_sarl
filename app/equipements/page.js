@@ -26,10 +26,13 @@ import { getEquipments, sendContactMessage } from "@/lib/data";
 
 const CATEGORIES = [
   "Tous",
-  "Matériel de Maçonnerie & Serrage",
+  "Engins Lourds & Levage",
+  "Coffrage & Étaiement",
   "Malaxage & Béton",
   "Échafaudage & Sécurité",
-  "Coffrage & Soutènement"
+  "Groupe Électrogène",
+  "Transport & Logistique",
+  "Outillage & Matériel Divers"
 ];
 
 export default function EquipementsPage() {
