@@ -106,7 +106,7 @@ export default function ContactForm({
               <MessageSquare className="w-4 h-4" /> Écrire sur WhatsApp
             </a>
             <a
-              href="mailto:contact@bestbuilders224.com"
+              href="mailto:bestbuilderssarlu@gmail.com"
               className="inline-flex items-center gap-2 px-4 py-2 bg-[#0A2540] text-white text-[12px] font-bold uppercase tracking-wider rounded-xs hover:bg-[#295EA8] transition-colors"
             >
               <Mail className="w-4 h-4 text-[#00C2FF]" /> Envoyer un e-mail direct

@@ -29,7 +29,7 @@ export default function MentionsLegalesPage() {
               <li><strong>Forme Juridique :</strong> Société à Responsabilité Limitée Unipersonnelle (SARLU)</li>
               <li><strong>Siège Social :</strong> Quartier Ratoma / Kipé, Conakry, République de Guinée</li>
               <li><strong>Téléphone :</strong> +224 614 60 60 79 / +224 621 37 51 85</li>
-              <li><strong>Email :</strong> contact@bestbuilders224.com</li>
+              <li><strong>Email :</strong> bestbuilderssarlu@gmail.com</li>
               <li><strong>N° RCCM (Entreprise) :</strong> GN.TCC.2024.B.12454</li>
               <li><strong>N° Formalité RCCM :</strong> GN.TCC.2024.13958</li>
               <li><strong>N° Identification Fiscale (NIF) :</strong> 802569368</li>

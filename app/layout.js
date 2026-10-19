@@ -30,7 +30,7 @@ const jsonLdData = {
   "name": "Best Builders SARLU",
   "url": "https://bestbuilders224.com",
   "logo": "https://bestbuilders224.com/img/logo.png",
-  "email": "contact@bestbuilders224.com",
+  "email": "bestbuilderssarlu@gmail.com",
   "telephone": "+224614606079",
   "address": {
     "@type": "PostalAddress",
