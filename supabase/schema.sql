@@ -127,7 +127,6 @@ CREATE TABLE IF NOT EXISTS public.admin_users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID,
   email TEXT UNIQUE NOT NULL,
-  password TEXT,
   full_name TEXT NOT NULL,
   role TEXT NOT NULL DEFAULT 'admin' CHECK (role IN ('super_admin', 'admin', 'editor')),
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
@@ -137,13 +136,10 @@ CREATE TABLE IF NOT EXISTS public.admin_users (
 
 ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Admin Users Access Policy" ON public.admin_users;
-CREATE POLICY "Admin Users Access Policy" ON public.admin_users FOR ALL USING (true);
-
--- Super Admin par défaut (insère uniquement si absent)
-INSERT INTO public.admin_users (email, password, full_name, role, status)
-VALUES ('bestbuilders@gmail.com', 'BestBuilders2026!', 'Super Admin - Best Builders', 'super_admin', 'active')
-ON CONFLICT (email) DO NOTHING;
+-- Les politiques d'accès (admin_users, contenu, messages) sont définies dans
+-- supabase/migrations/20261026b_securite_admin.sql : à exécuter après ce fichier.
+-- Ajoutez ensuite le premier Super Admin (son compte doit exister dans Supabase Auth) :
+--   INSERT INTO public.admin_users (email, full_name, role) VALUES ('email@exemple.com', 'Nom', 'super_admin');
 
 
 -- ========================================================

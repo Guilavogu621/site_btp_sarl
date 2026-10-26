@@ -62,9 +62,9 @@ export default function DashboardPage() {
   // Authentication State with Persistence
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [currentUserEmail, setCurrentUserEmail] = useState("bestbuilders@gmail.com");
+  const [currentUserEmail, setCurrentUserEmail] = useState("");
 
-  const [currentUserRole, setCurrentUserRole] = useState("super_admin");
+  const [currentUserRole, setCurrentUserRole] = useState("editor");
   const [currentFullName, setCurrentFullName] = useState("Super Admin");
 
   // User Management State
@@ -142,13 +142,26 @@ export default function DashboardPage() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("Modifications enregistrées avec succès !");
 
+  // En-têtes avec le jeton de session : l'API vérifie l'identité et le rôle côté serveur.
+  const authHeaders = async (extra = {}) => {
+    const { data } = supabase ? await supabase.auth.getSession() : { data: null };
+    const token = data?.session?.access_token;
+    return token ? { ...extra, Authorization: `Bearer ${token}` } : extra;
+  };
+
   const fetchUsers = async () => {
     setIsLoadingUsers(true);
     try {
-      const res = await fetch("/api/admin/users");
+      const res = await fetch("/api/admin/users", { headers: await authHeaders() });
       const data = await res.json();
       if (res.ok && data.users) {
         setUsers(data.users);
+        // Le rôle affiché vient de la base (admin_users), pas des métadonnées du compte.
+        if (data.me?.role) setCurrentUserRole(data.me.role);
+        if (data.me?.full_name) setCurrentFullName(data.me.full_name);
+      } else if (res.status === 403 || res.status === 401) {
+        setUsers([]);
+        setCurrentUserRole("editor");
       }
     } catch {
       // Gérer l'erreur silencieusement
@@ -188,8 +201,6 @@ export default function DashboardPage() {
           if (session?.user && isMounted) {
             setIsAuthenticated(true);
             setCurrentUserEmail(session.user.email);
-            const userRole = session.user.user_metadata?.role || "admin";
-            setCurrentUserRole(userRole);
             setCurrentFullName(session.user.user_metadata?.full_name || "Administrateur");
           } else if (isMounted) {
             setIsAuthenticated(false);
@@ -211,8 +222,6 @@ export default function DashboardPage() {
         if (session?.user) {
           setIsAuthenticated(true);
           setCurrentUserEmail(session.user.email);
-          const userRole = session.user.user_metadata?.role || "admin";
-          setCurrentUserRole(userRole);
           setCurrentFullName(session.user.user_metadata?.full_name || "Administrateur");
         } else {
           setIsAuthenticated(false);
@@ -242,11 +251,9 @@ export default function DashboardPage() {
 
   const handleLogin = (userData) => {
     const email = typeof userData === "string" ? userData : userData?.email;
-    const role = userData?.role || "admin";
     const fullName = userData?.full_name || userData?.fullName || "Administrateur";
 
     if (email) setCurrentUserEmail(email);
-    setCurrentUserRole(role);
     setCurrentFullName(fullName);
     setIsAuthenticated(true);
     fetchUsers();
@@ -272,13 +279,12 @@ export default function DashboardPage() {
     try {
       const res = await fetch("/api/admin/users", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await authHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({
           full_name: newUser.name,
           email: newUser.email,
           password: newUser.password,
           role: newUser.role,
-          creatorEmail: currentUserEmail,
         }),
       });
 
@@ -307,8 +313,9 @@ export default function DashboardPage() {
 
     if (confirm(`Voulez-vous vraiment supprimer l'utilisateur ${userObj.email} ?`)) {
       try {
-        const res = await fetch(`/api/admin/users?id=${userObj.id}&email=${encodeURIComponent(userObj.email)}`, {
+        const res = await fetch(`/api/admin/users?id=${encodeURIComponent(userObj.id)}`, {
           method: "DELETE",
+          headers: await authHeaders(),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -476,7 +483,12 @@ export default function DashboardPage() {
 
   const handleDeleteMessage = async (id) => {
     if (confirm("Voulez-vous supprimer ce message de contact ?")) {
-      await deleteContactMessage(id);
+      try {
+        await deleteContactMessage(id);
+      } catch (err) {
+        reportError(err);
+        return;
+      }
       setMessages((prev) => prev.filter((m) => m.id !== id));
       triggerSuccess("Message de contact supprimé.");
     }

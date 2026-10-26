@@ -1,17 +1,41 @@
 import nodemailer from "nodemailer";
-import { escapeHtml } from "@/lib/security";
+import { escapeHtml, sanitizeText, validateEmail } from "@/lib/security";
 
 const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587", 10);
 const SMTP_USER = process.env.SMTP_USER || "";
 const SMTP_PASS = process.env.SMTP_PASS || "";
-const NOTIFY_TO = process.env.ADMIN_EMAIL || "bestbuilders@gmail.com";
+const NOTIFY_TO = process.env.ADMIN_EMAIL || "bestbuilderssarlu@gmail.com";
+
+// Anti-spam simple : 5 envois max par IP toutes les 10 minutes (par instance serveur).
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const hits = new Map();
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const recent = (hits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+  if (hits.size > 5000) hits.clear();
+  return recent.length > RATE_LIMIT;
+}
+
+const clean = (value, max) => sanitizeText(typeof value === "string" ? value : "").slice(0, max);
 
 /**
  * API Route POST /api/notify
  * Envoie un email de notification à Best Builders lorsqu'un client soumet une demande de devis.
  */
 export async function POST(request) {
+  const ip = (request.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+  if (isRateLimited(ip)) {
+    return Response.json(
+      { error: "Trop de demandes. Réessayez dans quelques minutes.", code: "RATE_LIMITED", status: 429 },
+      { status: 429 }
+    );
+  }
+
   if (!SMTP_USER || !SMTP_PASS) {
     return Response.json(
       { success: false, error: "Configuration SMTP manquante — notification email désactivée." },
@@ -30,13 +54,20 @@ export async function POST(request) {
     );
   }
 
-  const { name, email, phone, service_requested, message } = payload || {};
+  const name = clean(payload?.name, 120);
+  const email = clean(payload?.email, 200);
+  const phone = clean(payload?.phone, 30);
+  const service_requested = clean(payload?.service_requested, 150);
+  const message = clean(payload?.message, 5000);
 
   if (!name || !email || !message) {
     return Response.json(
       { error: "Champs obligatoires manquants (nom, email, message).", code: "MISSING_FIELDS", status: 400 },
       { status: 400 }
     );
+  }
+  if (!validateEmail(email)) {
+    return Response.json({ error: "Adresse email invalide.", code: "INVALID_EMAIL", status: 400 }, { status: 400 });
   }
 
 
@@ -130,6 +161,7 @@ export async function POST(request) {
     await transporter.sendMail({
       from: `"Best Builders SARLU" <${SMTP_USER}>`,
       to: NOTIFY_TO,
+      replyTo: email,
       subject: `🏗️ Nouvelle demande de devis — ${name} (${service_requested || "Général"})`,
       html: htmlBody,
       text: `Nouvelle demande de devis de ${name}\nEmail: ${email}\nTéléphone: ${phone || "N/A"}\nService: ${service_requested || "N/A"}\nMessage: ${message}`,

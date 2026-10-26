@@ -1,194 +1,166 @@
 import { NextResponse } from "next/server";
 import { sanitizeText, validateEmail } from "@/lib/security";
-import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { requireAdmin } from "@/lib/server-auth";
 
 /**
  * API Route : /api/admin/users
- * Permet au Super Admin de :
- * - GET: Lister tous les utilisateurs enregistrés dans Supabase (Auth + Table)
- * - POST: Créer un nouvel utilisateur dans Supabase Auth
- * - DELETE: Supprimer un utilisateur de Supabase
+ * - GET    : liste des utilisateurs du dashboard (admins connectés)
+ * - POST   : création d'un utilisateur (Super Admin uniquement)
+ * - DELETE : suppression d'un utilisateur (Super Admin uniquement)
+ *
+ * Chaque appel exige le jeton de session Supabase (Authorization: Bearer ...).
+ * Le rôle est lu dans la table admin_users, protégée par la RLS.
  */
 
-// GET : Liste des utilisateurs réels depuis Supabase Auth
-export async function GET() {
-  try {
-    // 1. Tenter la récupération via Supabase Auth Admin API (Priorité Native)
-    if (supabaseAdmin) {
-      try {
-        const { data: authData, error: authError } = await supabaseAdmin.auth.admin.listUsers();
-        if (!authError && authData?.users && authData.users.length > 0) {
-          const users = authData.users.map((u) => ({
-            id: u.id,
-            email: u.email,
-            full_name: u.user_metadata?.full_name || u.user_metadata?.name || u.email.split("@")[0],
-            role: u.user_metadata?.role || "admin",
-            status: u.banned_until ? "inactive" : "active",
-            created_at: u.created_at,
-          }));
-          return NextResponse.json({ users });
-        }
-      } catch (authErr) {
-        console.warn("Supabase Auth admin listUsers indisponible, fallback vers table admin_users :", authErr);
-      }
-    }
+const ROLES = ["super_admin", "admin", "editor"];
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-    // 2. Récupération via la table Supabase `admin_users`
-    if (supabase) {
-      const { data, error } = await supabase
-        .from("admin_users")
-        .select("id, email, full_name, role, status, created_at, created_by")
-        .order("created_at", { ascending: false });
+export async function GET(req) {
+  const auth = await requireAdmin(req);
+  if (auth.response) return auth.response;
 
-      if (!error && data && data.length > 0) {
-        return NextResponse.json({ users: data });
-      }
-    }
+  const { data, error } = await auth.client
+    .from("admin_users")
+    .select("id, user_id, email, full_name, role, status, created_at, created_by")
+    .order("created_at", { ascending: false });
 
-    return NextResponse.json({ users: [] });
-  } catch (error) {
-    console.error("Erreur de récupération des utilisateurs dans /api/admin/users :", error);
+  if (error) {
+    console.error("Erreur lecture admin_users :", error);
     return NextResponse.json(
       { error: "Impossible de récupérer la liste des utilisateurs.", code: "FETCH_USERS_ERROR", status: 500 },
       { status: 500 }
     );
   }
+
+  return NextResponse.json({
+    users: data || [],
+    me: { email: auth.user.email, role: auth.role, full_name: auth.fullName },
+  });
 }
 
-// POST : Créer un utilisateur dans Supabase Auth (Super Admin uniquement)
 export async function POST(req) {
+  const auth = await requireAdmin(req, { superAdmin: true });
+  if (auth.response) return auth.response;
+
+  let body;
   try {
-    const body = await req.json();
-    const email = sanitizeText(body?.email || "").toLowerCase();
-    const password = body?.password || "";
-    const full_name = sanitizeText(body?.full_name || body?.name || "");
-    const role = ["super_admin", "admin", "editor"].includes(body?.role) ? body.role : "admin";
-    const creatorEmail = sanitizeText(body?.creatorEmail || "");
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Requête invalide.", code: "INVALID_BODY", status: 400 }, { status: 400 });
+  }
 
-    if (!email || !password || !full_name) {
-      return NextResponse.json(
-        { error: "Tous les champs (Nom, Email, Mot de passe) sont requis.", code: "MISSING_FIELDS", status: 400 },
-        { status: 400 }
-      );
-    }
+  const email = sanitizeText(body?.email || "").toLowerCase();
+  const password = typeof body?.password === "string" ? body.password : "";
+  const full_name = sanitizeText(body?.full_name || body?.name || "").slice(0, 120);
+  const role = ROLES.includes(body?.role) ? body.role : "admin";
 
-    if (!validateEmail(email)) {
-      return NextResponse.json(
-        { error: "Format d'adresse email invalide.", code: "INVALID_EMAIL", status: 400 },
-        { status: 400 }
-      );
-    }
-
-    if (password.length < 6) {
-      return NextResponse.json(
-        { error: "Le mot de passe doit contenir au moins 6 caractères.", code: "PASSWORD_TOO_SHORT", status: 400 },
-        { status: 400 }
-      );
-    }
-
-    let createdUser = null;
-
-    // 1. Création directe dans Supabase Auth via Admin API
-    if (supabaseAdmin) {
-      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: { full_name, role },
-      });
-
-      if (authError) {
-        return NextResponse.json(
-          { error: `Erreur Supabase Auth : ${authError.message}`, code: "SUPABASE_AUTH_ERROR", status: 400 },
-          { status: 400 }
-        );
-      }
-
-      if (authData?.user) {
-        createdUser = {
-          id: authData.user.id,
-          email: authData.user.email,
-          full_name,
-          role,
-          status: "active",
-        };
-      }
-    }
-
-    // 2. Synchroniser dans la table Supabase `admin_users` si existante
-    if (supabase) {
-      await supabase
-        .from("admin_users")
-        .insert([
-          {
-            user_id: createdUser?.id || null,
-            email,
-            full_name,
-            role,
-            status: "active",
-            created_by: creatorEmail || "super_admin",
-          },
-        ])
-        .select();
-    }
-
+  if (!email || !password || !full_name) {
+    return NextResponse.json(
+      { error: "Tous les champs (Nom, Email, Mot de passe) sont requis.", code: "MISSING_FIELDS", status: 400 },
+      { status: 400 }
+    );
+  }
+  if (!validateEmail(email)) {
+    return NextResponse.json({ error: "Format d'adresse email invalide.", code: "INVALID_EMAIL", status: 400 }, { status: 400 });
+  }
+  if (password.length < 8) {
+    return NextResponse.json(
+      { error: "Le mot de passe doit contenir au moins 8 caractères.", code: "PASSWORD_TOO_SHORT", status: 400 },
+      { status: 400 }
+    );
+  }
+  if (!supabaseAdmin) {
     return NextResponse.json(
       {
-        success: true,
-        message: `Utilisateur ${email} créé avec succès !`,
-        user: createdUser || { email, full_name, role, status: "active" },
+        error: "Création de compte impossible : la variable SUPABASE_SERVICE_ROLE_KEY n'est pas configurée sur le serveur.",
+        code: "SERVICE_KEY_MISSING",
+        status: 503,
       },
-      { status: 201 }
+      { status: 503 }
     );
-  } catch (error) {
-    console.error("Erreur création utilisateur dans /api/admin/users :", error);
+  }
+
+  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { full_name },
+    app_metadata: { role },
+  });
+  if (authError || !authData?.user) {
     return NextResponse.json(
-      { error: "Une erreur est survenue lors de la création de l'utilisateur.", code: "CREATE_USER_ERROR", status: 500 },
+      { error: `Erreur Supabase Auth : ${authError?.message || "compte non créé"}`, code: "SUPABASE_AUTH_ERROR", status: 400 },
+      { status: 400 }
+    );
+  }
+
+  const { error: insertError } = await auth.client.from("admin_users").upsert(
+    [{ user_id: authData.user.id, email, full_name, role, status: "active", created_by: auth.user.email }],
+    { onConflict: "email" }
+  );
+  if (insertError) {
+    // Ne pas laisser un compte de connexion sans droits enregistrés
+    await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+    console.error("Erreur insertion admin_users :", insertError);
+    return NextResponse.json(
+      { error: "Le compte n'a pas pu être enregistré dans admin_users.", code: "CREATE_USER_ERROR", status: 500 },
       { status: 500 }
     );
   }
+
+  return NextResponse.json(
+    {
+      success: true,
+      message: `Utilisateur ${email} créé avec succès !`,
+      user: { id: authData.user.id, email, full_name, role, status: "active" },
+    },
+    { status: 201 }
+  );
 }
 
-// DELETE : Supprimer un utilisateur de Supabase Auth
 export async function DELETE(req) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("id");
-    const userEmail = searchParams.get("email");
+  const auth = await requireAdmin(req, { superAdmin: true });
+  if (auth.response) return auth.response;
 
-    if (!userId && !userEmail) {
-      return NextResponse.json(
-        { error: "ID ou email d'utilisateur requis.", code: "MISSING_IDENTIFIER", status: 400 },
-        { status: 400 }
-      );
-    }
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+  if (!id || !UUID_RE.test(id)) {
+    return NextResponse.json({ error: "ID d'utilisateur invalide.", code: "MISSING_IDENTIFIER", status: 400 }, { status: 400 });
+  }
 
-    // 1. Supprimer de Supabase Auth
-    if (supabaseAdmin && userId) {
-      await supabaseAdmin.auth.admin.deleteUser(userId);
-    }
+  const { data: target } = await auth.client
+    .from("admin_users")
+    .select("id, user_id, email")
+    .or(`id.eq.${id},user_id.eq.${id}`)
+    .maybeSingle();
 
-    // 2. Supprimer de la table `admin_users`
-    if (supabase) {
-      const query = userId
-        ? supabase.from("admin_users").delete().eq("id", userId)
-        : supabase.from("admin_users").delete().eq("email", userEmail);
+  if (!target) {
+    return NextResponse.json({ error: "Utilisateur introuvable.", code: "NOT_FOUND", status: 404 }, { status: 404 });
+  }
+  if (target.email.toLowerCase() === auth.user.email.toLowerCase()) {
+    return NextResponse.json(
+      { error: "Vous ne pouvez pas supprimer votre propre compte.", code: "SELF_DELETE", status: 400 },
+      { status: 400 }
+    );
+  }
 
-      await query;
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: "Utilisateur supprimé de Supabase avec succès.",
-    });
-  } catch (error) {
-    console.error("Erreur suppression utilisateur dans /api/admin/users :", error);
+  const { error: deleteError } = await auth.client.from("admin_users").delete().eq("id", target.id);
+  if (deleteError) {
+    console.error("Erreur suppression admin_users :", deleteError);
     return NextResponse.json(
       { error: "Une erreur est survenue lors de la suppression.", code: "DELETE_USER_ERROR", status: 500 },
       { status: 500 }
     );
   }
+
+  // Supprimer aussi le compte de connexion si la clé serveur est disponible.
+  // Sans elle, le compte existe encore mais n'a plus aucun droit (RLS).
+  const authUserId = target.user_id;
+  if (supabaseAdmin && authUserId) {
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(authUserId);
+    if (error) console.warn("Compte Auth non supprimé :", error.message);
+  }
+
+  return NextResponse.json({ success: true, message: "Utilisateur supprimé." });
 }
-
-
