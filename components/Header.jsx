@@ -56,7 +56,7 @@ export default function Header() {
         </Link>
 
         {/* NAV desktop */}
-        <nav className="hidden md:flex items-center gap-3 lg:gap-6">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
           <Link
             href="/"
             className={`font-display text-[12px] lg:text-[13px] font-semibold uppercase tracking-wider transition-colors ${
@@ -74,7 +74,7 @@ export default function Header() {
           >
             <Link
               href="/a-propos"
-              className={`flex items-center gap-1 font-display text-[12px] lg:text-[13px] font-semibold uppercase tracking-wider transition-colors py-2 ${
+              className={`flex items-center gap-1 whitespace-nowrap font-display text-[12px] lg:text-[13px] font-semibold uppercase tracking-wider transition-colors py-2 ${
                 dropdownOpen ? "text-[#00C2FF]" : "text-slate-200 hover:text-[#00C2FF]"
               }`}
             >
@@ -124,7 +124,7 @@ export default function Header() {
         </nav>
 
         {/* CTA desktop */}
-        <div className="hidden md:block shrink-0 ml-4 lg:ml-6">
+        <div className="hidden xl:block shrink-0 ml-6">
           <Link
             href="/contact"
             className="inline-flex items-center justify-center px-4 lg:px-5 py-2.5 bg-[#00C2FF] text-[#000F22] font-display font-bold text-[12px] lg:text-[13px] uppercase tracking-wider transition-all duration-200 hover:bg-[#007AFF] hover:text-white shadow-md active:scale-95 group rounded-xs whitespace-nowrap"
@@ -137,7 +137,7 @@ export default function Header() {
 
         {/* Burger mobile */}
         <button
-          className="md:hidden text-[#00C2FF] p-2 focus:outline-none transition-transform hover:scale-110"
+          className="lg:hidden text-[#00C2FF] p-2 focus:outline-none transition-transform hover:scale-110"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
         >
@@ -147,7 +147,7 @@ export default function Header() {
 
       {/* Menu mobile - Plein écran & Déroulant sans coupure */}
       <div
-        className={`md:hidden overflow-y-auto transition-all duration-300 ease-in-out ${
+        className={`lg:hidden overflow-y-auto transition-all duration-300 ease-in-out ${
           menuOpen ? "max-h-[calc(100vh-5rem)] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >

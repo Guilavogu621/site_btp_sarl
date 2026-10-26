@@ -80,7 +80,7 @@ export default function ContactInfo({ showHours = false, variant = "default" }) 
                   {item.badge}
                 </span>
               </div>
-              <p className="font-sans text-[14px] text-[#5B6B7A] truncate">{item.value}</p>
+              <p className="font-sans text-[14px] text-[#5B6B7A] break-words">{item.value}</p>
             </div>
           </div>
         );

@@ -474,3 +474,8 @@ input, select, textarea {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
+
+/* Accessibilité : pas d'animation si l'utilisateur l'a désactivée */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-up { opacity: 1; transform: none; transition: none; }
+}

@@ -23,7 +23,7 @@ export default function HomePage() {
 
   /** Photos statiques de fallback affichées si Supabase est vide ou en pause */
   const staticGalleryItems = [
-    { id: 1, title: "Supervision de Chantier à Conakry", category: "Supervision & Contrôle OPC", image: "/img/showcase/ingenieure-chantier.webp", description: "Ingénieure de chantier coordonnant les opérations avec radio de liaison.", location: "Conakry" },
+    { id: 1, title: "Supervision de Chantier à Conakry", category: "Supervision & Contrôle OPC", image: "/img/showcase/chantier-hauteur.webp", description: "Suivi des travaux en hauteur et coordination des corps d’état sous grue à tour.", location: "Conakry" },
     { id: 2, title: "Immeuble R+12 & Grue à Tour", category: "Gros Œuvre & Structure", image: "/img/showcase/tour-grue-ciel.webp", description: "Coulage de voiles béton et coffrage sous grue à tour.", location: "Almamya" },
     { id: 3, title: "Surélévation Ossature Bois", category: "Rénovation & Surélévation", image: "/img/showcase/immeuble-bois-survation.webp", description: "Extension de 2 étages en bois massif avec assemblage haute précision.", location: "Kipé" },
     { id: 4, title: "Conception & Modélisation CAD", category: "Supervision & Contrôle OPC", image: "/img/showcase/architecte-bureau.webp", description: "Modélisation numérique des structures et vérification des descentes de charges.", location: "Conakry" },
@@ -36,7 +36,7 @@ export default function HomePage() {
 
   const heroSlides = [
     {
-      image: "/img/showcase/ingenieure-chantier.webp",
+      image: "/img/showcase/chantier-hauteur.webp",
       title: "Supervision & Contrôle Chantier",
       tag: "SUPERVISION TECHNIQUE • CONAKRY"
     },
@@ -69,8 +69,8 @@ export default function HomePage() {
       title: "Supervision de Chantier à Conakry",
       category: "supervision",
       categoryName: "Supervision & Suivi",
-      image: "/img/showcase/ingenieure-chantier.webp",
-      desc: "Ingénieure de chantier coordonnant les opérations avec radio de liaison."
+      image: "/img/showcase/chantier-hauteur.webp",
+      desc: "Suivi des travaux en hauteur et coordination des corps d’état sous grue à tour."
     },
     {
       id: 2,
@@ -197,10 +197,20 @@ export default function HomePage() {
       });
     }, observerOptions);
 
-    const animatedElements = document.querySelectorAll(".fade-in-up");
-    animatedElements.forEach((el) => observer.observe(el));
+    const observeAll = () => {
+      document.querySelectorAll(".fade-in-up:not(.is-visible)").forEach((el) => observer.observe(el));
+    };
+    observeAll();
 
-    return () => observer.disconnect();
+    // Les éléments ajoutés après le chargement (équipe, galerie Supabase…) doivent aussi être observés,
+    // sinon ils restent invisibles (opacity: 0).
+    const mutationObserver = new MutationObserver(observeAll);
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
   }, []);
 
   const serviceBadges = [
@@ -854,7 +864,7 @@ export default function HomePage() {
         <section id="contact" className="py-24 bg-[#F7F9FF] border-t border-[#C4C6CE] relative">
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid lg:grid-cols-2 gap-16 items-start">
-              <div className="fade-in-up">
+              <div className="fade-in-up min-w-0">
                 <span className="technical-badge mb-3">
                   CONTACT &amp; DEVIS TECHNIQUE
                 </span>
@@ -870,7 +880,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="fade-in-up delay-200">
+              <div className="fade-in-up delay-200 min-w-0">
                 <ContactForm />
               </div>
             </div>
