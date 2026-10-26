@@ -82,7 +82,7 @@ export default function DashboardPage() {
   const [copiedText, setCopiedText] = useState(null);
 
   // Content State
-  const [messages, setMessages] = useState(initialContactMessages);
+  const [messages, setMessages] = useState([]);
   const [projects, setProjects] = useState(initialProjects);
   const [articles, setArticles] = useState(initialArticles);
   const [services] = useState(initialServices);
@@ -900,6 +900,21 @@ export default function DashboardPage() {
                   <span>Actualités</span>
                 </div>
                 <span className="text-[11px] font-mono text-slate-400">{articles.length}</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("equipments")}
+                className={`shrink-0 md:w-full flex items-center justify-between gap-3 px-3.5 py-2.5 sm:py-3 rounded-lg font-medium text-[12px] sm:text-[13px] transition-all text-left whitespace-nowrap ${
+                  activeTab === "equipments"
+                    ? "bg-[#1E56A0] text-white font-bold shadow-lg border border-[#00C2FF]/30"
+                    : "text-slate-300 hover:bg-[#0F3854] hover:text-white"
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Wrench className={`w-4 h-4 ${activeTab === "equipments" ? "text-[#00C2FF]" : "text-slate-400"}`} />
+                  <span>Équipements</span>
+                </div>
+                <span className="text-[11px] font-mono text-slate-400">{equipments.length}</span>
               </button>
 
               <button
@@ -2381,13 +2396,18 @@ export default function DashboardPage() {
                 <p className="text-[14px] text-slate-600 mt-1">Coordonnées et informations institutionnelles de Best Builders SARLU.</p>
               </div>
 
-              <form onSubmit={(e) => { e.preventDefault(); triggerSuccess("Paramètres du site enregistrés."); }} className="bg-white border border-slate-200 p-8 rounded-xl shadow-xs space-y-6">
+              <div className="p-4 bg-[#EBF3FF] border border-[#1E56A0]/30 rounded-lg text-[14px] text-[#0A2540]">
+                Ces informations s&apos;affichent sur tout le site (pied de page, contact, mentions légales).
+                Elles sont pour l&apos;instant modifiées par l&apos;équipe technique : envoyez-lui les changements souhaités.
+              </div>
+
+              <form onSubmit={(e) => e.preventDefault()} className="bg-white border border-slate-200 p-5 sm:p-8 rounded-xl shadow-xs space-y-6">
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-2">Nom de la Société</label>
                     <input
                       type="text"
-                      defaultValue={settings.company_name}
+                      readOnly defaultValue={settings.company_name}
                       className="w-full p-3.5 bg-slate-50 border border-slate-300 text-[#0A2540] font-medium outline-none focus:border-[#1E56A0] rounded-lg"
                     />
                   </div>
@@ -2395,7 +2415,7 @@ export default function DashboardPage() {
                     <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-2">Téléphone Principal</label>
                     <input
                       type="text"
-                      defaultValue={settings.phone}
+                      readOnly defaultValue={settings.phone}
                       className="w-full p-3.5 bg-slate-50 border border-slate-300 text-[#0A2540] font-medium outline-none focus:border-[#1E56A0] rounded-lg"
                     />
                   </div>
@@ -2403,7 +2423,7 @@ export default function DashboardPage() {
                     <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-2">Adresse Email Officielle</label>
                     <input
                       type="email"
-                      defaultValue={settings.email}
+                      readOnly defaultValue={settings.email}
                       className="w-full p-3.5 bg-slate-50 border border-slate-300 text-[#0A2540] font-medium outline-none focus:border-[#1E56A0] rounded-lg"
                     />
                   </div>
@@ -2411,7 +2431,7 @@ export default function DashboardPage() {
                     <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-2">Localisation du Siège</label>
                     <input
                       type="text"
-                      defaultValue={settings.address}
+                      readOnly defaultValue={settings.address}
                       className="w-full p-3.5 bg-slate-50 border border-slate-300 text-[#0A2540] font-medium outline-none focus:border-[#1E56A0] rounded-lg"
                     />
                   </div>
@@ -2421,17 +2441,11 @@ export default function DashboardPage() {
                   <label className="block text-[11px] font-mono uppercase text-[#0A2540] font-bold mb-2">Présentation Institutionnelle</label>
                   <textarea
                     rows={4}
-                    defaultValue={settings.about_text}
+                    readOnly defaultValue={settings.about_text}
                     className="w-full p-3.5 bg-slate-50 border border-slate-300 text-[#0A2540] font-medium outline-none focus:border-[#1E56A0] rounded-lg"
                   ></textarea>
                 </div>
 
-                <button
-                  type="submit"
-                  className="px-8 py-3.5 bg-[#0A2540] text-white font-bold text-[13px] uppercase tracking-wider rounded-lg hover:bg-[#1E56A0] transition-colors shadow-md"
-                >
-                  Enregistrer les modifications
-                </button>
               </form>
             </div>
           )}

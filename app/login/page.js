@@ -68,7 +68,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A2540] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0A2540] flex items-center justify-center px-4 pt-24 pb-10">
       <LoginScreen onLogin={handleLoginSuccess} />
     </div>
   );

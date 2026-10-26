@@ -7,7 +7,7 @@ export default function WhatsAppButton() {
   const pathname = usePathname();
 
   // Hide on dashboard
-  if (pathname === "/dashboard") return null;
+  if (pathname === "/dashboard" || pathname === "/login") return null;
 
   const whatsappUrl = "https://wa.me/224614606079?text=Bonjour%20Best%20Builders%2C%20je%20souhaite%20obtenir%20des%20informations%20pour%20un%20projet%20BTP%20%2F%20demande%20de%20devis.";
 

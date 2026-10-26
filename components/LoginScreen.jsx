@@ -32,7 +32,7 @@ export default function LoginScreen({ onLogin }) {
         });
 
         if (error) {
-          setLoginError("Identifiants incorrects ou compte inexistant sur Supabase.");
+          setLoginError("Email ou mot de passe incorrect.");
           return;
         }
 
@@ -125,7 +125,7 @@ export default function LoginScreen({ onLogin }) {
             {/* Main Form */}
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-200 mb-2">
+                <label htmlFor="login-email" className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-200 mb-2">
                   Identifiant (Adresse Email)
                 </label>
                 <div className="relative">
@@ -133,19 +133,20 @@ export default function LoginScreen({ onLogin }) {
                     <Mail className="w-4 h-4" />
                   </div>
                   <input
+                    id="login-email"
                     type="email"
                     required
                     autoComplete="email"
                     value={loginForm.email}
                     onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                    placeholder="bestbuilderssarlu@gmail.com"
+                    placeholder="votre.email@exemple.com"
                     className="w-full pl-10 pr-4 py-3.5 bg-[#0A2540]/80 border border-[#295EA8]/50 rounded-xl text-white placeholder-slate-400 text-[14px] outline-none focus:border-[#00C2FF] focus:ring-2 focus:ring-[#00C2FF]/30 transition-all font-sans"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-200 mb-2">
+                <label htmlFor="login-password" className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-200 mb-2">
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -153,6 +154,7 @@ export default function LoginScreen({ onLogin }) {
                     <KeyRound className="w-4 h-4" />
                   </div>
                   <input
+                    id="login-password"
                     type={showPassword ? "text" : "password"}
                     required
                     autoComplete="current-password"

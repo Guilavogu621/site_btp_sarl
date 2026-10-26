@@ -7,7 +7,7 @@ import { Phone, Mail, MapPin, ShieldCheck, Scale } from "lucide-react";
 export default function Footer() {
   const pathname = usePathname();
 
-  if (pathname === "/dashboard") {
+  if (pathname === "/dashboard" || pathname === "/login") {
     return null;
   }
   return (
