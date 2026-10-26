@@ -18,6 +18,15 @@ export const metadata = {
   metadataBase: new URL("https://bestbuilders224.com"),
   title: "Best Builders SARLU — Bureau d'études & Ingénierie BTP à Conakry",
   description: "Bureau d'études et de construction BTP à Conakry, Guinée (Kipé). Conception, calcul de structure, chiffrage et maîtrise d'œuvre.",
+  openGraph: {
+    type: "website",
+    locale: "fr_GN",
+    siteName: "Best Builders SARLU",
+    title: "Best Builders SARLU — Bureau d'études & Ingénierie BTP à Conakry",
+    description: "Conception, calcul de structure, chiffrage, maîtrise d'œuvre et location d'équipements BTP à Conakry.",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Chantier Best Builders SARLU à Conakry" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og-image.jpg"] },
   icons: {
     icon: [{ url: "/icon.png", type: "image/png" }],
     apple: [{ url: "/apple-icon.png" }]

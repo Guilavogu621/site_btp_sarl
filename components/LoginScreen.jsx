@@ -46,28 +46,7 @@ export default function LoginScreen({ onLogin }) {
         }
       }
 
-      // Route API de secours passant par Supabase Auth
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: loginForm.email,
-          password: loginForm.password,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setLoginError(data.error || "Identifiants incorrects sur Supabase.");
-        return;
-      }
-
-      if (data.session && supabase) {
-        await supabase.auth.setSession(data.session);
-      }
-
-      onLogin(data.user);
+      setLoginError("Le service de connexion n'est pas configuré (variables Supabase manquantes).");
     } catch (err) {
       setLoginError("Connexion impossible au serveur. Veuillez vérifier votre réseau.");
     } finally {
