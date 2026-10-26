@@ -51,7 +51,8 @@ import {
   createEquipment,
   updateEquipment,
   deleteEquipment,
-  makeSlug
+  makeSlug,
+  migrateInlineMedia
 } from "@/lib/data";
 import { sanitizeText } from "@/lib/security";
 import { supabase } from "@/lib/supabase";
@@ -159,6 +160,8 @@ export default function DashboardPage() {
         // Le rôle affiché vient de la base (admin_users), pas des métadonnées du compte.
         if (data.me?.role) setCurrentUserRole(data.me.role);
         if (data.me?.full_name) setCurrentFullName(data.me.full_name);
+        // Admin confirmé : convertir les anciennes photos stockées en texte (une seule fois).
+        migrateInlineMedia().then((count) => { if (count > 0) refreshData(); }).catch(() => {});
       } else if (res.status === 403 || res.status === 401) {
         setUsers([]);
         setCurrentUserRole("editor");
@@ -686,8 +689,8 @@ export default function DashboardPage() {
   const handleVideoFileChange = (e, callback) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
-      if (file.size > 8 * 1024 * 1024) {
-        alert("Le fichier vidéo sélectionné dépasse 8 Mo.\n\nPour les vidéos plus lourdes, collez plutôt un lien YouTube ou Vimeo dans la case URL afin de préserver les performances.");
+      if (file.size > 45 * 1024 * 1024) {
+        alert("Le fichier vidéo sélectionné dépasse 45 Mo.\n\nPour les vidéos plus lourdes, collez plutôt un lien YouTube ou Vimeo dans la case URL.");
         return;
       }
       const reader = new FileReader();
