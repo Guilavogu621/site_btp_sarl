@@ -21,7 +21,7 @@ export default function BlueprintGraphic() {
         />
         <circle cx="120" cy="60" r="3" fill="#1E56A0"/>
       </svg>
-      <p className="font-mono text-[10px] tracking-widest uppercase mt-2 text-right text-[#5B6B7A]">
+      <p className="font-mono text-[12px] tracking-widest uppercase mt-2 text-right text-[#5B6B7A]">
         Élévation — Éch. 1:100
       </p>
     </div>

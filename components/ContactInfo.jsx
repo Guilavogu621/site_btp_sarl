@@ -47,7 +47,7 @@ export default function ContactInfo({ showHours = false, variant = "default" }) 
                 <div className="icon-box-stitch">
                   <Icon className="w-5 h-5" />
                 </div>
-                <span className="font-mono text-[10px] text-[#295EA8] font-semibold bg-[#F1F4F7] px-2 py-0.5 border border-[#C4C6CE] rounded-xs">
+                <span className="font-mono text-[12px] text-[#295EA8] font-semibold bg-[#F1F4F7] px-2 py-0.5 border border-[#C4C6CE] rounded-xs">
                   {item.badge}
                 </span>
               </div>
@@ -76,7 +76,7 @@ export default function ContactInfo({ showHours = false, variant = "default" }) 
                 <h4 className="font-display font-bold text-[15px] text-[#0A2540] group-hover:text-[#295EA8] transition-colors">
                   {item.title}
                 </h4>
-                <span className="font-mono text-[9px] text-[#295EA8] font-semibold bg-[#F1F4F7] px-2 py-0.5 border border-[#C4C6CE] rounded-xs shrink-0">
+                <span className="font-mono text-[11px] text-[#295EA8] font-semibold bg-[#F1F4F7] px-2 py-0.5 border border-[#C4C6CE] rounded-xs shrink-0">
                   {item.badge}
                 </span>
               </div>

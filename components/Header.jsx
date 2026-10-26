@@ -47,9 +47,9 @@ export default function Header() {
           <div className="hidden sm:block">
             <div className="font-display font-bold text-[17px] text-white tracking-tight group-hover:text-[#00C2FF] transition-colors flex items-center gap-2">
               <span>Best Builders</span>
-              <span className="font-mono text-[9px] px-1.5 py-0.5 bg-[#00C2FF]/10 text-[#00C2FF] border border-[#00C2FF]/30 rounded-xs font-semibold">BTP</span>
+              <span className="font-mono text-[11px] px-1.5 py-0.5 bg-[#00C2FF]/10 text-[#00C2FF] border border-[#00C2FF]/30 rounded-xs font-semibold">BTP</span>
             </div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-slate-300 font-medium">
+            <div className="font-mono text-[12px] uppercase tracking-[0.12em] text-slate-300 font-medium">
               Bureau d&apos;Études &amp; Ingénierie
             </div>
           </div>

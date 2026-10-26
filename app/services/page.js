@@ -50,7 +50,7 @@ export default function ServicesPage() {
                     0{index + 1}
                   </span>
 
-                  <span className="absolute bottom-4 left-4 font-mono text-[10px] text-[#00C2FF] font-semibold bg-[#0A2540]/90 backdrop-blur-sm px-3 py-1.5 border border-[#00C2FF]/30 rounded-sm shadow-md">
+                  <span className="absolute bottom-4 left-4 font-mono text-[12px] text-[#00C2FF] font-semibold bg-[#0A2540]/90 backdrop-blur-sm px-3 py-1.5 border border-[#00C2FF]/30 rounded-sm shadow-md">
                     {serviceBadges[index] || `0${index + 1} • SERVICE`}
                   </span>
                 </div>
@@ -62,7 +62,7 @@ export default function ServicesPage() {
                       <span className="technical-badge">
                         {serviceBadges[index] || `0${index + 1} • SERVICE`}
                       </span>
-                      <span className="font-mono text-[10px] text-[#5B6B7A] uppercase font-semibold tracking-wider">
+                      <span className="font-mono text-[12px] text-[#5B6B7A] uppercase font-semibold tracking-wider">
                         CONAKRY &amp; RÉGIONS
                       </span>
                     </div>

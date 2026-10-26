@@ -127,7 +127,7 @@ export default function AboutPage() {
                   <span className="font-display font-extrabold text-[28px] text-[#0A2540]/10 group-hover:text-[#00C2FF]/20 transition-colors leading-none block">
                     {value.stat}
                   </span>
-                  <span className="font-mono text-[9px] text-[#5B6B7A]/60 uppercase tracking-wider">
+                  <span className="font-mono text-[11px] text-[#5B6B7A]/60 uppercase tracking-wider">
                     {value.statLabel}
                   </span>
                 </div>

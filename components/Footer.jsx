@@ -101,7 +101,7 @@ export default function Footer() {
             <p className="font-mono text-[11px]"><strong className="text-[#00C2FF]">NIF :</strong> 802569368</p>
             <p><strong className="text-[#00C2FF]">Siège :</strong> Ratoma / Kipé, Conakry, Guinée</p>
           </div>
-          <div className="inline-block px-2.5 py-1 bg-[#295EA8]/20 border border-[#295EA8]/40 rounded-xs font-mono text-[10px] text-[#00C2FF] uppercase tracking-wider font-semibold">
+          <div className="inline-block px-2.5 py-1 bg-[#295EA8]/20 border border-[#295EA8]/40 rounded-xs font-mono text-[12px] text-[#00C2FF] uppercase tracking-wider font-semibold">
             Bureau d&apos;études &amp; entreprise de construction — Conakry
           </div>
         </div>

@@ -206,7 +206,7 @@ export default function LoginScreen({ onLogin }) {
 
           {/* Bottom Executive Status */}
           <div className="py-3 px-6 bg-[#0A2540] border-t border-[#00C2FF]/20 text-center">
-            <span className="font-mono text-[10px] uppercase text-[#00C2FF] font-bold tracking-widest flex items-center justify-center gap-2">
+            <span className="font-mono text-[12px] uppercase text-[#00C2FF] font-bold tracking-widest flex items-center justify-center gap-2">
               <Building2 className="w-3.5 h-3.5" />
               Ingénierie &amp; Maîtrise d&apos;Ouvrage
             </span>

@@ -294,13 +294,8 @@ export default function HomePage() {
 
             {/* Colonne Droite: Télémesure Technique & Image Animée (Maintenant AFFICHEE sur Mobile & Desktop) */}
             <div className="lg:col-span-5 relative w-full h-auto fade-in-up delay-400 mt-4 lg:mt-0">
-              <div className="card-stitch p-4 flex flex-col justify-between h-full shadow-2xl bg-[#0A2540]/90 backdrop-blur-md border-[#00C2FF]/40 rounded-sm">
-                <div className="flex justify-between items-start text-[#00C2FF] font-mono text-[11px] sm:text-[12px] font-semibold">
-                  <span>LAT: 9.585° N</span>
-                  <span>LON: -13.630° W (Kipé)</span>
-                </div>
-
-                <div className="w-full h-56 sm:h-72 relative my-3 overflow-hidden border border-[#00C2FF]/30 bg-[#0A2540] rounded-xs">
+              <div className="card-stitch p-3 flex flex-col gap-3 h-full shadow-2xl bg-[#0A2540]/90 backdrop-blur-md border-[#00C2FF]/40 rounded-sm">
+                <div className="w-full h-56 sm:h-72 relative overflow-hidden border border-[#00C2FF]/30 bg-[#0A2540] rounded-xs">
                   {heroSlides.map((slide, idx) => (
                     <img
                       key={idx}
@@ -311,17 +306,23 @@ export default function HomePage() {
                     />
                   ))}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/90 via-transparent to-transparent opacity-80" />
-                  <div className="absolute bottom-3 left-3 bg-[#0A2540]/95 backdrop-blur-md border border-[#00C2FF]/50 px-3 py-1 rounded-xs text-[10px] sm:text-[11px] font-mono text-[#00C2FF] font-semibold max-w-[85%] truncate">
+                  <div className="absolute bottom-3 left-3 bg-[#0A2540]/95 backdrop-blur-md border border-[#00C2FF]/50 px-3 py-1 rounded-xs text-[12px] font-mono text-[#00C2FF] font-semibold max-w-[85%] truncate">
                     {heroSlides[currentHeroSlide].tag}
                   </div>
                 </div>
 
-                <div className="flex justify-between items-end text-slate-300 font-mono text-[11px] sm:text-[12px]">
-                  <span className="flex items-center gap-1.5 text-[#00C2FF] font-semibold">
-                    <span className="w-2 h-2 rounded-full bg-[#00C2FF] animate-pulse" />
-                    SYS. OK • DIAPORAMA
-                  </span>
-                  <span className="font-semibold">{currentHeroSlide + 1} / {heroSlides.length}</span>
+                <div className="flex justify-center gap-1">
+                  {heroSlides.map((slide, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setCurrentHeroSlide(idx)}
+                      aria-label={`Afficher la photo ${idx + 1} : ${slide.title}`}
+                      className="p-2"
+                    >
+                      <span className={`block h-1.5 rounded-full transition-all ${idx === currentHeroSlide ? "w-6 bg-[#00C2FF]" : "w-1.5 bg-white/40"}`} />
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -332,19 +333,19 @@ export default function HomePage() {
             <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
               <div className="flex flex-col gap-1 fade-in-up">
                 <span className="font-display font-extrabold text-[26px] sm:text-[30px] md:text-[34px] text-[#00C2FF]">8+</span>
-                <span className="font-mono text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-wider">Années d&apos;expérience</span>
+                <span className="font-mono text-[12px] text-slate-300 uppercase tracking-wider">Années d&apos;expérience</span>
               </div>
               <div className="flex flex-col gap-1 fade-in-up delay-100">
                 <span className="font-display font-extrabold text-[26px] sm:text-[30px] md:text-[34px] text-[#00C2FF]">120+</span>
-                <span className="font-mono text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-wider">Projets réalisés</span>
+                <span className="font-mono text-[12px] text-slate-300 uppercase tracking-wider">Projets réalisés</span>
               </div>
               <div className="flex flex-col gap-1 fade-in-up delay-200">
                 <span className="font-display font-extrabold text-[26px] sm:text-[30px] md:text-[34px] text-[#00C2FF]">45+</span>
-                <span className="font-mono text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-wider">Collaborateurs qualifiés</span>
+                <span className="font-mono text-[12px] text-slate-300 uppercase tracking-wider">Collaborateurs qualifiés</span>
               </div>
               <div className="flex flex-col gap-1 fade-in-up delay-300">
                 <span className="font-display font-extrabold text-[26px] sm:text-[30px] md:text-[34px] text-[#00C2FF]">100%</span>
-                <span className="font-mono text-[10px] sm:text-[11px] text-slate-300 uppercase tracking-wider">Rigueur &amp; Sécurité</span>
+                <span className="font-mono text-[12px] text-slate-300 uppercase tracking-wider">Rigueur &amp; Sécurité</span>
               </div>
             </div>
           </div>
@@ -365,86 +366,43 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Grille à 2 colonnes très aérées et lisibles */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Cartes allégées : le détail complet reste sur la page Services */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
               {initialServices.map((service, index) => {
                 const delayClasses = ["", "delay-100", "delay-200", "delay-300"];
 
                 return (
-                  <div
+                  <Link
                     key={service.id}
-                    className={`fade-in-up ${delayClasses[index]} card-stitch flex flex-col justify-between group h-full overflow-hidden border border-[#C4C6CE] shadow-md hover:shadow-xl transition-all duration-300`}
+                    href={`/services#${service.slug}`}
+                    className={`fade-in-up ${delayClasses[index]} card-stitch flex flex-col group h-full overflow-hidden border border-[#C4C6CE] shadow-md hover:shadow-xl transition-all duration-300`}
                   >
-                    <div>
-                      {/* Banner Image & Badge Garanties */}
-                      <div className="relative w-full h-52 sm:h-60 overflow-hidden bg-[#0A2540] border-b border-[#C4C6CE]">
-                        <img
-                          src={service.image}
-                          alt={service.title}
-                          className="w-full h-full object-cover opacity-95 transition-transform duration-700 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/85 via-transparent to-transparent" />
-
-                        <span className="absolute top-4 right-4 font-mono text-[11px] font-bold text-[#00C2FF] bg-[#0A2540]/95 backdrop-blur-md px-3 py-1.5 border border-[#00C2FF]/40 rounded-xs shadow-md uppercase tracking-wider">
-                          {serviceBadges[index]}
-                        </span>
-
-                        {service.guarantee && (
-                          <span className="absolute bottom-4 left-4 font-mono text-[11px] font-extrabold uppercase tracking-wider text-[#000F22] bg-[#00C2FF] px-3.5 py-1.5 rounded-xs shadow-lg border border-white/20">
-                            ✓ {service.guarantee}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Contenu Texte Haute Lisibilité */}
-                      <div className="p-7 sm:p-8">
-                        <h3 className="font-display text-[22px] sm:text-[25px] leading-snug font-bold text-[#0A2540] mb-3 group-hover:text-[#295EA8] transition-colors">
-                          {service.title}
-                        </h3>
-
-                        {service.tagline && (
-                          <div className="inline-block bg-[#EBF3FF] border border-[#295EA8]/20 px-3.5 py-1.5 rounded-xs mb-4">
-                            <p className="font-mono text-[12px] font-bold text-[#295EA8] uppercase tracking-wide">
-                              ⚡ {service.tagline}
-                            </p>
-                          </div>
-                        )}
-
-                        <p className="font-sans text-[15px] sm:text-[16px] text-[#1E293B] font-medium leading-relaxed mb-6">
-                          {service.short_description}
-                        </p>
-
-                        {/* Puces d'Expertise Haute Lisibilité */}
-                        {service.highlights && (
-                          <div className="space-y-3 mb-6 p-4 bg-[#F8FAFC] border border-[#CBD5E1] rounded-xs">
-                            <span className="font-mono text-[11px] font-bold text-[#0A2540] uppercase tracking-wider block mb-2">
-                              Engagements &amp; Avantages Clés :
-                            </span>
-                            {service.highlights.map((point, pIdx) => (
-                              <div key={pIdx} className="flex items-start gap-2.5">
-                                <CheckCircle2 className="w-4 h-4 text-[#0088CC] shrink-0 mt-0.5" />
-                                <span className="font-sans text-[14px] font-semibold text-[#0F172A] leading-snug">
-                                  {point}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                    <div className="relative w-full h-48 sm:h-56 overflow-hidden bg-[#0A2540]">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/60 via-transparent to-transparent" />
+                      <span className="absolute top-4 left-4 font-mono text-[12px] font-bold text-[#00C2FF] bg-[#0A2540]/90 px-3 py-1.5 rounded-xs uppercase tracking-wider">
+                        {serviceBadges[index]}
+                      </span>
                     </div>
 
-                    <div className="px-7 sm:px-8 pb-7 pt-0 mt-auto">
-                      <div className="pt-4 border-t border-[#CBD5E1]">
-                        <Link
-                          className="inline-flex items-center gap-2 text-[#0A2540] font-mono text-[12px] font-bold uppercase tracking-wider group/link transition-colors hover:text-[#295EA8]"
-                          href={`/services#${service.slug}`}
-                        >
-                          <span>Explorer l&apos;expertise complète</span>
-                          <ChevronRight className="w-4 h-4 text-[#00C2FF] group-hover/link:translate-x-1.5 transition-transform" />
-                        </Link>
-                      </div>
+                    <div className="p-6 sm:p-7 flex flex-col flex-1">
+                      <h3 className="font-display text-[21px] sm:text-[24px] leading-snug font-bold text-[#0A2540] mb-3 group-hover:text-[#295EA8] transition-colors">
+                        {service.title}
+                      </h3>
+                      <p className="font-sans text-[15px] sm:text-[16px] text-[#334155] leading-relaxed mb-5 line-clamp-3">
+                        {service.short_description}
+                      </p>
+                      <span className="mt-auto inline-flex items-center gap-2 text-[#0A2540] font-display text-[14px] font-bold group-hover:text-[#295EA8] transition-colors">
+                        En savoir plus
+                        <ChevronRight className="w-4 h-4 text-[#00C2FF] group-hover:translate-x-1.5 transition-transform" />
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -500,12 +458,12 @@ export default function HomePage() {
 
                         {/* Badges Code & Catégorie */}
                         <div className="absolute top-3 left-3 flex items-center gap-2">
-                          <span className="px-2.5 py-1 bg-[#0A2540]/95 border border-[#00C2FF]/60 text-[#00C2FF] font-mono text-[10px] font-extrabold rounded-xs shadow-md">
+                          <span className="px-2.5 py-1 bg-[#0A2540]/95 border border-[#00C2FF]/60 text-[#00C2FF] font-mono text-[12px] font-extrabold rounded-xs shadow-md">
                             {equipmentCodes[idx]}
                           </span>
                         </div>
 
-                        <span className="absolute bottom-3 left-3 font-mono text-[10px] font-black uppercase tracking-wider text-[#000F22] bg-[#00C2FF] px-2.5 py-1 rounded-xs shadow-md">
+                        <span className="absolute bottom-3 left-3 font-mono text-[12px] font-black uppercase tracking-wider text-[#000F22] bg-[#00C2FF] px-2.5 py-1 rounded-xs shadow-md">
                           MATÉRIEL CHANTIER
                         </span>
                       </div>
@@ -565,17 +523,17 @@ export default function HomePage() {
                   <div className="card-stitch p-4 text-center">
                     <ShieldCheck className="w-5 h-5 text-[#295EA8] mx-auto mb-2" />
                     <span className="font-mono text-[11px] font-bold text-[#0A2540] uppercase block">Sécurité</span>
-                    <span className="font-sans text-[10px] text-[#5B6B7A]">Normes BAEL</span>
+                    <span className="font-sans text-[12px] text-[#5B6B7A]">Normes BAEL</span>
                   </div>
                   <div className="card-stitch p-4 text-center">
                     <Target className="w-5 h-5 text-[#295EA8] mx-auto mb-2" />
                     <span className="font-mono text-[11px] font-bold text-[#0A2540] uppercase block">Précision</span>
-                    <span className="font-sans text-[10px] text-[#5B6B7A]">Métré exact</span>
+                    <span className="font-sans text-[12px] text-[#5B6B7A]">Métré exact</span>
                   </div>
                   <div className="card-stitch p-4 text-center">
                     <Award className="w-5 h-5 text-[#295EA8] mx-auto mb-2" />
                     <span className="font-mono text-[11px] font-bold text-[#0A2540] uppercase block">Qualité</span>
-                    <span className="font-sans text-[10px] text-[#5B6B7A]">Matériaux certifiés</span>
+                    <span className="font-sans text-[12px] text-[#5B6B7A]">Matériaux certifiés</span>
                   </div>
                 </div>
 
@@ -604,7 +562,7 @@ export default function HomePage() {
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/30 to-transparent opacity-85" />
-                    <span className="absolute bottom-3 left-3 font-mono text-[10px] text-[#00C2FF] font-bold bg-[#0A2540]/95 px-3 py-1 rounded-xs border border-[#00C2FF]/40 shadow-md uppercase tracking-wider">
+                    <span className="absolute bottom-3 left-3 font-mono text-[12px] text-[#00C2FF] font-bold bg-[#0A2540]/95 px-3 py-1 rounded-xs border border-[#00C2FF]/40 shadow-md uppercase tracking-wider">
                       INGÉNIERIE &amp; CALCULS DE STRUCTURES
                     </span>
                   </div>
@@ -827,7 +785,7 @@ export default function HomePage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-transparent to-transparent opacity-75 group-hover:opacity-60 transition-opacity" />
 
-                    <span className="absolute top-3 left-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] border border-[#00C2FF]/30 font-mono text-[10px] font-semibold px-2.5 py-1 rounded-xs">
+                    <span className="absolute top-3 left-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] border border-[#00C2FF]/30 font-mono text-[12px] font-semibold px-2.5 py-1 rounded-xs">
                       {item.category}
                     </span>
 
@@ -924,7 +882,7 @@ export default function HomePage() {
 
             <div className="p-6 bg-[#0A2540] border-t border-[#295EA8]/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <span className="font-mono text-[10px] text-[#00C2FF] uppercase tracking-wider block font-semibold mb-1">
+                <span className="font-mono text-[12px] text-[#00C2FF] uppercase tracking-wider block font-semibold mb-1">
                   {activeLightboxImage.categoryName}
                 </span>
                 <p className="font-sans text-[14px] text-slate-200">

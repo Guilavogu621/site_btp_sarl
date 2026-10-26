@@ -255,17 +255,17 @@ export default function EquipementsPage() {
 
                     {/* Top Badges */}
                     <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
-                      <span className="px-2.5 py-1 bg-[#0A2540]/95 border border-[#00C2FF]/60 text-[#00C2FF] font-mono text-[10px] font-extrabold rounded-xs shadow-md">
+                      <span className="px-2.5 py-1 bg-[#0A2540]/95 border border-[#00C2FF]/60 text-[#00C2FF] font-mono text-[12px] font-extrabold rounded-xs shadow-md">
                         {equipmentCodes[idx] || `EQ-0${idx + 1}`}
                       </span>
                     </div>
 
-                    <span className="absolute bottom-3 left-3 font-mono text-[10px] font-black uppercase tracking-wider text-[#000F22] bg-[#00C2FF] px-2.5 py-1 rounded-xs shadow-md">
+                    <span className="absolute bottom-3 left-3 font-mono text-[12px] font-black uppercase tracking-wider text-[#000F22] bg-[#00C2FF] px-2.5 py-1 rounded-xs shadow-md">
                       MATÉRIEL CHANTIER
                     </span>
 
                     {/* Status Badge */}
-                    <span className="absolute top-3 right-3 px-2.5 py-1 bg-[#0A2540]/90 border border-[#00C2FF]/40 text-emerald-400 font-mono text-[10px] font-bold rounded-xs backdrop-blur-sm">
+                    <span className="absolute top-3 right-3 px-2.5 py-1 bg-[#0A2540]/90 border border-[#00C2FF]/40 text-emerald-400 font-mono text-[12px] font-bold rounded-xs backdrop-blur-sm">
                       Disponible sur Chantier
                     </span>
                   </div>
@@ -328,7 +328,7 @@ export default function EquipementsPage() {
             {/* Modal Header */}
             <div className="p-6 border-b border-[#295EA8]/40 flex items-center justify-between bg-[#0A2540]/80">
               <div>
-                <span className="text-[10px] font-mono text-[#00C2FF] uppercase font-bold tracking-widest block">
+                <span className="text-[12px] font-mono text-[#00C2FF] uppercase font-bold tracking-widest block">
                   FICHE TECHNIQUE — BEST BUILDERS BTP
                 </span>
                 <h2 className="font-display font-extrabold text-[20px] text-white mt-0.5">
@@ -356,19 +356,19 @@ export default function EquipementsPage() {
               {/* Technical Specifications Grid */}
               <div className="grid sm:grid-cols-2 gap-4 font-mono text-[13px]">
                 <div className="p-3 bg-[#0A2540]/80 border border-[#295EA8]/40 rounded-xl">
-                  <span className="text-[10px] text-slate-400 uppercase block">Catégorie</span>
+                  <span className="text-[12px] text-slate-400 uppercase block">Catégorie</span>
                   <span className="font-bold text-[#00C2FF]">{activeEquipment.category}</span>
                 </div>
                 <div className="p-3 bg-[#0A2540]/80 border border-[#295EA8]/40 rounded-xl">
-                  <span className="text-[10px] text-slate-400 uppercase block">Marque / Modèle</span>
+                  <span className="text-[12px] text-slate-400 uppercase block">Marque / Modèle</span>
                   <span className="font-bold text-white">{activeEquipment.brand || 'N/C'} — {activeEquipment.model || 'N/C'}</span>
                 </div>
                 <div className="p-3 bg-[#0A2540]/80 border border-[#295EA8]/40 rounded-xl">
-                  <span className="text-[10px] text-slate-400 uppercase block">État du Matériel</span>
+                  <span className="text-[12px] text-slate-400 uppercase block">État du Matériel</span>
                   <span className="font-bold text-emerald-400">{activeEquipment.condition || 'Neuf'}</span>
                 </div>
                 <div className="p-3 bg-[#0A2540]/80 border border-[#295EA8]/40 rounded-xl">
-                  <span className="text-[10px] text-slate-400 uppercase block">Disponibilité</span>
+                  <span className="text-[12px] text-slate-400 uppercase block">Disponibilité</span>
                   <span className="font-bold text-emerald-400">Disponible Immédiatement</span>
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function EquipementsPage() {
             
             <div className="p-6 border-b border-[#295EA8]/40 flex items-center justify-between bg-[#0A2540]/80">
               <div>
-                <span className="text-[10px] font-mono text-[#00C2FF] uppercase font-bold tracking-widest block">
+                <span className="text-[12px] font-mono text-[#00C2FF] uppercase font-bold tracking-widest block">
                   CONTACT BUREAU D&apos;ÉTUDES &amp; CHANTIER
                 </span>
                 <h2 className="font-display font-extrabold text-[18px] text-white mt-0.5 line-clamp-1">

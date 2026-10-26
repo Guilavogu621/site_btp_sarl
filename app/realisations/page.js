@@ -184,19 +184,19 @@ export default function PortfolioPage() {
 
                     {/* BADGE STATUT EN COURS OU TERMINÉ */}
                     {project.is_ongoing ? (
-                      <div className="absolute top-3 left-3 bg-[#00C2FF] text-[#000F22] text-[10px] font-mono px-2.5 py-1 uppercase font-bold tracking-wider rounded-xs shadow-md flex items-center gap-1.5">
+                      <div className="absolute top-3 left-3 bg-[#00C2FF] text-[#000F22] text-[12px] font-mono px-2.5 py-1 uppercase font-bold tracking-wider rounded-xs shadow-md flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-[#000F22] animate-ping" />
                         Chantier En Cours
                       </div>
                     ) : (
-                      <div className="absolute top-3 left-3 bg-[#0A2540] text-emerald-300 text-[10px] font-mono px-2.5 py-1 uppercase font-bold tracking-wider rounded-xs border border-emerald-400/40 shadow-md flex items-center gap-1">
+                      <div className="absolute top-3 left-3 bg-[#0A2540] text-emerald-300 text-[12px] font-mono px-2.5 py-1 uppercase font-bold tracking-wider rounded-xs border border-emerald-400/40 shadow-md flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                         Ouvrage Livré
                       </div>
                     )}
 
                     {/* LOCALISATION */}
-                    <div className="absolute top-3 right-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] text-[10px] font-mono px-2.5 py-1 uppercase font-semibold border border-[#00C2FF]/30 rounded-xs">
+                    <div className="absolute top-3 right-3 bg-[#0A2540]/90 backdrop-blur-md text-[#00C2FF] text-[12px] font-mono px-2.5 py-1 uppercase font-semibold border border-[#00C2FF]/30 rounded-xs">
                       {project.location}
                     </div>
 
@@ -205,7 +205,7 @@ export default function PortfolioPage() {
                       <div className="absolute bottom-3 left-3 flex gap-1 bg-[#0A2540]/95 backdrop-blur-md p-1 border border-[#00C2FF]/40 rounded-xs z-10">
                         <button
                           onClick={() => toggleImageMode(project.id, "before")}
-                          className={`px-2.5 py-1 text-[9px] font-mono uppercase font-bold rounded-xs transition-all ${
+                          className={`px-2.5 py-1 text-[11px] font-mono uppercase font-bold rounded-xs transition-all ${
                             currentImageMode === "before"
                               ? "bg-[#00C2FF] text-[#000F22] shadow-xs"
                               : "text-slate-300 hover:text-white"
@@ -215,7 +215,7 @@ export default function PortfolioPage() {
                         </button>
                         <button
                           onClick={() => toggleImageMode(project.id, "after")}
-                          className={`px-2.5 py-1 text-[9px] font-mono uppercase font-bold rounded-xs transition-all ${
+                          className={`px-2.5 py-1 text-[11px] font-mono uppercase font-bold rounded-xs transition-all ${
                             currentImageMode === "after"
                               ? "bg-[#00C2FF] text-[#000F22] shadow-xs"
                               : "text-slate-300 hover:text-white"

@@ -117,13 +117,13 @@ export default function BlogPage() {
 
                     <div className="absolute top-3 right-3 flex items-center gap-2">
                       {hasMultiplePhotos && !hasVideo && (
-                        <div className="bg-[#0A2540]/90 text-white font-mono text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md border border-[#00C2FF]/40 flex items-center gap-1.5">
+                        <div className="bg-[#0A2540]/90 text-white font-mono text-[12px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md border border-[#00C2FF]/40 flex items-center gap-1.5">
                           <ImageIcon className="w-3.5 h-3.5 text-[#00C2FF]" />
                           <span>{articlePhotos.length} photos</span>
                         </div>
                       )}
                       {hasVideo && (
-                        <div className="bg-[#00C2FF] text-[#0A2540] font-mono text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md flex items-center gap-1.5">
+                        <div className="bg-[#00C2FF] text-[#0A2540] font-mono text-[12px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md flex items-center gap-1.5">
                           <VideoIcon className="w-3.5 h-3.5 fill-[#0A2540]" />
                           <span>Vidéo</span>
                         </div>
@@ -269,7 +269,7 @@ export default function BlogPage() {
                       aria-label="Voir la vidéo"
                     >
                       <Play className="w-5 h-5 text-[#00C2FF] fill-[#00C2FF]" />
-                      <span className="text-[8px] font-mono text-[#00C2FF] font-bold uppercase">Vidéo</span>
+                      <span className="text-[11px] font-mono text-[#00C2FF] font-bold uppercase">Vidéo</span>
                     </button>
                   )}
                 </div>

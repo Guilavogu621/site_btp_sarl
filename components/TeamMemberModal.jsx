@@ -87,7 +87,7 @@ export default function TeamMemberModal({ member, onClose }) {
                 )}
               </div>
 
-              <span className="inline-block px-3 py-1 bg-[#295EA8]/10 text-[#295EA8] font-mono text-[10px] font-bold uppercase tracking-wider rounded-xs border border-[#295EA8]/20">
+              <span className="inline-block px-3 py-1 bg-[#295EA8]/10 text-[#295EA8] font-mono text-[12px] font-bold uppercase tracking-wider rounded-xs border border-[#295EA8]/20">
                 {member.role}
               </span>
             </div>
@@ -107,7 +107,7 @@ export default function TeamMemberModal({ member, onClose }) {
                 {/* Biography */}
                 {member.bio && (
                   <div className="mb-5">
-                    <h4 className="font-mono text-[10px] font-bold text-[#5B6B7A] uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                    <h4 className="font-mono text-[12px] font-bold text-[#5B6B7A] uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
                       <Briefcase className="w-3.5 h-3.5 text-[#295EA8]" />
                       PARCOURS &amp; EXPRÉTIENCE
                     </h4>
@@ -120,7 +120,7 @@ export default function TeamMemberModal({ member, onClose }) {
                 {/* Key Skills */}
                 {member.skills && member.skills.length > 0 && (
                   <div className="mb-5">
-                    <h4 className="font-mono text-[10px] font-bold text-[#5B6B7A] uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                    <h4 className="font-mono text-[12px] font-bold text-[#5B6B7A] uppercase tracking-widest mb-2 flex items-center gap-1.5">
                       <Award className="w-3.5 h-3.5 text-[#00C2FF]" />
                       DOMAINES D&apos;EXPERTISE
                     </h4>

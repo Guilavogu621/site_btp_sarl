@@ -73,7 +73,7 @@ export default function ContactForm({
             <span className="w-2.5 h-6 bg-[#00C2FF] rounded-xs" />
             {title}
           </h3>
-          <span className="font-mono text-[10px] text-[#295EA8] font-semibold bg-[#F1F4F7] px-2.5 py-1 border border-[#C4C6CE] rounded-xs uppercase">
+          <span className="font-mono text-[12px] text-[#295EA8] font-semibold bg-[#F1F4F7] px-2.5 py-1 border border-[#C4C6CE] rounded-xs uppercase">
             Études &amp; Devis BTP
           </span>
         </div>
