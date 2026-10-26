@@ -37,7 +37,6 @@ import {
   initialContactMessages,
   initialServices,
   initialSiteSettings,
-  initialEquipments,
   getProjects,
   createProject,
   updateProject,
@@ -51,7 +50,8 @@ import {
   getEquipments,
   createEquipment,
   updateEquipment,
-  deleteEquipment
+  deleteEquipment,
+  makeSlug
 } from "@/lib/data";
 import { sanitizeText } from "@/lib/security";
 import { supabase } from "@/lib/supabase";
@@ -122,7 +122,7 @@ export default function DashboardPage() {
   const [editingArticle, setEditingArticle] = useState(null);
 
   // Equipments state
-  const [equipments, setEquipments] = useState(initialEquipments);
+  const [equipments, setEquipments] = useState([]);
   const [showAddEquipment, setShowAddEquipment] = useState(false);
   const [newEquipment, setNewEquipment] = useState({
     title: "",
@@ -160,14 +160,16 @@ export default function DashboardPage() {
   const refreshData = async () => {
     setIsLoadingData(true);
     try {
-      const [fetchedArticles, fetchedProjects, fetchedMessages] = await Promise.all([
+      const [fetchedArticles, fetchedProjects, fetchedMessages, fetchedEquipments] = await Promise.all([
         getArticles(),
         getProjects(),
-        getContactMessages()
+        getContactMessages(),
+        getEquipments({ fallback: false })
       ]);
       if (Array.isArray(fetchedArticles)) setArticles(fetchedArticles);
       if (Array.isArray(fetchedProjects)) setProjects(fetchedProjects);
       if (Array.isArray(fetchedMessages)) setMessages(fetchedMessages);
+      if (Array.isArray(fetchedEquipments)) setEquipments(fetchedEquipments);
     } catch {
       // Gérer l'erreur silencieusement
     } finally {
@@ -339,10 +341,16 @@ export default function DashboardPage() {
       photo_before: projectPhotos[0] || "/img/logo.png",
       photo_after: projectPhotos[1] || "",
       photos: projectPhotos,
-      slug: newProject.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+      slug: makeSlug(newProject.title, "projet")
     };
 
-    const created = await createProject(projectPayload);
+    let created;
+    try {
+      created = await createProject(projectPayload);
+    } catch (err) {
+      reportError(err);
+      return;
+    }
     setProjects((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
     setShowAddProject(false);
     setNewProject({
@@ -362,7 +370,12 @@ export default function DashboardPage() {
 
   const handleDeleteProject = async (id) => {
     if (confirm("Voulez-vous supprimer ce projet du portfolio ?")) {
-      await deleteProject(id);
+      try {
+        await deleteProject(id);
+      } catch (err) {
+        reportError(err);
+        return;
+      }
       setProjects((prev) => prev.filter((p) => p.id !== id));
       triggerSuccess("Projet supprimé.");
     }
@@ -400,7 +413,13 @@ export default function DashboardPage() {
       photo_after: projectPhotos[1] || "",
       photos: projectPhotos
     };
-    const updated = await updateProject(editingProjectId, payload);
+    let updated;
+    try {
+      updated = await updateProject(editingProjectId, payload);
+    } catch (err) {
+      reportError(err);
+      return;
+    }
     setProjects((prev) => prev.map((p) => (p.id === editingProjectId ? { ...p, ...updated } : p)));
     setEditingProjectId(null);
     setEditingProject(null);
@@ -421,7 +440,7 @@ export default function DashboardPage() {
         photos: articlePhotos,
         video_url: newArticle.video_url || "",
         published_at: newArticle.published_at || new Date().toISOString().split("T")[0],
-        slug: newArticle.title.toLowerCase().replace(/[^a-z0-9\u00e0-\u00ff]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, ""),
+        slug: makeSlug(newArticle.title, "article"),
         is_published: true
       };
 
@@ -438,14 +457,18 @@ export default function DashboardPage() {
       });
       triggerSuccess("Article d'actualité publié avec succès !");
     } catch (err) {
-      console.error("Erreur publication article :", err);
-      alert("Une erreur est survenue lors de la publication. Si vous insérez une vidéo, utilisez de préférence un lien YouTube / Vimeo.");
+      reportError(err);
     }
   };
 
   const handleDeleteArticle = async (id) => {
     if (confirm("Voulez-vous supprimer cet article d'actualité ?")) {
-      await deleteArticle(id);
+      try {
+        await deleteArticle(id);
+      } catch (err) {
+        reportError(err);
+        return;
+      }
       setArticles((prev) => prev.filter((a) => a.id !== id));
       triggerSuccess("Article supprimé.");
     }
@@ -493,8 +516,7 @@ export default function DashboardPage() {
       setEditingArticle(null);
       triggerSuccess("Article mis à jour avec succès !");
     } catch (err) {
-      console.error("Erreur mise à jour article :", err);
-      alert("Une erreur est survenue lors de la mise à jour de l'article.");
+      reportError(err);
     }
   };
 
@@ -511,10 +533,16 @@ export default function DashboardPage() {
       model: sanitizeText(newEquipment.model),
       specs: sanitizeText(newEquipment.specs),
       image: newEquipment.image || "/img/showcase/tour-grue-ciel.webp",
-      slug: newEquipment.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+      slug: makeSlug(newEquipment.title, "equipement")
     };
 
-    const created = await createEquipment(equipmentPayload);
+    let created;
+    try {
+      created = await createEquipment(equipmentPayload);
+    } catch (err) {
+      reportError(err);
+      return;
+    }
     setEquipments((prev) => [created, ...prev.filter((eq) => eq.id !== created.id)]);
     setShowAddEquipment(false);
     setNewEquipment({
@@ -534,7 +562,12 @@ export default function DashboardPage() {
 
   const handleDeleteEquipment = async (id) => {
     if (confirm("Voulez-vous supprimer cet équipement du catalogue ?")) {
-      await deleteEquipment(id);
+      try {
+        await deleteEquipment(id);
+      } catch (err) {
+        reportError(err);
+        return;
+      }
       setEquipments((prev) => prev.filter((eq) => eq.id !== id));
       triggerSuccess("Équipement supprimé.");
     }
@@ -560,7 +593,13 @@ export default function DashboardPage() {
       specs: sanitizeText(editingEquipment.specs),
       image: editingEquipment.image || "/img/showcase/tour-grue-ciel.webp"
     };
-    const updated = await updateEquipment(editingEquipmentId, payload);
+    let updated;
+    try {
+      updated = await updateEquipment(editingEquipmentId, payload);
+    } catch (err) {
+      reportError(err);
+      return;
+    }
     setEquipments((prev) => prev.map((eq) => (eq.id === editingEquipmentId ? { ...eq, ...updated } : eq)));
     setEditingEquipmentId(null);
     setEditingEquipment(null);
@@ -568,6 +607,11 @@ export default function DashboardPage() {
   };
 
 
+
+  const reportError = (err) => {
+    console.error(err);
+    alert(err?.message || "Une erreur est survenue. Rien n'a été enregistré.");
+  };
 
   const triggerSuccess = (msg = "Modifications enregistrées avec succès !") => {
     setSuccessMessage(msg);
