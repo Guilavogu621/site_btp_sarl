@@ -27,7 +27,7 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
-          { 
+          {
             key: 'X-Frame-Options',
             value: 'DENY',
           },
@@ -44,12 +44,31 @@ const nextConfig = {
             value: 'max-age=31536000; includeSubDomains; preload',
           },
           {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
+          },
+          // Content-Security-Policy : directives à forte valeur qui ne cassent
+          // pas l'app (Next.js injecte des scripts/styles inline au rendu, d'où
+          // 'unsafe-inline'). frame-ancestors remplace X-Frame-Options,
+          // object-src 'none' bloque les plugins, upgrade-insecure-requests
+          // force le HTTPS, et les connexions sortantes sont limitées à
+          // l'app + Supabase.
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "base-uri 'self'",
+              "object-src 'none'",
+              "frame-ancestors 'none'",
+              "form-action 'self'",
+              "img-src 'self' data: blob: https:",
+              "media-src 'self' data: blob: https:",
+              "font-src 'self' https://fonts.gstatic.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "script-src 'self' 'unsafe-inline'",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              "upgrade-insecure-requests",
+            ].join('; '),
           },
         ],
       },

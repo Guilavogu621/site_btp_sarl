@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @theme {
+  /* Breakpoint intermédiaire pour les très petits écrans (badges, puces). */
+  --breakpoint-xs: 400px;
+
   --color-navy: #0A2540;
   --color-navy-dark: #000F22;
   --color-navy-light: #1E56A0;

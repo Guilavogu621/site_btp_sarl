@@ -162,7 +162,9 @@ export async function POST(request) {
       from: `"Best Builders SARLU" <${SMTP_USER}>`,
       to: NOTIFY_TO,
       replyTo: email,
-      subject: `🏗️ Nouvelle demande de devis — ${name} (${service_requested || "Général"})`,
+      // On retire tout retour à la ligne des champs insérés dans le sujet
+      // pour éliminer tout risque d'injection d'en-tête email.
+      subject: `🏗️ Nouvelle demande de devis — ${name.replace(/[\r\n]+/g, " ")} (${(service_requested || "Général").replace(/[\r\n]+/g, " ")})`,
       html: htmlBody,
       text: `Nouvelle demande de devis de ${name}\nEmail: ${email}\nTéléphone: ${phone || "N/A"}\nService: ${service_requested || "N/A"}\nMessage: ${message}`,
     });
